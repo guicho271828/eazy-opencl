@@ -1,7 +1,7 @@
 
-# Cl-Opencl - Opencl Binding for Common Lisp
+# eazy-opencl - Opencl Binding for Common Lisp
 
-*Can you see the dawn of lisp-based FPGA ?*
+*Can You see the dawn of lisp-based FPGA ?*
 
 
 

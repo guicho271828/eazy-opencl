@@ -18,7 +18,7 @@ exec ros -Q -- $0 "$@"
 (defun main (&rest argv)
   (declare (ignorable argv))
   (uiop:quit (if (every #'fiveam::TEST-PASSED-P
-                      (test :cl-opencl))
+                      (test :eazy-opencl))
                  0 1)))
 
 

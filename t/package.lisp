@@ -1,24 +1,24 @@
 #|
-  This file is a part of cl-opencl project.
+  This file is a part of eazy-opencl project.
   Copyright (c) 2015 Masataro Asai (guicho2.71828@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage :cl-opencl.test
+(defpackage :eazy-opencl.test
   (:use :cl
-        :cl-opencl
+        :eazy-opencl
         :fiveam
         :iterate :alexandria :trivia))
-(in-package :cl-opencl.test)
+(in-package :eazy-opencl.test)
 
 
 
-(def-suite :cl-opencl)
-(in-suite :cl-opencl)
+(def-suite :eazy-opencl)
+(in-suite :eazy-opencl)
 
 ;; run test with (run! test-name) 
 
-(test cl-opencl
+(test eazy-opencl
 
   )
 
