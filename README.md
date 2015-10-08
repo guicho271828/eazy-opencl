@@ -3,8 +3,7 @@
 
 *Can You see the dawn of lisp-based FPGA ?*
 
-
-
+Both [cl-opencl](https://github.com/malkia/cl-opencl) and [cl-opencl-3b](https://github.com/3b/cl-opencl-3b) seems the abondoned projects. I'm trying to supersede it with something better.
 
 ## Dependencies
 This library is at least tested on implementation listed below:
