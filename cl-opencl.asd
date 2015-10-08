@@ -27,4 +27,4 @@
                 :components
                 ((:file "package"))))
   :description "Opencl Binding for Common Lisp"
-  :in-order-to ((test-op (load-op :cl-opencl.test))))
+  :in-order-to ((test-op (test-op :cl-opencl.test))))
