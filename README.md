@@ -1,7 +1,9 @@
 
 # Cl-Opencl - Opencl Binding for Common Lisp
 
-## Usage
+*Can you see the dawn of lisp-based FPGA ?*
+
+
 
 
 ## Dependencies
@@ -17,12 +19,11 @@ Also, it depends on the following libraries:
     Alexandria is a collection of portable public domain utilities.
 + trivia :
     
-
-## Installation
-
 ## Author
 
 * Masataro Asai (guicho2.71828@gmail.com)
+
+Part of the C-like source generator is forked from those in [Takagi@CL-CUDA](https://github.com/takagi/cl-cuda).
 
 ## Copyright
 
