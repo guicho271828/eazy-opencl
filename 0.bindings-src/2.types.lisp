@@ -37,7 +37,6 @@
 
 (cffi::defctype int int32-t)
 
-
 ;;(cffi::defctype intptr-t :intptr)
 
 (defcenum error-code
@@ -54,8 +53,10 @@
   (:IMAGE-FORMAT-NOT-SUPPORTED -10)
   (:BUILD-PROGRAM-FAILURE -11)
   (:MAP-FAILURE -12)
-  (:misaligned-sub-buffer-offset -13) ;; 1.1
-  (:exec-status-error-for-events-in-wait-list -14) ;; 1.1
+  #+opencl-1.1
+  (:misaligned-sub-buffer-offset -13)
+  #+opencl-1.1
+  (:exec-status-error-for-events-in-wait-list -14)
   (:INVALID-VALUE -30)
   (:INVALID-DEVICE-TYPE -31)
   (:INVALID-PLATFORM -32)
@@ -90,7 +91,7 @@
   (:INVALID-BUFFER-SIZE -61)
   (:INVALID-MIP-LEVEL -62)
   (:INVALID-GLOBAL-WORK-SIZE -63)
-  ;; 1.1
+  #+opencl-1.1
   (:invalid-property -64)
   ;; cl_khr_gl_sharing
   (:invalid-sharegroup-reference-khr -1000)
@@ -166,16 +167,26 @@
   (:platform                          #x1031)
   ;;/* 0x1032 reserved for CL_DEVICE_DOUBLE_FP_CONFIG */
   ;;/* 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG */
-   (:PREFERRED-VECTOR-WIDTH-HALF       #x1034) ;;1.1
-   (:HOST-UNIFIED-MEMORY               #x1035) ;;1.1
-   (:NATIVE-VECTOR-WIDTH-CHAR          #x1036) ;;1.1
-   (:NATIVE-VECTOR-WIDTH-SHORT         #x1037) ;;1.1
-   (:NATIVE-VECTOR-WIDTH-INT           #x1038) ;;1.1
-   (:NATIVE-VECTOR-WIDTH-LONG          #x1039) ;;1.1
-   (:NATIVE-VECTOR-WIDTH-FLOAT         #x103A) ;;1.1
-   (:NATIVE-VECTOR-WIDTH-DOUBLE        #x103B) ;;1.1
-   (:NATIVE-VECTOR-WIDTH-HALF          #x103C) ;;1.1
-   (:OPENCL-C-VERSION                  #x103D)) ;;1.1
+  #+opencl-1.1
+  (:PREFERRED-VECTOR-WIDTH-HALF       #x1034)
+  #+opencl-1.1
+  (:HOST-UNIFIED-MEMORY               #x1035)
+  #+opencl-1.1
+  (:NATIVE-VECTOR-WIDTH-CHAR          #x1036)
+  #+opencl-1.1
+  (:NATIVE-VECTOR-WIDTH-SHORT         #x1037)
+  #+opencl-1.1
+  (:NATIVE-VECTOR-WIDTH-INT           #x1038)
+  #+opencl-1.1
+  (:NATIVE-VECTOR-WIDTH-LONG          #x1039)
+  #+opencl-1.1
+  (:NATIVE-VECTOR-WIDTH-FLOAT         #x103A)
+  #+opencl-1.1
+  (:NATIVE-VECTOR-WIDTH-DOUBLE        #x103B)
+  #+opencl-1.1
+  (:NATIVE-VECTOR-WIDTH-HALF          #x103C)
+  #+opencl-1.1
+  (:OPENCL-C-VERSION                  #x103D))
 
 (defbitfield (device-fp-config bitfield)
   (:DENORM                                #.(cl:ash 1 0))
@@ -184,7 +195,8 @@
   (:ROUND-TO-ZERO                         #.(cl:ash 1 3))
   (:ROUND-TO-INF                          #.(cl:ash 1 4))
   (:FMA                                   #.(cl:ash 1 5))
-  (:FP-SOFT-FLOAT                         #.(cl:ash 1 6))) ;; 1.1
+  #+opencl-1.1
+  (:FP-SOFT-FLOAT                         #.(cl:ash 1 6)))
 
 
 (defcenum (device-mem-cache-type uint)
@@ -208,7 +220,8 @@
   (:REFERENCE-COUNT                  #x1080)
   (:DEVICES                          #x1081)
   (:PROPERTIES                       #x1082)
-  (:context-num-devices              #x1083)) ;; 1.1
+  #+opencl-1.1
+  (:context-num-devices              #x1083))
 
 ;(cffi::defctype cl-context-properties intptr-t) ?
 ;; intptr-t in C headers, but easier to use as unsigned, so :uintptr here
@@ -246,9 +259,12 @@
   (:ARGB                                     #x10B7)
   (:INTENSITY                                #x10B8)
   (:LUMINANCE                                #x10B9)
-  (:rx                                       #x10BA) ;;1.1
-  (:rgx                                      #x10BB) ;;1.1
-  (:rgbx                                     #x10BC)) ;;1.1
+  #+opencl-1.1
+  (:rx                                       #x10BA)
+  #+opencl-1.1
+  (:rgx                                      #x10BB)
+  #+opencl-1.1
+  (:rgbx                                     #x10BC))
 
 (defcenum (channel-type uint)
   (:SNORM-INT8                               #x10D0)
@@ -280,8 +296,10 @@
   (:MAP-COUNT                            #x1104)
   (:REFERENCE-COUNT                      #x1105)
   (:CONTEXT                              #x1106)
-  (:associated-memobject                 #x1107) ;;1.1
-  (:offset                               #x1108));;1.1
+  #+opencl-1.1
+  (:associated-memobject                 #x1107)
+  #+opencl-1.1
+  (:offset                               #x1108))
 
 (defcenum (image-info uint)
   (:FORMAT                             #x1110)
@@ -297,7 +315,7 @@
   (:CLAMP-TO-EDGE                    #x1131)
   (:CLAMP                            #x1132)
   (:REPEAT                           #x1133)
-  (:mirrored-repeat                  #x1134)) ;;1.1
+  (:mirrored-repeat                  #x1134))
 
 (defcenum (filter-mode uint)
   (:NEAREST                           #x1140)
@@ -345,15 +363,18 @@
   (:WORK-GROUP-SIZE                   #x11B0)
   (:COMPILE-WORK-GROUP-SIZE           #x11B1)
   (:LOCAL-MEM-SIZE                    #x11B2)
-  (:preferred-work-group-size-multiple #x11b3) ;;1.1
-  (:private-mem-size                  #x11b4)) ;;1.1
+  #+opencl-1.1
+  (:preferred-work-group-size-multiple #x11b3)
+  #+opencl-1.1
+  (:private-mem-size                  #x11b4))
 
 (defcenum (event-info uint)
   (:COMMAND-QUEUE                      #x11D0)
   (:COMMAND-TYPE                       #x11D1)
   (:REFERENCE-COUNT                    #x11D2)
   (:COMMAND-EXECUTION-STATUS           #x11D3)
-  (:event-context                      #x11d4)) ;;1.1
+  #+opencl-1.1
+  (:event-context                      #x11d4))
 
 (defcenum (command-type uint)
   (:NDRANGE-KERNEL                   #x11F0)
@@ -373,10 +394,14 @@
   (:MARKER                           #x11FE)
   (:ACQUIRE-GL-OBJECTS               #x11FF)
   (:RELEASE-GL-OBJECTS               #x1200)
-  (:read-buffer-rect                 #x1201) ;;1.1
-  (:write-buffer-rect                #x1202) ;;1.1
-  (:copy-buffer-rect                 #x1203) ;;1.1
-  (:user                             #x1204));;1.1
+  #+opencl-1.1
+  (:read-buffer-rect                 #x1201)
+  #+opencl-1.1
+  (:write-buffer-rect                #x1202)
+  #+opencl-1.1
+  (:copy-buffer-rect                 #x1203)
+  #+opencl-1.1
+  (:user                             #x1204))
 
 (defcenum command-execution-status
   (:COMPLETE                                 #x0)
