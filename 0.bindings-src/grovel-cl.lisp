@@ -6,6 +6,11 @@
 
 ;;; types
 
+(ctype #.(lispify "intptr_t") "intptr_t")
+(ctype #.(lispify "uintptr_t") "uintptr_t")
+(ctype #.(lispify "size_t") "size_t")
+(ctype #.(lispify "ptrdiff_t") "ptrdiff_t")
+
 ;; /* WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels. */ 
 (ctype #.(lispify "cl_bool") "cl_bool")
 (ctype #.(lispify "cl_bitfield") "cl_bitfield")
