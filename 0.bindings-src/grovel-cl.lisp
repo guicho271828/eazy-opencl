@@ -6,8 +6,6 @@
 
 ;;; types
 
-(ctype #.(lispify "int") "int")
-(ctype #.(lispify "uint") "uint")
 (ctype #.(lispify "intptr_t") "intptr_t")
 (ctype #.(lispify "uintptr_t") "uintptr_t")
 (ctype #.(lispify "size_t") "size_t")

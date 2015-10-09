@@ -6,17 +6,17 @@
 
 ;;; C.1 Shared Application Scalar Data Types
 
-(ctype #.(lispify "cl_char") "cl_char")
-(ctype #.(lispify "cl_uchar") "cl_uchar")
-(ctype #.(lispify "cl_short") "cl_short")
-(ctype #.(lispify "cl_ushort") "cl_ushort")
-(ctype #.(lispify "cl_int") "cl_int")
-(ctype #.(lispify "cl_uint") "cl_uint")
-(ctype #.(lispify "cl_long") "cl_long")
-(ctype #.(lispify "cl_ulong") "cl_ulong")
-(ctype #.(lispify "cl_half") "cl_half")
-(ctype #.(lispify "cl_float") "cl_float")
-(ctype #.(lispify "cl_double") "cl_double")
+(ctype #.(lispify "char") "cl_char")
+(ctype #.(lispify "uchar") "cl_uchar")
+(ctype #.(lispify "short") "cl_short")
+(ctype #.(lispify "ushort") "cl_ushort")
+(ctype #.(lispify "int") "cl_int")
+(ctype #.(lispify "uint") "cl_uint")
+(ctype #.(lispify "long") "cl_long")
+(ctype #.(lispify "ulong") "cl_ulong")
+(ctype #.(lispify "half") "cl_half")
+(ctype #.(lispify "float") "cl_float")
+(ctype #.(lispify "double") "cl_double")
 
 ;;; C.2 Supported Application Vector Data Types
 
