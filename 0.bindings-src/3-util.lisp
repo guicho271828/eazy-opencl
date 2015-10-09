@@ -27,14 +27,14 @@
 
 (cl:defparameter *defined-opencl-functions* cl:nil)
 
-(cl:defmacro defclfun (lisp-and-c-name return-type cl:&body args)
+(cl:defmacro defclfun (cl:&whole whole lisp-and-c-name return-type cl:&body args)
   (cl:let ((lname (cl:second lisp-and-c-name)))
     `(cl:progn
-       (cl:push ',lname *defined-opencl-functions*)
+       (cl:push ',whole *defined-opencl-functions*)
        (cl:export ',lname)
-       (cl:declaim (inline ,lname))
+       (cl:declaim (cl:inline ,lname))
        (cffi:defcfun ,lisp-and-c-name ,return-type ,@args)
-       (cl:declaim (notinline ,lname)))))
+       (cl:declaim (cl:notinline ,lname)))))
 
 #++
 (cl:defmacro defclfun (name return-type cl:&body args)
