@@ -37,13 +37,6 @@
   (user-data (:pointer :void))
   (errcode-ret (:pointer error-code)))
 
-(defclfun ("clGetImageInfo" get-image-info) error-code
-  (image mem)
-  (param-name image-info)
-  (param-value-size size-t)
-  (param-value (:pointer :void))
-  (param-value-size-ret (:pointer size-t)))
-
 (defclfun ("clGetProgramBuildInfo" get-program-build-info) error-code
   (program program)
   (device device-id)
@@ -61,19 +54,6 @@
 
 (defclfun ("clRetainMemObject" retain-mem-object) error-code
   (memobj mem))
-
-(defclfun ("clEnqueueMapBuffer" enqueue-map-buffer) (:pointer :void)
-  (command-queue command-queue)
-  (buffer mem)
-  (blocking-map-p bool)
-  (map-flags map-flags)
-  (offset size-t)
-  (cb size-t)
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event))
-  (errcode-ret (:pointer error-code)))
-
 
 ;; 1.0 deprecated in 1.1
 (defclfun ("clSetCommandQueueProperty" set-command-queue-property)
@@ -99,17 +79,6 @@
 (defclfun ("clReleaseSampler" release-sampler) error-code
   (sampler sampler))
 
-(defclfun ("clEnqueueReadBuffer" enqueue-read-buffer) error-code
-  (command-queue command-queue)
-  (buffer mem)
-  (blocking-read-p bool)
-  (offset size-t)
-  (cb size-t)
-  (ptr (:pointer :void))
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
-
 (defclfun ("clGetDeviceIDs" get-device-ids) error-code
   (platform platform-id)
   (device-type device-type)
@@ -124,13 +93,6 @@
   (context context)
   (device device-id)
   (properties command-queue-properties)
-  (errcode-ret (:pointer error-code)))
-
-(defclfun ("clCreateBuffer" create-buffer) mem
-  (context context)
-  (flags mem-flags)
-  (size size-t)
-  (host-ptr (:pointer :void))
   (errcode-ret (:pointer error-code)))
 
 (defclfun ("clGetProgramInfo" get-program-info) error-code
@@ -150,17 +112,6 @@
   (event-wait-list (:pointer event))
   (event (:pointer event)))
 
-(defclfun ("clEnqueueCopyBuffer" enqueue-copy-buffer) error-code
-  (command-queue command-queue)
-  (src-buffer mem)
-  (dst-buffer mem)
-  (src-offset size-t)
-  (dst-offset size-t)
-  (cb size-t)
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
-
 (defclfun ("clCreateProgramWithSource" create-program-with-source) program
   (context context)
   (count uint)
@@ -168,45 +119,8 @@
   (lengths (:pointer size-t))
   (errcode-ret (:pointer error-code)))
 
-(defclfun ("clEnqueueWriteImage" enqueue-write-image) error-code
-  (command-queue command-queue)
-  (image mem)
-  (blocking-write bool)
-  (origin (:pointer size-t)) ;; todo: special type for these size_t[3] args?
-  (region (:pointer size-t))
-  (input-row-pitch size-t)
-  (input-slice-pitch size-t)
-  (ptr (:pointer :void))
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
-
-
-(defclfun ("clEnqueueWriteBuffer" enqueue-write-buffer) error-code
-  (command-queue command-queue)
-  (buffer mem)
-  (blocking-write-p bool)
-  (offset size-t)
-  (cb size-t)
-  (ptr (:pointer :void))
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
-
 (defclfun ("clFinish" finish) error-code
   (command-queue command-queue))
-
-(defclfun ("clEnqueueCopyImageToBuffer" enqueue-copy-image-to-buffer)
-    error-code
-  (command-queue command-queue)
-  (src-image mem)
-  (dst-buffer mem)
-  (src-origin (:pointer size-t))
-  (region (:pointer size-t))
-  (dst-offset size-t)
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
 
 (defclfun ("clBuildProgram" build-program) error-code
   (program program)
@@ -215,20 +129,6 @@
   (potions :string)
   (pfn-notify :pointer) ;; type
   (user-data (:pointer :void)))
-
-(defclfun ("clEnqueueMapImage" enqueue-map-image) (:pointer :void)
-  (command-queue command-queue)
-  (image mem)
-  (blocking-map bool)
-  (map-flags map-flags)
-  (origin (:pointer size-t)) ;; [3]
-  (region (:pointer size-t)) ;; [3]
-  (image-row-pitch (:pointer size-t))
-  (image-slice-pitch (:pointer size-t))
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event))
-  (errcode-ret (:pointer error-code)))
 
 (defclfun ("clRetainSampler" retain-sampler) error-code
   (sampler sampler))
@@ -248,32 +148,6 @@
 
 (defclfun ("clReleaseEvent" release-event) error-code
   (event event))
-
-(defclfun ("clEnqueueReadImage" enqueue-read-image) error-code
-  (command-queue command-queue)
-  (image mem)
-  (blocking-read bool)
-  (origin (:pointer size-t)) ;;[3]
-  (region (:pointer size-t)) ;;[3]
-  (row-pitch size-t)
-  (slice-pitch size-t)
-  (ptr (:pointer :void))
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
-
-
-(defclfun ("clEnqueueCopyBufferToImage" enqueue-copy-buffer-to-image)
-    error-code
-  (command-queue command-queue)
-  (src-buffer mem)
-  (dst-image mem)
-  (src-offset size-t)
-  (dst-origin (:pointer size-t)) ;;[3]
-  (region (:pointer size-t)) ;;[3]
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
 
 (defclfun ("clGetMemObjectInfo" get-mem-object-info) error-code
   (memobj mem)
@@ -353,14 +227,7 @@
   (platforms (:pointer platform-id))
   (num-platforms (:pointer uint)))
 
-(defclfun ("clGetSupportedImageFormats" get-supported-image-formats)
-    error-code
-  (context context)
-  (flags mem-flags)
-  (image-type mem-object-type)
-  (num-entries uint)
-  (image-formats (:pointer image-format))
-  (num-image-format (:pointer uint)))
+
 
 (defclfun ("clCreateProgramWithBinary" create-program-with-binary) program
   (context context)
@@ -374,41 +241,8 @@
 (defclfun ("clRetainProgram" retain-program) error-code
   (program program))
 
-(defclfun ("clEnqueueCopyImage" enqueue-copy-image) error-code
-  (command-queue command-queue)
-  (src-image mem)
-  (dst-image mem)
-  (src-origin (:pointer size-t)) ;;[3]
-  (dst-origin (:pointer size-t)) ;;[3]
-  (region (:pointer size-t)) ;;[3]
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
-
 (defclfun ("clRetainCommandQueue" retain-command-queue) error-code
   (command-queue command-queue))
-
-(defclfun ("clCreateImage2D" create-image-2d) mem
-  (context context)
-  (flags mem-flags)
-  (image-format (:pointer image-format))
-  (image-width size-t)
-  (image-height size-t)
-  (image-row-pitch size-t)
-  (host-ptr (:pointer :void))
-  (errcode-ret (:pointer error-code)))
-
-(defclfun ("clCreateImage3D" create-image-3d) mem
-  (context context)
-  (flags mem-flags)
-  (image-format :pointer)
-  (image-width size-t)
-  (image-height size-t)
-  (image-depth size-t)
-  (image-row-pitch size-t)
-  (image-slice-pitch size-t)
-  (host-ptr (:pointer :void))
-  (error-code-ret (:pointer error-code)))
 
 (defclfun ("clWaitForEvents" wait-for-events) error-code
   (num-events uint)
@@ -478,21 +312,7 @@
   (context context)
   (errcode-ret (:pointer error-code)))
 
-(defclfun ("clEnqueueWriteBufferRect" enqueue-write-buffer-rect) int
-  (command-queue command-queue)
-  (buffer mem)
-  (blocking-write-p bool)
-  (buffer-origin (:pointer size-t)) ;;[3]
-  (host-origin (:pointer size-t)) ;;[3]
-  (region (:pointer size-t)) ;;[3]
-  (buffer-row-pitch size-t)
-  (buffer-slice-pitch size-t)
-  (host-row-pitch size-t)
-  (host-slice-pitch size-t)
-  (pointer :pointer)
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
+
 
 (defclfun ("clSetEventCallback" set-event-callback) int
   (event event)
@@ -500,49 +320,12 @@
   (callback :pointer)
   (user-data (:pointer :void)))
 
-(defclfun ("clEnqueueReadBufferRect" enqueue-read-buffer-rect) int
-  (command-queue command-queue)
-  (buffer mem)
-  (blocking-read-p bool)
-  (buffer-origin (:pointer size-t)) ;;[3]
-  (host-origin (:pointer size-t)) ;;[3]
-  (region (:pointer size-t)) ;;[3]
-  (buffer-row-pitch size-t)
-  (buffer-slice-pitch size-t)
-  (host-row-pitch size-t)
-  (host-slice-pitch size-t)
-  (pointer (:pointer :void))
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
-
-(defclfun ("clCreateSubBuffer" create-sub-buffer) mem
-  (buffer mem)
-  (flags mem-flags)
-  (buffer-create-type buffer-create-type)
-  (buffer-create-info (:pointer :void))
-  (errcode-ret (:pointer error-code)))
 
 (defclfun ("clSetMemObjectDestructorCallback"
                set-mem-object-destructor-callback) int
   (memobj mem)
   (callback :pointer)
   (user-data (:pointer :void)))
-
-(defclfun ("clEnqueueCopyBufferRect" enqueue-copy-buffer-rect) int
-  (command-queue command-queue)
-  (src-buffer mem)
-  (dst-buffer mem)
-  (src-origin (:pointer size-t)) ;;[3]
-  (dst-origin (:pointer size-t)) ;;[3]
-  (region (:pointer size-t)) ;;[3]
-  (src-row-pitch size-t)
-  (src-slice-pitch size-t)
-  (dst-row-pitch size-t)
-  (dst-slice-pitch size-t)
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
 
 (defclfun ("clSetUserEventStatus" set-user-event-status) int
   (event event)
