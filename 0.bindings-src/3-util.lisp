@@ -1,6 +1,6 @@
 ;; Note: the code here is taken from cl-opencl-3b. I do not understand what
 ;; they are doing, but it seems like something related to dumping the lisp image.
-;; I do not understand the later macros either. What are they for?
+;; I do not understand the later macros either. What are they for? --- guicho 2015/10/9
 
 (cl:in-package #:eazy-opencl.bindings)
 
@@ -41,7 +41,7 @@
          (,n ,@(cl:mapcar 'cl:first args))
          ))))
 
-
+;; it is here, untouched, but it doesnt seem like being used... --- guicho 2015/10/9
 (cl:defmacro defclextfun ((cname lname) return-type cl:&body args)
   (alexandria:with-unique-names (pointer)
     `(cl:let ((,pointer (null-pointer)))
