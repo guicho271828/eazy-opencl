@@ -1,3 +1,5 @@
+(cl:in-package #:eazy-opencl.bindings)
+
 (defclfun ("clGetImageInfo" get-image-info) error-code
   (image mem)
   (param-name image-info)
