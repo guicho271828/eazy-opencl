@@ -1,4 +1,4 @@
-(in-package :eazy-opencl.host)
+(in-package :eazy-opencl.error)
 
 ;; blah blah blah.
 

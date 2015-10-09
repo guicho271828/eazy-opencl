@@ -4,8 +4,12 @@
 |#
 
 (in-package :cl-user)
-(defpackage eazy-opencl.host
+(defpackage eazy-opencl.error
   (:use :cl :alexandria :trivia)
   (:import-from :eazy-opencl.bindings
                 #:error-code
-                #:*defined-opencl-functions*))
+                #:*defined-opencl-functions*)
+  (:export
+   #:opencl-error
+   #:code
+   #:form))
