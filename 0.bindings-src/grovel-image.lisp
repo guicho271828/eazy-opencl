@@ -32,3 +32,9 @@ typedef struct _cl_image_desc {
 } cl_image_desc;
 
 
+
+(cffi:defcstruct _image-format
+  (image-channel-order channel-order)
+  (image-channel-data-type channel-type))
+
+(cffi::defctype image-format _image-format)
