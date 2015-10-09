@@ -27,5 +27,7 @@
                 :components
                 ((:file "0.package")
                  (:file "1.library")
-                 (:cffi-grovel-file "grovel"))))
+                 (:file "2.grovel-tools")
+                 (:cffi-grovel-file "grovel-cl_platform")
+                 (:cffi-grovel-file "grovel-cl"))))
   :description "Opencl Binding for Common Lisp: Low-level API bindings")
