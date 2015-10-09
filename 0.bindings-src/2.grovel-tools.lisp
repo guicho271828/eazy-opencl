@@ -35,3 +35,6 @@
         (cl:nreverse (helper (cl:concatenate 'cl:list name) cl:nil cl:nil))
         fix)
        package))))
+
+(cl:defun lispify-k (name cl:&optional flag)
+  (lispify name flag (cl:find-package :keyword)))
