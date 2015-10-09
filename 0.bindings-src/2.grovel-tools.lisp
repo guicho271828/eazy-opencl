@@ -24,17 +24,19 @@
                    (helper (cl:cdr lst) '_ (cl:cons #\- rest)))
                   (cl:t
                    (cl:error "Invalid character: ~A" c)))))
-    (cl:let ((fix (cl:case flag
-                    ((constant enumvalue) "+")
-                    (variable "*")
-                    (cl:t ""))))
-      (cl:intern
-       (cl:concatenate
-        'cl:string
-        fix
-        (cl:nreverse (helper (cl:concatenate 'cl:list name) cl:nil cl:nil))
-        fix)
-       package))))
+    (cl:let* ((fix (cl:case flag
+                     ((constant enumvalue) "+")
+                     (variable "*")
+                     (cl:t "")))
+              (sym (cl:intern
+                    (cl:concatenate
+                     'cl:string
+                     fix
+                     (cl:nreverse (helper (cl:concatenate 'cl:list name) cl:nil cl:nil))
+                     fix)
+                    package)))
+      (cl:export sym package)
+      sym)))
 
 (cl:defun lispify-k (name cl:&optional flag)
   (lispify name flag (cl:find-package :keyword)))
