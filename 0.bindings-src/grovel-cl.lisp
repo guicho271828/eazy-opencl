@@ -62,605 +62,508 @@
 
 ;;; structs
 
-(cstruct (#.(lispify "cl_buffer_region") "cl_buffer_region")
-         (:origin "origin" :type "size_t")
-         (:origin "size" :type "size_t"))
 
-;; 
-;; ;;(ctype intptr-t :intptr)
-;; 
-;; (defcenum error-code
-;;   (:SUCCESS 0)
-;;   (:DEVICE-NOT-FOUND -1)
-;;   (:DEVICE-NOT-AVAILABLE -2)
-;;   (:COMPILER-NOT-AVAILABLE -3)
-;;   (:MEM-OBJECT-ALLOCATION-FAILURE -4)
-;;   (:OUT-OF-RESOURCES -5)
-;;   (:OUT-OF-HOST-MEMORY -6)
-;;   (:PROFILING-INFO-NOT-AVAILABLE -7)
-;;   (:MEM-COPY-OVERLAP -8)
-;;   (:IMAGE-FORMAT-MISMATCH -9)
-;;   (:IMAGE-FORMAT-NOT-SUPPORTED -10)
-;;   (:BUILD-PROGRAM-FAILURE -11)
-;;   (:MAP-FAILURE -12)
-;;   #+opencl-1.1
-;;   (:misaligned-sub-buffer-offset -13)
-;;   #+opencl-1.1
-;;   (:exec-status-error-for-events-in-wait-list -14)
-;;   (:INVALID-VALUE -30)
-;;   (:INVALID-DEVICE-TYPE -31)
-;;   (:INVALID-PLATFORM -32)
-;;   (:INVALID-DEVICE -33)
-;;   (:INVALID-CONTEXT -34)
-;;   (:INVALID-QUEUE-PROPERTIES -35)
-;;   (:INVALID-COMMAND-QUEUE -36)
-;;   (:INVALID-HOST-PTR -37)
-;;   (:INVALID-MEM-OBJECT -38)
-;;   (:INVALID-IMAGE-FORMAT-DESCRIPTOR -39)
-;;   (:INVALID-IMAGE-SIZE -40)
-;;   (:INVALID-SAMPLER -41)
-;;   (:INVALID-BINARY -42)
-;;   (:INVALID-BUILD-OPTIONS -43)
-;;   (:INVALID-PROGRAM -44)
-;;   (:INVALID-PROGRAM-EXECUTABLE -45)
-;;   (:INVALID-KERNEL-NAME -46)
-;;   (:INVALID-KERNEL-DEFINITION -47)
-;;   (:INVALID-KERNEL -48)
-;;   (:INVALID-ARG-INDEX -49)
-;;   (:INVALID-ARG-VALUE -50)
-;;   (:INVALID-ARG-SIZE -51)
-;;   (:INVALID-KERNEL-ARGS -52)
-;;   (:INVALID-WORK-DIMENSION -53)
-;;   (:INVALID-WORK-GROUP-SIZE -54)
-;;   (:INVALID-WORK-ITEM-SIZE -55)
-;;   (:INVALID-GLOBAL-OFFSET -56)
-;;   (:INVALID-EVENT-WAIT-LIST -57)
-;;   (:INVALID-EVENT -58)
-;;   (:INVALID-OPERATION -59)
-;;   (:INVALID-GL-OBJECT -60)
-;;   (:INVALID-BUFFER-SIZE -61)
-;;   (:INVALID-MIP-LEVEL -62)
-;;   (:INVALID-GLOBAL-WORK-SIZE -63)
-;;   #+opencl-1.1
-;;   (:invalid-property -64)
-;;   ;; cl_khr_gl_sharing
-;;   (:invalid-sharegroup-reference-khr -1000)
-;;   ;; cl_khr_icd
-;;   (:platform-not-found-khr -1001))
-;; 
-;; (defcenum (platform-info uint)
-;;   (:profile        #x0900)
-;;   (:version        #x0901)
-;;   (:name           #x0902)
-;;   (:vendor         #x0903)
-;;   (:extensions     #x0904)
-;;   ;; cl_khr_icd
-;;   (:icd-suffix-khr #x0920))
-;; 
-;; (defbitfield (device-type bitfield)
-;;   (:DEFAULT                      1)
-;;   (:CPU                          2)
-;;   (:GPU                          4)
-;;   (:ACCELERATOR                  8)
-;;   (:ALL                 #xFFFFFFFF))
-;; 
-;; (defcenum (device-info uint)
-;;   (:type                              #x1000)
-;;   (:vendor-id                         #x1001)
-;;   (:max-compute-units                 #x1002)
-;;   (:max-work-item-dimensions          #x1003)
-;;   (:max-work-group-size               #x1004)
-;;   (:max-work-item-sizes               #x1005)
-;;   (:preferred-vector-width-char       #x1006)
-;;   (:preferred-vector-width-short      #x1007)
-;;   (:preferred-vector-width-int        #x1008)
-;;   (:preferred-vector-width-long       #x1009)
-;;   (:preferred-vector-width-float      #x100a)
-;;   (:preferred-vector-width-double     #x100b)
-;;   (:max-clock-frequency               #x100c)
-;;   (:address-bits                      #x100d)
-;;   (:max-read-image-args               #x100e)
-;;   (:max-write-image-args              #x100f)
-;;   (:max-mem-alloc-size                #x1010)
-;;   (:image2d-max-width                 #x1011)
-;;   (:image2d-max-height                #x1012)
-;;   (:image3d-max-width                 #x1013)
-;;   (:image3d-max-height                #x1014)
-;;   (:image3d-max-depth                 #x1015)
-;;   (:image-support                     #x1016)
-;;   (:max-parameter-size                #x1017)
-;;   (:max-samplers                      #x1018)
-;;   (:mem-base-addr-align               #x1019)
-;;   (:min-data-type-align-size          #x101a)
-;;   (:single-fp-config                  #x101b)
-;;   (:global-mem-cache-type             #x101c)
-;;   (:global-mem-cacheline-size         #x101d)
-;;   (:global-mem-cache-size             #x101e)
-;;   (:global-mem-size                   #x101f)
-;;   (:max-constant-buffer-size          #x1020)
-;;   (:max-constant-args                 #x1021)
-;;   (:local-mem-type                    #x1022)
-;;   (:local-mem-size                    #x1023)
-;;   (:error-correction-support          #x1024)
-;;   (:profiling-timer-resolution        #x1025)
-;;   (:endian-little                     #x1026)
-;;   (:available                         #x1027)
-;;   (:compiler-available                #x1028)
-;;   (:execution-capabilities            #x1029)
-;;   (:queue-properties                  #x102a)
-;;   (:name                              #x102b)
-;;   (:vendor                            #x102c)
-;;   (:driver-version                    #x102d)
-;;   (:profile                           #x102e)
-;;   (:version                           #x102f)
-;;   (:extensions                        #x1030)
-;;   (:platform                          #x1031)
-;;   ;;/* 0x1032 reserved for CL_DEVICE_DOUBLE_FP_CONFIG */
-;;   ;;/* 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG */
-;;   #+opencl-1.1
-;;   (:PREFERRED-VECTOR-WIDTH-HALF       #x1034)
-;;   #+opencl-1.1
-;;   (:HOST-UNIFIED-MEMORY               #x1035)
-;;   #+opencl-1.1
-;;   (:NATIVE-VECTOR-WIDTH-CHAR          #x1036)
-;;   #+opencl-1.1
-;;   (:NATIVE-VECTOR-WIDTH-SHORT         #x1037)
-;;   #+opencl-1.1
-;;   (:NATIVE-VECTOR-WIDTH-INT           #x1038)
-;;   #+opencl-1.1
-;;   (:NATIVE-VECTOR-WIDTH-LONG          #x1039)
-;;   #+opencl-1.1
-;;   (:NATIVE-VECTOR-WIDTH-FLOAT         #x103A)
-;;   #+opencl-1.1
-;;   (:NATIVE-VECTOR-WIDTH-DOUBLE        #x103B)
-;;   #+opencl-1.1
-;;   (:NATIVE-VECTOR-WIDTH-HALF          #x103C)
-;;   #+opencl-1.1
-;;   (:OPENCL-C-VERSION                  #x103D))
-;; 
-;; (defbitfield (device-fp-config bitfield)
-;;   (:DENORM                                #.(cl:ash 1 0))
-;;   (:INF-NAN                               #.(cl:ash 1 1))
-;;   (:ROUND-TO-NEAREST                      #.(cl:ash 1 2))
-;;   (:ROUND-TO-ZERO                         #.(cl:ash 1 3))
-;;   (:ROUND-TO-INF                          #.(cl:ash 1 4))
-;;   (:FMA                                   #.(cl:ash 1 5))
-;;   #+opencl-1.1
-;;   (:FP-SOFT-FLOAT                         #.(cl:ash 1 6)))
-;; 
-;; 
-;; (defcenum (device-mem-cache-type uint)
-;;   (:NONE                                     #x0)
-;;   (:READ-ONLY-CACHE                          #x1)
-;;   (:READ-WRITE-CACHE                         #x2))
-;; 
-;; (defcenum (device-local-mem-type uint)
-;;   (:LOCAL                                    #x1)
-;;   (:GLOBAL                                   #x2))
-;; 
-;; (defbitfield (device-exec-capabilities bitfield)
-;;   (:KERNEL                              #.(cl:ash 1 0))
-;;   (:NATIVE-KERNEL                       #.(cl:ash 1 1)))
-;; 
-;; (defbitfield (command-queue-properties bitfield)
-;;   (:OUT-OF-ORDER-EXEC-MODE-ENABLE      #.(cl:ash 1 0))
-;;   (:PROFILING-ENABLE                   #.(cl:ash 1 1)))
-;; 
-;; (defcenum (context-info uint)
-;;   (:REFERENCE-COUNT                  #x1080)
-;;   (:DEVICES                          #x1081)
-;;   (:PROPERTIES                       #x1082)
-;;   #+opencl-1.1
-;;   (:context-num-devices              #x1083))
-;; 
-;; ;(ctype cl-context-properties intptr-t) ?
-;; ;; intptr-t in C headers, but easier to use as unsigned, so :uintptr here
-;; (defcenum (context-properties :uintptr)
-;;   (:PLATFORM                         #x1084)
-;;   ;; cl_khr_gl_sharing
-;;   (:gl-context-khr                   #x2008)
-;;   (:egl-display-khr                  #x2009)
-;;   (:glx-display-khr                  #x200a)
-;;   (:wgl-hdc-khr                      #x200b)
-;;   (:cgl-sharegroup-khr               #x200c))
-;; 
-;; (defcenum (command-queue-info uint)
-;;   (:CONTEXT                            #x1090)
-;;   (:DEVICE                             #x1091)
-;;   (:REFERENCE-COUNT                    #x1092)
-;;   (:PROPERTIES                         #x1093))
-;; 
-;; (defbitfield (mem-flags bitfield)
-;;   (:READ-WRITE                           #.(cl:ash 1 0))
-;;   (:WRITE-ONLY                           #.(cl:ash 1 1))
-;;   (:READ-ONLY                            #.(cl:ash 1 2))
-;;   (:USE-HOST-PTR                         #.(cl:ash 1 3))
-;;   (:ALLOC-HOST-PTR                       #.(cl:ash 1 4))
-;;   (:COPY-HOST-PTR                        #.(cl:ash 1 5)))
-;; 
-;; (defcenum (channel-order uint)
-;;   (:R                                        #x10B0)
-;;   (:A                                        #x10B1)
-;;   (:RG                                       #x10B2)
-;;   (:RA                                       #x10B3)
-;;   (:RGB                                      #x10B4)
-;;   (:RGBA                                     #x10B5)
-;;   (:BGRA                                     #x10B6)
-;;   (:ARGB                                     #x10B7)
-;;   (:INTENSITY                                #x10B8)
-;;   (:LUMINANCE                                #x10B9)
-;;   #+opencl-1.1
-;;   (:rx                                       #x10BA)
-;;   #+opencl-1.1
-;;   (:rgx                                      #x10BB)
-;;   #+opencl-1.1
-;;   (:rgbx                                     #x10BC))
-;; 
-;; (defcenum (channel-type uint)
-;;   (:SNORM-INT8                               #x10D0)
-;;   (:SNORM-INT16                              #x10D1)
-;;   (:UNORM-INT8                               #x10D2)
-;;   (:UNORM-INT16                              #x10D3)
-;;   (:UNORM-SHORT-565                          #x10D4)
-;;   (:UNORM-SHORT-555                          #x10D5)
-;;   (:UNORM-INT-101010                         #x10D6)
-;;   (:SIGNED-INT8                              #x10D7)
-;;   (:SIGNED-INT16                             #x10D8)
-;;   (:SIGNED-INT32                             #x10D9)
-;;   (:UNSIGNED-INT8                            #x10DA)
-;;   (:UNSIGNED-INT16                           #x10DB)
-;;   (:UNSIGNED-INT32                           #x10DC)
-;;   (:HALF-FLOAT                               #x10DD)
-;;   (:FLOAT                                    #x10DE))
-;; 
-;; (defcenum (mem-object-type uint)
-;;   (:BUFFER                        #x10F0)
-;;   (:IMAGE2D                       #x10F1)
-;;   (:IMAGE3D                       #x10F2))
-;; 
-;; (defcenum (mem-info uint)
-;;   (:TYPE                                 #x1100)
-;;   (:FLAGS                                #x1101)
-;;   (:SIZE                                 #x1102)
-;;   (:HOST-PTR                             #x1103)
-;;   (:MAP-COUNT                            #x1104)
-;;   (:REFERENCE-COUNT                      #x1105)
-;;   (:CONTEXT                              #x1106)
-;;   #+opencl-1.1
-;;   (:associated-memobject                 #x1107)
-;;   #+opencl-1.1
-;;   (:offset                               #x1108))
-;; 
-;; (defcenum (image-info uint)
-;;   (:FORMAT                             #x1110)
-;;   (:ELEMENT-SIZE                       #x1111)
-;;   (:ROW-PITCH                          #x1112)
-;;   (:SLICE-PITCH                        #x1113)
-;;   (:WIDTH                              #x1114)
-;;   (:HEIGHT                             #x1115)
-;;   (:DEPTH                              #x1116))
-;; 
-;; (defcenum (addressing-mode uint)
-;;   (:NONE                             #x1130)
-;;   (:CLAMP-TO-EDGE                    #x1131)
-;;   (:CLAMP                            #x1132)
-;;   (:REPEAT                           #x1133)
-;;   (:mirrored-repeat                  #x1134))
-;; 
-;; (defcenum (filter-mode uint)
-;;   (:NEAREST                           #x1140)
-;;   (:LINEAR                            #x1141))
-;; 
-;; (defcenum (sampler-info uint)
-;;   (:REFERENCE-COUNT                  #x1150)
-;;   (:CONTEXT                          #x1151)
-;;   (:NORMALIZED-COORDS                #x1152)
-;;   (:ADDRESSING-MODE                  #x1153)
-;;   (:FILTER-MODE                      #x1154))
-;; 
-;; (defbitfield (map-flags bitfield)
-;;   (:READ                                 #.(cl:ash 1 0))
-;;   (:WRITE                                #.(cl:ash 1 1)))
-;; 
-;; (defcenum (program-info uint)
-;;   (:REFERENCE-COUNT                  #x1160)
-;;   (:CONTEXT                          #x1161)
-;;   (:NUM-DEVICES                      #x1162)
-;;   (:DEVICES                          #x1163)
-;;   (:SOURCE                           #x1164)
-;;   (:BINARY-SIZES                     #x1165)
-;;   (:BINARIES                         #x1166))
-;; 
-;; (defcenum (program-build-info uint)
-;;   (:STATUS                     #x1181)
-;;   (:OPTIONS                    #x1182)
-;;   (:LOG                        #x1183))
-;; 
-;; (defcenum (build-status int)
-;;   (:SUCCESS                            0)
-;;   (:NONE                               -1)
-;;   (:ERROR                              -2)
-;;   (:IN-PROGRESS                        -3))
-;; 
-;; (defcenum (kernel-info uint)
-;;   (:FUNCTION-NAME                     #x1190)
-;;   (:NUM-ARGS                          #x1191)
-;;   (:REFERENCE-COUNT                   #x1192)
-;;   (:CONTEXT                           #x1193)
-;;   (:PROGRAM                           #x1194))
-;; 
-;; (defcenum (kernel-work-group-info uint)
-;;   (:WORK-GROUP-SIZE                   #x11B0)
-;;   (:COMPILE-WORK-GROUP-SIZE           #x11B1)
-;;   (:LOCAL-MEM-SIZE                    #x11B2)
-;;   #+opencl-1.1
-;;   (:preferred-work-group-size-multiple #x11b3)
-;;   #+opencl-1.1
-;;   (:private-mem-size                  #x11b4))
-;; 
-;; (defcenum (event-info uint)
-;;   (:COMMAND-QUEUE                      #x11D0)
-;;   (:COMMAND-TYPE                       #x11D1)
-;;   (:REFERENCE-COUNT                    #x11D2)
-;;   (:COMMAND-EXECUTION-STATUS           #x11D3)
-;;   #+opencl-1.1
-;;   (:event-context                      #x11d4))
-;; 
-;; (defcenum (command-type uint)
-;;   (:NDRANGE-KERNEL                   #x11F0)
-;;   (:TASK                             #x11F1)
-;;   (:NATIVE-KERNEL                    #x11F2)
-;;   (:READ-BUFFER                      #x11F3)
-;;   (:WRITE-BUFFER                     #x11F4)
-;;   (:COPY-BUFFER                      #x11F5)
-;;   (:READ-IMAGE                       #x11F6)
-;;   (:WRITE-IMAGE                      #x11F7)
-;;   (:COPY-IMAGE                       #x11F8)
-;;   (:COPY-IMAGE-TO-BUFFER             #x11F9)
-;;   (:COPY-BUFFER-TO-IMAGE             #x11FA)
-;;   (:MAP-BUFFER                       #x11FB)
-;;   (:MAP-IMAGE                        #x11FC)
-;;   (:UNMAP-MEM-OBJECT                 #x11FD)
-;;   (:MARKER                           #x11FE)
-;;   (:ACQUIRE-GL-OBJECTS               #x11FF)
-;;   (:RELEASE-GL-OBJECTS               #x1200)
-;;   #+opencl-1.1
-;;   (:read-buffer-rect                 #x1201)
-;;   #+opencl-1.1
-;;   (:write-buffer-rect                #x1202)
-;;   #+opencl-1.1
-;;   (:copy-buffer-rect                 #x1203)
-;;   #+opencl-1.1
-;;   (:user                             #x1204))
-;; 
-;; (defcenum command-execution-status
-;;   (:COMPLETE                                 #x0)
-;;   (:RUNNING                                  #x1)
-;;   (:SUBMITTED                                #x2)
-;;   (:QUEUED                                   #x3))
-;; 
-;; (defcenum (profiling-info uint)
-;;   (:QUEUED                 #x1280)
-;;   (:SUBMIT                 #x1281)
-;;   (:START                  #x1282)
-;;   (:END                    #x1283))
-;; 
-;; 
-;; 
-;; 
-;; (cffi:defcstruct _image-format
-;;   (image-channel-order channel-order)
-;;   (image-channel-data-type channel-type))
-;; 
-;; (ctype image-format _image-format)
-;; 
-;; 
-;; (cffi:defcstruct _program
-;;   )
-;; 
-;; (ctype program :pointer)
-;; 
-;; (cffi:defcstruct _kernel
-;;   )
-;; 
-;; (ctype kernel :pointer)
-;; 
-;; 
-;; (cffi:defcstruct _context
-;;   )
-;; 
-;; (ctype context :pointer)
-;; 
-;; (cffi:defcstruct _device-id
-;;   )
-;; 
-;; (ctype device-id :pointer)
-;; 
-;; (cffi:defcstruct _mem
-;;   )
-;; 
-;; (ctype mem :pointer)
-;; 
-;; (ctype size-t :unsigned-long)
-;; 
-;; 
-;; ;(ctype ulong-16 uint64-t :count 16)
-;; 
-;; (cffi:defcstruct _command-queue
-;;   )
-;; 
-;; (ctype command-queue :pointer)
-;; 
-;; (ctype bool :boolean)
-;; 
-;; (cffi:defcstruct _event
-;;   )
-;; 
-;; (ctype event :pointer)
-;; 
-;; (ctype uint8-t :unsigned-char)
-;; 
-;; ;(ctype uchar-16 uint8-t :count 16)
-;; 
-;; (ctype int16-t :short)
-;; 
-;; ;(ctype short-8 int16-t :count 8)
-;; 
-;; (cffi:defcstruct _sampler
-;;   )
-;; 
-;; (ctype sampler :pointer)
-;; 
-;; 
-;; (cffi:defcstruct _platform-id
-;;   )
-;; 
-;; (ctype platform-id :pointer)
-;; 
-;; ;(ctype uint-16 uint-32-t :count 16)
-;; 
-;; (ctype int64-t :long)
-;; 
-;; ;(ctype long-2 int64-t :count 2)
-;; 
-;; ;(ctype long-4 int64-t :count 4)
-;; 
-;; ;;(ctype long-8 int64-t :count 8)
-;; 
-;; ;;(ctype short-16 int16-t :count 16)
-;; 
-;; ;;(ctype long-16 int64-t :count 16)
-;; 
-;; ;;(ctype float-16 :float :count 16)
-;; 
-;; ;;(ctype int-2 int32-t :count 2)
-;; 
-;; ;;(ctype int-4 int32-t :count 4)
-;; 
-;; (ctype long int64-t)
-;; 
-;; (ctype uint16-t :unsigned-short)
-;; 
-;; (ctype half uint16-t)
-;; 
-;; (ctype short int16-t)
-;; 
-;; ;;(ctype uint-2 uint32-t :count 2)
-;; 
-;; ;;(ctype uint-4 uint32-t :count 4)
-;; 
-;; ;;(ctype uint-8 uint32-t :count 8)
-;; 
-;; ;;(ctype int-16 int32-t :count 16)
-;; 
-;; (ctype int8-t :char)
-;; 
-;; (ctype char int8-t)
-;; 
-;; ;;(ctype uchar-2 uint8-t :count 2)
-;; 
-;; ;;(ctype uchar-4 uint8-t :count 4)
-;; 
-;; ;;(ctype uchar-8 uint8-t :count 8)
-;; 
-;; ;;(ctype int-8 int32-t :count 8)
-;; 
-;; (ctype device-address-info bitfield)
-;; 
-;; ;;(ctype ushort-16 uint16-t :count 16)
-;; 
-;; ;;(ctype double-16 :double :count 16)
-;; 
-;; ;;(ctype char-2 int8-t :count 2)
-;; 
-;; ;;(ctype char-4 int8-t :count 4)
-;; 
-;; ;;(ctype char-8 int8-t :count 8)
-;; 
-;; ;;(ctype short-2 int16-t :count 2)
-;; 
-;; ;;(ctype short-4 int16-t :count 4)
-;; 
-;; (ctype uchar uint8-t)
-;; 
-;; ;;(ctype ulong-2 uint64-t :count 2)
-;; 
-;; ;;(ctype ulong-4 uint64-t :count 4)
-;; 
-;; ;;(ctype ulong-8 uint64-t :count 8)
-;; 
-;; (ctype double :double)
-;; 
-;; ;;(ctype double-2 :double :count 2)
-;; 
-;; ;;(ctype double-4 :double :count 4)
-;; 
-;; ;;(ctype double-8 :double :count 8)
-;; 
-;; ;;(ctype float-2 :float :count 2)
-;; 
-;; ;;(ctype float-4 :float :count 4)
-;; 
-;; ;;(ctype ushort-2 uint16-t :count 2)
-;; 
-;; ;;(ctype ushort-4 uint16-t :count 4)
-;; 
-;; ;;(ctype float-8 :float :count 8)
-;; 
-;; ;;(ctype ushort-8 uint16-t :count 8)
-;; 
-;; (ctype ushort uint16-t)
-;; 
-;; (ctype float :float)
-;; 
-;; ;;(ctype char-16 int8-t :count 16)
-;; 
-;; 
-;; ;;(ctype uint-16-t :unsigned-short)
-;; 
-;; ;;(cffi:defcstruct _buffer-region
-;; ;;  (origin size-t)
-;; ;;  (size size-t))
-;; ;;(ctype buffer-region _buffer-region)
-;; 
-;; (defcenum (buffer-create-type uint)
-;;   (:region #x1220))
-;; 
-;; 
-;; ;; cl_khr_gl_sharing
-;; 
-;; (defcenum (gl-context-info uint)
-;;   (:current-device-for-gl-context-khr #x2006)
-;;   (:devices-for-gl-context-khr        #x2007))
-;; 
-;; ;; cl_gl.h
-;; 
-;; ;; fixme: import these from cl-opengl?
-;; ;; (would probably want to split out the GL stuff to a separate .asd if it
-;; ;;  depended on cl-opengl though, so just leaving here for now)
-;; (defctype gl-enum :unsigned-int)
-;; (defctype gl-uint :unsigned-int)
-;; (defctype gl-int :int)
-;; 
-;; ;; not sure if it would be better to just use gl:enum here or keep it specific
-;; (defcenum (gl-texture-target uint)
-;;   (:texture-2d #x0de1)
-;;   (:texture-cube-map-positive-x #x8515)
-;;   (:texture-cube-map-positive-y #x8517)
-;;   (:texture-cube-map-positive-z #x8519)
-;;   (:texture-cube-map-negative-x #x8516)
-;;   (:texture-cube-map-negative-y #x8518)
-;;   (:texture-cube-map-negative-z #x851a)
-;;   (:texture-rectangle #x84f5)
-;;   (:texture-rectangle-arb #x84f5)
-;;   (:texture-3d #x806F))
-;; 
-;; (defcenum (gl-object-type uint)
-;;   (:buffer       #x2000)
-;;   (:texture-2d   #x2001)
-;;   (:texture-3d   #x2002)
-;;   (:renderbuffer #x2003))
-;; 
-;; (defcenum (gl-texture-info uint)
-;;   (:texture-target #x2004)
-;;   (:mipmap-level   #x2005))
+;;; enums
+
+(constant (#.(lispify "CL_SUCCESS") "CL_SUCCESS"))
+(constant (#.(lispify "CL_DEVICE_NOT_FOUND") "CL_DEVICE_NOT_FOUND"))
+(constant (#.(lispify "CL_DEVICE_NOT_AVAILABLE") "CL_DEVICE_NOT_AVAILABLE"))
+(constant (#.(lispify "CL_COMPILER_NOT_AVAILABLE") "CL_COMPILER_NOT_AVAILABLE"))
+(constant (#.(lispify "CL_MEM_OBJECT_ALLOCATION_FAILURE") "CL_MEM_OBJECT_ALLOCATION_FAILURE"))
+(constant (#.(lispify "CL_OUT_OF_RESOURCES") "CL_OUT_OF_RESOURCES"))
+(constant (#.(lispify "CL_OUT_OF_HOST_MEMORY") "CL_OUT_OF_HOST_MEMORY"))
+(constant (#.(lispify "CL_PROFILING_INFO_NOT_AVAILABLE") "CL_PROFILING_INFO_NOT_AVAILABLE"))
+(constant (#.(lispify "CL_MEM_COPY_OVERLAP") "CL_MEM_COPY_OVERLAP"))
+(constant (#.(lispify "CL_IMAGE_FORMAT_MISMATCH") "CL_IMAGE_FORMAT_MISMATCH"))
+(constant (#.(lispify "CL_IMAGE_FORMAT_NOT_SUPPORTED") "CL_IMAGE_FORMAT_NOT_SUPPORTED"))
+(constant (#.(lispify "CL_BUILD_PROGRAM_FAILURE") "CL_BUILD_PROGRAM_FAILURE"))
+(constant (#.(lispify "CL_MAP_FAILURE") "CL_MAP_FAILURE"))
+(constant (#.(lispify "CL_MISALIGNED_SUB_BUFFER_OFFSET") "CL_MISALIGNED_SUB_BUFFER_OFFSET"))
+(constant (#.(lispify "CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST") "CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST"))
+(constant (#.(lispify "CL_COMPILE_PROGRAM_FAILURE") "CL_COMPILE_PROGRAM_FAILURE"))
+(constant (#.(lispify "CL_LINKER_NOT_AVAILABLE") "CL_LINKER_NOT_AVAILABLE"))
+(constant (#.(lispify "CL_LINK_PROGRAM_FAILURE") "CL_LINK_PROGRAM_FAILURE"))
+(constant (#.(lispify "CL_DEVICE_PARTITION_FAILED") "CL_DEVICE_PARTITION_FAILED"))
+(constant (#.(lispify "CL_KERNEL_ARG_INFO_NOT_AVAILABLE") "CL_KERNEL_ARG_INFO_NOT_AVAILABLE"))
+(constant (#.(lispify "CL_INVALID_VALUE") "CL_INVALID_VALUE"))
+(constant (#.(lispify "CL_INVALID_DEVICE_TYPE") "CL_INVALID_DEVICE_TYPE"))
+(constant (#.(lispify "CL_INVALID_PLATFORM") "CL_INVALID_PLATFORM"))
+(constant (#.(lispify "CL_INVALID_DEVICE") "CL_INVALID_DEVICE"))
+(constant (#.(lispify "CL_INVALID_CONTEXT") "CL_INVALID_CONTEXT"))
+(constant (#.(lispify "CL_INVALID_QUEUE_PROPERTIES") "CL_INVALID_QUEUE_PROPERTIES"))
+(constant (#.(lispify "CL_INVALID_COMMAND_QUEUE") "CL_INVALID_COMMAND_QUEUE"))
+(constant (#.(lispify "CL_INVALID_HOST_PTR") "CL_INVALID_HOST_PTR"))
+(constant (#.(lispify "CL_INVALID_MEM_OBJECT") "CL_INVALID_MEM_OBJECT"))
+(constant (#.(lispify "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR") "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR"))
+(constant (#.(lispify "CL_INVALID_IMAGE_SIZE") "CL_INVALID_IMAGE_SIZE"))
+(constant (#.(lispify "CL_INVALID_SAMPLER") "CL_INVALID_SAMPLER"))
+(constant (#.(lispify "CL_INVALID_BINARY") "CL_INVALID_BINARY"))
+(constant (#.(lispify "CL_INVALID_BUILD_OPTIONS") "CL_INVALID_BUILD_OPTIONS"))
+(constant (#.(lispify "CL_INVALID_PROGRAM") "CL_INVALID_PROGRAM"))
+(constant (#.(lispify "CL_INVALID_PROGRAM_EXECUTABLE") "CL_INVALID_PROGRAM_EXECUTABLE"))
+(constant (#.(lispify "CL_INVALID_KERNEL_NAME") "CL_INVALID_KERNEL_NAME"))
+(constant (#.(lispify "CL_INVALID_KERNEL_DEFINITION") "CL_INVALID_KERNEL_DEFINITION"))
+(constant (#.(lispify "CL_INVALID_KERNEL") "CL_INVALID_KERNEL"))
+(constant (#.(lispify "CL_INVALID_ARG_INDEX") "CL_INVALID_ARG_INDEX"))
+(constant (#.(lispify "CL_INVALID_ARG_VALUE") "CL_INVALID_ARG_VALUE"))
+(constant (#.(lispify "CL_INVALID_ARG_SIZE") "CL_INVALID_ARG_SIZE"))
+(constant (#.(lispify "CL_INVALID_KERNEL_ARGS") "CL_INVALID_KERNEL_ARGS"))
+(constant (#.(lispify "CL_INVALID_WORK_DIMENSION") "CL_INVALID_WORK_DIMENSION"))
+(constant (#.(lispify "CL_INVALID_WORK_GROUP_SIZE") "CL_INVALID_WORK_GROUP_SIZE"))
+(constant (#.(lispify "CL_INVALID_WORK_ITEM_SIZE") "CL_INVALID_WORK_ITEM_SIZE"))
+(constant (#.(lispify "CL_INVALID_GLOBAL_OFFSET") "CL_INVALID_GLOBAL_OFFSET"))
+(constant (#.(lispify "CL_INVALID_EVENT_WAIT_LIST") "CL_INVALID_EVENT_WAIT_LIST"))
+(constant (#.(lispify "CL_INVALID_EVENT") "CL_INVALID_EVENT"))
+(constant (#.(lispify "CL_INVALID_OPERATION") "CL_INVALID_OPERATION"))
+(constant (#.(lispify "CL_INVALID_GL_OBJECT") "CL_INVALID_GL_OBJECT"))
+(constant (#.(lispify "CL_INVALID_BUFFER_SIZE") "CL_INVALID_BUFFER_SIZE"))
+(constant (#.(lispify "CL_INVALID_MIP_LEVEL") "CL_INVALID_MIP_LEVEL"))
+(constant (#.(lispify "CL_INVALID_GLOBAL_WORK_SIZE") "CL_INVALID_GLOBAL_WORK_SIZE"))
+(constant (#.(lispify "CL_INVALID_PROPERTY") "CL_INVALID_PROPERTY"))
+(constant (#.(lispify "CL_INVALID_IMAGE_DESCRIPTOR") "CL_INVALID_IMAGE_DESCRIPTOR"))
+(constant (#.(lispify "CL_INVALID_COMPILER_OPTIONS") "CL_INVALID_COMPILER_OPTIONS"))
+(constant (#.(lispify "CL_INVALID_LINKER_OPTIONS") "CL_INVALID_LINKER_OPTIONS"))
+(constant (#.(lispify "CL_INVALID_DEVICE_PARTITION_COUNT") "CL_INVALID_DEVICE_PARTITION_COUNT"))
+(constant (#.(lispify "CL_INVALID_PIPE_SIZE") "CL_INVALID_PIPE_SIZE"))
+(constant (#.(lispify "CL_INVALID_DEVICE_QUEUE") "CL_INVALID_DEVICE_QUEUE"))
+
+(constant (#.(lispify "CL_VERSION_1_0") "CL_VERSION_1_0"))
+(constant (#.(lispify "CL_VERSION_1_1") "CL_VERSION_1_1"))
+(constant (#.(lispify "CL_VERSION_1_2") "CL_VERSION_1_2"))
+(constant (#.(lispify "CL_VERSION_2_0") "CL_VERSION_2_0"))
+
+(constant (#.(lispify "CL_FALSE") "CL_FALSE"))
+(constant (#.(lispify "CL_TRUE") "CL_TRUE"))
+(constant (#.(lispify "CL_BLOCKING") "CL_BLOCKING"))
+(constant (#.(lispify "CL_NON_BLOCKING") "CL_NON_BLOCKING"))
+
+;; cl_platform_info
+(constant (#.(lispify "CL_PLATFORM_PROFILE") "CL_PLATFORM_PROFILE"))
+(constant (#.(lispify "CL_PLATFORM_VERSION") "CL_PLATFORM_VERSION"))
+(constant (#.(lispify "CL_PLATFORM_NAME") "CL_PLATFORM_NAME"))
+(constant (#.(lispify "CL_PLATFORM_VENDOR") "CL_PLATFORM_VENDOR"))
+(constant (#.(lispify "CL_PLATFORM_EXTENSIONS") "CL_PLATFORM_EXTENSIONS"))
+
+;; cl_device_type - bitfield
+(constant (#.(lispify "CL_DEVICE_TYPE_DEFAULT") "CL_DEVICE_TYPE_DEFAULT"))
+(constant (#.(lispify "CL_DEVICE_TYPE_CPU") "CL_DEVICE_TYPE_CPU"))
+(constant (#.(lispify "CL_DEVICE_TYPE_GPU") "CL_DEVICE_TYPE_GPU"))
+(constant (#.(lispify "CL_DEVICE_TYPE_ACCELERATOR") "CL_DEVICE_TYPE_ACCELERATOR"))
+(constant (#.(lispify "CL_DEVICE_TYPE_CUSTOM") "CL_DEVICE_TYPE_CUSTOM"))
+(constant (#.(lispify "CL_DEVICE_TYPE_ALL") "CL_DEVICE_TYPE_ALL"))
+
+;; cl_device_info
+(constant (#.(lispify "CL_DEVICE_TYPE") "CL_DEVICE_TYPE"))
+(constant (#.(lispify "CL_DEVICE_VENDOR_ID") "CL_DEVICE_VENDOR_ID"))
+(constant (#.(lispify "CL_DEVICE_MAX_COMPUTE_UNITS") "CL_DEVICE_MAX_COMPUTE_UNITS"))
+(constant (#.(lispify "CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS") "CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS"))
+(constant (#.(lispify "CL_DEVICE_MAX_WORK_GROUP_SIZE") "CL_DEVICE_MAX_WORK_GROUP_SIZE"))
+(constant (#.(lispify "CL_DEVICE_MAX_WORK_ITEM_SIZES") "CL_DEVICE_MAX_WORK_ITEM_SIZES"))
+(constant (#.(lispify "CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR") "CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR"))
+(constant (#.(lispify "CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT") "CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT"))
+(constant (#.(lispify "CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT") "CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT"))
+(constant (#.(lispify "CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG") "CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG"))
+(constant (#.(lispify "CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT") "CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT"))
+(constant (#.(lispify "CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE") "CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE"))
+(constant (#.(lispify "CL_DEVICE_MAX_CLOCK_FREQUENCY") "CL_DEVICE_MAX_CLOCK_FREQUENCY"))
+(constant (#.(lispify "CL_DEVICE_ADDRESS_BITS") "CL_DEVICE_ADDRESS_BITS"))
+(constant (#.(lispify "CL_DEVICE_MAX_READ_IMAGE_ARGS") "CL_DEVICE_MAX_READ_IMAGE_ARGS"))
+(constant (#.(lispify "CL_DEVICE_MAX_WRITE_IMAGE_ARGS") "CL_DEVICE_MAX_WRITE_IMAGE_ARGS"))
+(constant (#.(lispify "CL_DEVICE_MAX_MEM_ALLOC_SIZE") "CL_DEVICE_MAX_MEM_ALLOC_SIZE"))
+(constant (#.(lispify "CL_DEVICE_IMAGE2D_MAX_WIDTH") "CL_DEVICE_IMAGE2D_MAX_WIDTH"))
+(constant (#.(lispify "CL_DEVICE_IMAGE2D_MAX_HEIGHT") "CL_DEVICE_IMAGE2D_MAX_HEIGHT"))
+(constant (#.(lispify "CL_DEVICE_IMAGE3D_MAX_WIDTH") "CL_DEVICE_IMAGE3D_MAX_WIDTH"))
+(constant (#.(lispify "CL_DEVICE_IMAGE3D_MAX_HEIGHT") "CL_DEVICE_IMAGE3D_MAX_HEIGHT"))
+(constant (#.(lispify "CL_DEVICE_IMAGE3D_MAX_DEPTH") "CL_DEVICE_IMAGE3D_MAX_DEPTH"))
+(constant (#.(lispify "CL_DEVICE_IMAGE_SUPPORT") "CL_DEVICE_IMAGE_SUPPORT"))
+(constant (#.(lispify "CL_DEVICE_MAX_PARAMETER_SIZE") "CL_DEVICE_MAX_PARAMETER_SIZE"))
+(constant (#.(lispify "CL_DEVICE_MAX_SAMPLERS") "CL_DEVICE_MAX_SAMPLERS"))
+(constant (#.(lispify "CL_DEVICE_MEM_BASE_ADDR_ALIGN") "CL_DEVICE_MEM_BASE_ADDR_ALIGN"))
+(constant (#.(lispify "CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE") "CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE"))
+(constant (#.(lispify "CL_DEVICE_SINGLE_FP_CONFIG") "CL_DEVICE_SINGLE_FP_CONFIG"))
+(constant (#.(lispify "CL_DEVICE_GLOBAL_MEM_CACHE_TYPE") "CL_DEVICE_GLOBAL_MEM_CACHE_TYPE"))
+(constant (#.(lispify "CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE") "CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE"))
+(constant (#.(lispify "CL_DEVICE_GLOBAL_MEM_CACHE_SIZE") "CL_DEVICE_GLOBAL_MEM_CACHE_SIZE"))
+(constant (#.(lispify "CL_DEVICE_GLOBAL_MEM_SIZE") "CL_DEVICE_GLOBAL_MEM_SIZE"))
+(constant (#.(lispify "CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE") "CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE"))
+(constant (#.(lispify "CL_DEVICE_MAX_CONSTANT_ARGS") "CL_DEVICE_MAX_CONSTANT_ARGS"))
+(constant (#.(lispify "CL_DEVICE_LOCAL_MEM_TYPE") "CL_DEVICE_LOCAL_MEM_TYPE"))
+(constant (#.(lispify "CL_DEVICE_LOCAL_MEM_SIZE") "CL_DEVICE_LOCAL_MEM_SIZE"))
+(constant (#.(lispify "CL_DEVICE_ERROR_CORRECTION_SUPPORT") "CL_DEVICE_ERROR_CORRECTION_SUPPORT"))
+(constant (#.(lispify "CL_DEVICE_PROFILING_TIMER_RESOLUTION") "CL_DEVICE_PROFILING_TIMER_RESOLUTION"))
+(constant (#.(lispify "CL_DEVICE_ENDIAN_LITTLE") "CL_DEVICE_ENDIAN_LITTLE"))
+(constant (#.(lispify "CL_DEVICE_AVAILABLE") "CL_DEVICE_AVAILABLE"))
+(constant (#.(lispify "CL_DEVICE_COMPILER_AVAILABLE") "CL_DEVICE_COMPILER_AVAILABLE"))
+(constant (#.(lispify "CL_DEVICE_EXECUTION_CAPABILITIES") "CL_DEVICE_EXECUTION_CAPABILITIES"))
+(constant (#.(lispify "CL_DEVICE_QUEUE_PROPERTIES") "CL_DEVICE_QUEUE_PROPERTIES"))
+(constant (#.(lispify "CL_DEVICE_QUEUE_ON_HOST_PROPERTIES") "CL_DEVICE_QUEUE_ON_HOST_PROPERTIES"))
+(constant (#.(lispify "CL_DEVICE_NAME") "CL_DEVICE_NAME"))
+(constant (#.(lispify "CL_DEVICE_VENDOR") "CL_DEVICE_VENDOR"))
+(constant (#.(lispify "CL_DRIVER_VERSION") "CL_DRIVER_VERSION"))
+(constant (#.(lispify "CL_DEVICE_PROFILE") "CL_DEVICE_PROFILE"))
+(constant (#.(lispify "CL_DEVICE_VERSION") "CL_DEVICE_VERSION"))
+(constant (#.(lispify "CL_DEVICE_EXTENSIONS") "CL_DEVICE_EXTENSIONS"))
+(constant (#.(lispify "CL_DEVICE_PLATFORM") "CL_DEVICE_PLATFORM"))
+(constant (#.(lispify "CL_DEVICE_DOUBLE_FP_CONFIG") "CL_DEVICE_DOUBLE_FP_CONFIG"))
+;; 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG
+(constant (#.(lispify "CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF") "CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF"))
+(constant (#.(lispify "CL_DEVICE_HOST_UNIFIED_MEMORY") "CL_DEVICE_HOST_UNIFIED_MEMORY"))
+(constant (#.(lispify "CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR") "CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR"))
+(constant (#.(lispify "CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT") "CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT"))
+(constant (#.(lispify "CL_DEVICE_NATIVE_VECTOR_WIDTH_INT") "CL_DEVICE_NATIVE_VECTOR_WIDTH_INT"))
+(constant (#.(lispify "CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG") "CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG"))
+(constant (#.(lispify "CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT") "CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT"))
+(constant (#.(lispify "CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE") "CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE"))
+(constant (#.(lispify "CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF") "CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF"))
+(constant (#.(lispify "CL_DEVICE_OPENCL_C_VERSION") "CL_DEVICE_OPENCL_C_VERSION"))
+(constant (#.(lispify "CL_DEVICE_LINKER_AVAILABLE") "CL_DEVICE_LINKER_AVAILABLE"))
+(constant (#.(lispify "CL_DEVICE_BUILT_IN_KERNELS") "CL_DEVICE_BUILT_IN_KERNELS"))
+(constant (#.(lispify "CL_DEVICE_IMAGE_MAX_BUFFER_SIZE") "CL_DEVICE_IMAGE_MAX_BUFFER_SIZE"))
+(constant (#.(lispify "CL_DEVICE_IMAGE_MAX_ARRAY_SIZE") "CL_DEVICE_IMAGE_MAX_ARRAY_SIZE"))
+(constant (#.(lispify "CL_DEVICE_PARENT_DEVICE") "CL_DEVICE_PARENT_DEVICE"))
+(constant (#.(lispify "CL_DEVICE_PARTITION_MAX_SUB_DEVICES") "CL_DEVICE_PARTITION_MAX_SUB_DEVICES"))
+(constant (#.(lispify "CL_DEVICE_PARTITION_PROPERTIES") "CL_DEVICE_PARTITION_PROPERTIES"))
+(constant (#.(lispify "CL_DEVICE_PARTITION_AFFINITY_DOMAIN") "CL_DEVICE_PARTITION_AFFINITY_DOMAIN"))
+(constant (#.(lispify "CL_DEVICE_PARTITION_TYPE") "CL_DEVICE_PARTITION_TYPE"))
+(constant (#.(lispify "CL_DEVICE_REFERENCE_COUNT") "CL_DEVICE_REFERENCE_COUNT"))
+(constant (#.(lispify "CL_DEVICE_PREFERRED_INTEROP_USER_SYNC") "CL_DEVICE_PREFERRED_INTEROP_USER_SYNC"))
+(constant (#.(lispify "CL_DEVICE_PRINTF_BUFFER_SIZE") "CL_DEVICE_PRINTF_BUFFER_SIZE"))
+(constant (#.(lispify "CL_DEVICE_IMAGE_PITCH_ALIGNMENT") "CL_DEVICE_IMAGE_PITCH_ALIGNMENT"))
+(constant (#.(lispify "CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT") "CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT"))
+(constant (#.(lispify "CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS") "CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS"))
+(constant (#.(lispify "CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE") "CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE"))
+(constant (#.(lispify "CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES") "CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES"))
+(constant (#.(lispify "CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE") "CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE"))
+(constant (#.(lispify "CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE") "CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE"))
+(constant (#.(lispify "CL_DEVICE_MAX_ON_DEVICE_QUEUES") "CL_DEVICE_MAX_ON_DEVICE_QUEUES"))
+(constant (#.(lispify "CL_DEVICE_MAX_ON_DEVICE_EVENTS") "CL_DEVICE_MAX_ON_DEVICE_EVENTS"))
+(constant (#.(lispify "CL_DEVICE_SVM_CAPABILITIES") "CL_DEVICE_SVM_CAPABILITIES"))
+(constant (#.(lispify "CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE") "CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE"))
+(constant (#.(lispify "CL_DEVICE_MAX_PIPE_ARGS") "CL_DEVICE_MAX_PIPE_ARGS"))
+(constant (#.(lispify "CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS") "CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS"))
+(constant (#.(lispify "CL_DEVICE_PIPE_MAX_PACKET_SIZE") "CL_DEVICE_PIPE_MAX_PACKET_SIZE"))
+(constant (#.(lispify "CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT") "CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT"))
+(constant (#.(lispify "CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT") "CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT"))
+(constant (#.(lispify "CL_DEVICE_PREFERRED_LOCAL_ATOMIC_ALIGNMENT") "CL_DEVICE_PREFERRED_LOCAL_ATOMIC_ALIGNMENT"))
+
+;; cl_device_fp_config - bitfield
+(constant (#.(lispify "CL_FP_DENORM") "CL_FP_DENORM"))
+(constant (#.(lispify "CL_FP_INF_NAN") "CL_FP_INF_NAN"))
+(constant (#.(lispify "CL_FP_ROUND_TO_NEAREST") "CL_FP_ROUND_TO_NEAREST"))
+(constant (#.(lispify "CL_FP_ROUND_TO_ZERO") "CL_FP_ROUND_TO_ZERO"))
+(constant (#.(lispify "CL_FP_ROUND_TO_INF") "CL_FP_ROUND_TO_INF"))
+(constant (#.(lispify "CL_FP_FMA") "CL_FP_FMA"))
+(constant (#.(lispify "CL_FP_SOFT_FLOAT") "CL_FP_SOFT_FLOAT"))
+(constant (#.(lispify "CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT") "CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT"))
+
+;; cl_device_mem_cache_type
+(constant (#.(lispify "CL_NONE") "CL_NONE"))
+(constant (#.(lispify "CL_READ_ONLY_CACHE") "CL_READ_ONLY_CACHE"))
+(constant (#.(lispify "CL_READ_WRITE_CACHE") "CL_READ_WRITE_CACHE"))
+
+;; cl_device_local_mem_type
+(constant (#.(lispify "CL_LOCAL") "CL_LOCAL"))
+(constant (#.(lispify "CL_GLOBAL") "CL_GLOBAL"))
+
+;; cl_device_exec_capabilities - bitfield
+(constant (#.(lispify "CL_EXEC_KERNEL") "CL_EXEC_KERNEL"))
+(constant (#.(lispify "CL_EXEC_NATIVE_KERNEL") "CL_EXEC_NATIVE_KERNEL"))
+
+;; cl_command_queue_properties - bitfield
+(constant (#.(lispify "CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE") "CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE"))
+(constant (#.(lispify "CL_QUEUE_PROFILING_ENABLE") "CL_QUEUE_PROFILING_ENABLE"))
+(constant (#.(lispify "CL_QUEUE_ON_DEVICE") "CL_QUEUE_ON_DEVICE"))
+(constant (#.(lispify "CL_QUEUE_ON_DEVICE_DEFAULT") "CL_QUEUE_ON_DEVICE_DEFAULT"))
+
+;; cl_context_info 
+(constant (#.(lispify "CL_CONTEXT_REFERENCE_COUNT") "CL_CONTEXT_REFERENCE_COUNT"))
+(constant (#.(lispify "CL_CONTEXT_DEVICES") "CL_CONTEXT_DEVICES"))
+(constant (#.(lispify "CL_CONTEXT_PROPERTIES") "CL_CONTEXT_PROPERTIES"))
+(constant (#.(lispify "CL_CONTEXT_NUM_DEVICES") "CL_CONTEXT_NUM_DEVICES"))
+
+;; cl_context_properties
+(constant (#.(lispify "CL_CONTEXT_PLATFORM") "CL_CONTEXT_PLATFORM"))
+(constant (#.(lispify "CL_CONTEXT_INTEROP_USER_SYNC") "CL_CONTEXT_INTEROP_USER_SYNC"))
+    
+;; cl_device_partition_property
+(constant (#.(lispify "CL_DEVICE_PARTITION_EQUALLY") "CL_DEVICE_PARTITION_EQUALLY"))
+(constant (#.(lispify "CL_DEVICE_PARTITION_BY_COUNTS") "CL_DEVICE_PARTITION_BY_COUNTS"))
+(constant (#.(lispify "CL_DEVICE_PARTITION_BY_COUNTS_LIST_END") "CL_DEVICE_PARTITION_BY_COUNTS_LIST_END"))
+(constant (#.(lispify "CL_DEVICE_PARTITION_BY_AFFINITY_DOMAIN") "CL_DEVICE_PARTITION_BY_AFFINITY_DOMAIN"))
+    
+;; cl_device_affinity_domain
+(constant (#.(lispify "CL_DEVICE_AFFINITY_DOMAIN_NUMA") "CL_DEVICE_AFFINITY_DOMAIN_NUMA"))
+(constant (#.(lispify "CL_DEVICE_AFFINITY_DOMAIN_L4_CACHE") "CL_DEVICE_AFFINITY_DOMAIN_L4_CACHE"))
+(constant (#.(lispify "CL_DEVICE_AFFINITY_DOMAIN_L3_CACHE") "CL_DEVICE_AFFINITY_DOMAIN_L3_CACHE"))
+(constant (#.(lispify "CL_DEVICE_AFFINITY_DOMAIN_L2_CACHE") "CL_DEVICE_AFFINITY_DOMAIN_L2_CACHE"))
+(constant (#.(lispify "CL_DEVICE_AFFINITY_DOMAIN_L1_CACHE") "CL_DEVICE_AFFINITY_DOMAIN_L1_CACHE"))
+(constant (#.(lispify "CL_DEVICE_AFFINITY_DOMAIN_NEXT_PARTITIONABLE") "CL_DEVICE_AFFINITY_DOMAIN_NEXT_PARTITIONABLE"))
+    
+;; cl_device_svm_capabilities
+(constant (#.(lispify "CL_DEVICE_SVM_COARSE_GRAIN_BUFFER") "CL_DEVICE_SVM_COARSE_GRAIN_BUFFER"))
+(constant (#.(lispify "CL_DEVICE_SVM_FINE_GRAIN_BUFFER") "CL_DEVICE_SVM_FINE_GRAIN_BUFFER"))
+(constant (#.(lispify "CL_DEVICE_SVM_FINE_GRAIN_SYSTEM") "CL_DEVICE_SVM_FINE_GRAIN_SYSTEM"))
+(constant (#.(lispify "CL_DEVICE_SVM_ATOMICS") "CL_DEVICE_SVM_ATOMICS"))
+
+;; cl_command_queue_info
+(constant (#.(lispify "CL_QUEUE_CONTEXT") "CL_QUEUE_CONTEXT"))
+(constant (#.(lispify "CL_QUEUE_DEVICE") "CL_QUEUE_DEVICE"))
+(constant (#.(lispify "CL_QUEUE_REFERENCE_COUNT") "CL_QUEUE_REFERENCE_COUNT"))
+(constant (#.(lispify "CL_QUEUE_PROPERTIES") "CL_QUEUE_PROPERTIES"))
+(constant (#.(lispify "CL_QUEUE_SIZE") "CL_QUEUE_SIZE"))
+
+;; cl_mem_flags and cl_svm_mem_flags - bitfield
+(constant (#.(lispify "CL_MEM_READ_WRITE") "CL_MEM_READ_WRITE"))
+(constant (#.(lispify "CL_MEM_WRITE_ONLY") "CL_MEM_WRITE_ONLY"))
+(constant (#.(lispify "CL_MEM_READ_ONLY") "CL_MEM_READ_ONLY"))
+(constant (#.(lispify "CL_MEM_USE_HOST_PTR") "CL_MEM_USE_HOST_PTR"))
+(constant (#.(lispify "CL_MEM_ALLOC_HOST_PTR") "CL_MEM_ALLOC_HOST_PTR"))
+(constant (#.(lispify "CL_MEM_COPY_HOST_PTR") "CL_MEM_COPY_HOST_PTR"))
+;; reserved                                         (1 << 6)   
+(constant (#.(lispify "CL_MEM_HOST_WRITE_ONLY") "CL_MEM_HOST_WRITE_ONLY"))
+(constant (#.(lispify "CL_MEM_HOST_READ_ONLY") "CL_MEM_HOST_READ_ONLY"))
+(constant (#.(lispify "CL_MEM_HOST_NO_ACCESS") "CL_MEM_HOST_NO_ACCESS"))
+(constant (#.(lispify "CL_MEM_SVM_FINE_GRAIN_BUFFER") "CL_MEM_SVM_FINE_GRAIN_BUFFER"))
+(constant (#.(lispify "CL_MEM_SVM_ATOMICS") "CL_MEM_SVM_ATOMICS"))
+(constant (#.(lispify "CL_MEM_KERNEL_READ_AND_WRITE") "CL_MEM_KERNEL_READ_AND_WRITE"))
+
+;; cl_mem_migration_flags - bitfield
+(constant (#.(lispify "CL_MIGRATE_MEM_OBJECT_HOST") "CL_MIGRATE_MEM_OBJECT_HOST"))
+(constant (#.(lispify "CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED") "CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED"))
+
+;; cl_channel_order
+(constant (#.(lispify "CL_R") "CL_R"))
+(constant (#.(lispify "CL_A") "CL_A"))
+(constant (#.(lispify "CL_RG") "CL_RG"))
+(constant (#.(lispify "CL_RA") "CL_RA"))
+(constant (#.(lispify "CL_RGB") "CL_RGB"))
+(constant (#.(lispify "CL_RGBA") "CL_RGBA"))
+(constant (#.(lispify "CL_BGRA") "CL_BGRA"))
+(constant (#.(lispify "CL_ARGB") "CL_ARGB"))
+(constant (#.(lispify "CL_INTENSITY") "CL_INTENSITY"))
+(constant (#.(lispify "CL_LUMINANCE") "CL_LUMINANCE"))
+(constant (#.(lispify "CL_Rx") "CL_Rx"))
+(constant (#.(lispify "CL_RGx") "CL_RGx"))
+(constant (#.(lispify "CL_RGBx") "CL_RGBx"))
+(constant (#.(lispify "CL_DEPTH") "CL_DEPTH"))
+(constant (#.(lispify "CL_DEPTH_STENCIL") "CL_DEPTH_STENCIL"))
+(constant (#.(lispify "CL_sRGB") "CL_sRGB"))
+(constant (#.(lispify "CL_sRGBx") "CL_sRGBx"))
+(constant (#.(lispify "CL_sRGBA") "CL_sRGBA"))
+(constant (#.(lispify "CL_sBGRA") "CL_sBGRA"))
+(constant (#.(lispify "CL_ABGR") "CL_ABGR"))
+
+;; cl_channel_type
+(constant (#.(lispify "CL_SNORM_INT8") "CL_SNORM_INT8"))
+(constant (#.(lispify "CL_SNORM_INT16") "CL_SNORM_INT16"))
+(constant (#.(lispify "CL_UNORM_INT8") "CL_UNORM_INT8"))
+(constant (#.(lispify "CL_UNORM_INT16") "CL_UNORM_INT16"))
+(constant (#.(lispify "CL_UNORM_SHORT_565") "CL_UNORM_SHORT_565"))
+(constant (#.(lispify "CL_UNORM_SHORT_555") "CL_UNORM_SHORT_555"))
+(constant (#.(lispify "CL_UNORM_INT_101010") "CL_UNORM_INT_101010"))
+(constant (#.(lispify "CL_SIGNED_INT8") "CL_SIGNED_INT8"))
+(constant (#.(lispify "CL_SIGNED_INT16") "CL_SIGNED_INT16"))
+(constant (#.(lispify "CL_SIGNED_INT32") "CL_SIGNED_INT32"))
+(constant (#.(lispify "CL_UNSIGNED_INT8") "CL_UNSIGNED_INT8"))
+(constant (#.(lispify "CL_UNSIGNED_INT16") "CL_UNSIGNED_INT16"))
+(constant (#.(lispify "CL_UNSIGNED_INT32") "CL_UNSIGNED_INT32"))
+(constant (#.(lispify "CL_HALF_FLOAT") "CL_HALF_FLOAT"))
+(constant (#.(lispify "CL_FLOAT") "CL_FLOAT"))
+(constant (#.(lispify "CL_UNORM_INT24") "CL_UNORM_INT24"))
+
+;; cl_mem_object_type
+(constant (#.(lispify "CL_MEM_OBJECT_BUFFER") "CL_MEM_OBJECT_BUFFER"))
+(constant (#.(lispify "CL_MEM_OBJECT_IMAGE2D") "CL_MEM_OBJECT_IMAGE2D"))
+(constant (#.(lispify "CL_MEM_OBJECT_IMAGE3D") "CL_MEM_OBJECT_IMAGE3D"))
+(constant (#.(lispify "CL_MEM_OBJECT_IMAGE2D_ARRAY") "CL_MEM_OBJECT_IMAGE2D_ARRAY"))
+(constant (#.(lispify "CL_MEM_OBJECT_IMAGE1D") "CL_MEM_OBJECT_IMAGE1D"))
+(constant (#.(lispify "CL_MEM_OBJECT_IMAGE1D_ARRAY") "CL_MEM_OBJECT_IMAGE1D_ARRAY"))
+(constant (#.(lispify "CL_MEM_OBJECT_IMAGE1D_BUFFER") "CL_MEM_OBJECT_IMAGE1D_BUFFER"))
+(constant (#.(lispify "CL_MEM_OBJECT_PIPE") "CL_MEM_OBJECT_PIPE"))
+
+;; cl_mem_info
+(constant (#.(lispify "CL_MEM_TYPE") "CL_MEM_TYPE"))
+(constant (#.(lispify "CL_MEM_FLAGS") "CL_MEM_FLAGS"))
+(constant (#.(lispify "CL_MEM_SIZE") "CL_MEM_SIZE"))
+(constant (#.(lispify "CL_MEM_HOST_PTR") "CL_MEM_HOST_PTR"))
+(constant (#.(lispify "CL_MEM_MAP_COUNT") "CL_MEM_MAP_COUNT"))
+(constant (#.(lispify "CL_MEM_REFERENCE_COUNT") "CL_MEM_REFERENCE_COUNT"))
+(constant (#.(lispify "CL_MEM_CONTEXT") "CL_MEM_CONTEXT"))
+(constant (#.(lispify "CL_MEM_ASSOCIATED_MEMOBJECT") "CL_MEM_ASSOCIATED_MEMOBJECT"))
+(constant (#.(lispify "CL_MEM_OFFSET") "CL_MEM_OFFSET"))
+(constant (#.(lispify "CL_MEM_USES_SVM_POINTER") "CL_MEM_USES_SVM_POINTER"))
+
+;; cl_image_info
+(constant (#.(lispify "CL_IMAGE_FORMAT") "CL_IMAGE_FORMAT"))
+(constant (#.(lispify "CL_IMAGE_ELEMENT_SIZE") "CL_IMAGE_ELEMENT_SIZE"))
+(constant (#.(lispify "CL_IMAGE_ROW_PITCH") "CL_IMAGE_ROW_PITCH"))
+(constant (#.(lispify "CL_IMAGE_SLICE_PITCH") "CL_IMAGE_SLICE_PITCH"))
+(constant (#.(lispify "CL_IMAGE_WIDTH") "CL_IMAGE_WIDTH"))
+(constant (#.(lispify "CL_IMAGE_HEIGHT") "CL_IMAGE_HEIGHT"))
+(constant (#.(lispify "CL_IMAGE_DEPTH") "CL_IMAGE_DEPTH"))
+(constant (#.(lispify "CL_IMAGE_ARRAY_SIZE") "CL_IMAGE_ARRAY_SIZE"))
+(constant (#.(lispify "CL_IMAGE_BUFFER") "CL_IMAGE_BUFFER"))
+(constant (#.(lispify "CL_IMAGE_NUM_MIP_LEVELS") "CL_IMAGE_NUM_MIP_LEVELS"))
+(constant (#.(lispify "CL_IMAGE_NUM_SAMPLES") "CL_IMAGE_NUM_SAMPLES"))
+    
+;; cl_pipe_info
+(constant (#.(lispify "CL_PIPE_PACKET_SIZE") "CL_PIPE_PACKET_SIZE"))
+(constant (#.(lispify "CL_PIPE_MAX_PACKETS") "CL_PIPE_MAX_PACKETS"))
+
+;; cl_addressing_mode
+(constant (#.(lispify "CL_ADDRESS_NONE") "CL_ADDRESS_NONE"))
+(constant (#.(lispify "CL_ADDRESS_CLAMP_TO_EDGE") "CL_ADDRESS_CLAMP_TO_EDGE"))
+(constant (#.(lispify "CL_ADDRESS_CLAMP") "CL_ADDRESS_CLAMP"))
+(constant (#.(lispify "CL_ADDRESS_REPEAT") "CL_ADDRESS_REPEAT"))
+(constant (#.(lispify "CL_ADDRESS_MIRRORED_REPEAT") "CL_ADDRESS_MIRRORED_REPEAT"))
+
+;; cl_filter_mode
+(constant (#.(lispify "CL_FILTER_NEAREST") "CL_FILTER_NEAREST"))
+(constant (#.(lispify "CL_FILTER_LINEAR") "CL_FILTER_LINEAR"))
+
+;; cl_sampler_info
+(constant (#.(lispify "CL_SAMPLER_REFERENCE_COUNT") "CL_SAMPLER_REFERENCE_COUNT"))
+(constant (#.(lispify "CL_SAMPLER_CONTEXT") "CL_SAMPLER_CONTEXT"))
+(constant (#.(lispify "CL_SAMPLER_NORMALIZED_COORDS") "CL_SAMPLER_NORMALIZED_COORDS"))
+(constant (#.(lispify "CL_SAMPLER_ADDRESSING_MODE") "CL_SAMPLER_ADDRESSING_MODE"))
+(constant (#.(lispify "CL_SAMPLER_FILTER_MODE") "CL_SAMPLER_FILTER_MODE"))
+(constant (#.(lispify "CL_SAMPLER_MIP_FILTER_MODE") "CL_SAMPLER_MIP_FILTER_MODE"))
+(constant (#.(lispify "CL_SAMPLER_LOD_MIN") "CL_SAMPLER_LOD_MIN"))
+(constant (#.(lispify "CL_SAMPLER_LOD_MAX") "CL_SAMPLER_LOD_MAX"))
+
+;; cl_map_flags - bitfield
+(constant (#.(lispify "CL_MAP_READ") "CL_MAP_READ"))
+(constant (#.(lispify "CL_MAP_WRITE") "CL_MAP_WRITE"))
+(constant (#.(lispify "CL_MAP_WRITE_INVALIDATE_REGION") "CL_MAP_WRITE_INVALIDATE_REGION"))
+
+;; cl_program_info
+(constant (#.(lispify "CL_PROGRAM_REFERENCE_COUNT") "CL_PROGRAM_REFERENCE_COUNT"))
+(constant (#.(lispify "CL_PROGRAM_CONTEXT") "CL_PROGRAM_CONTEXT"))
+(constant (#.(lispify "CL_PROGRAM_NUM_DEVICES") "CL_PROGRAM_NUM_DEVICES"))
+(constant (#.(lispify "CL_PROGRAM_DEVICES") "CL_PROGRAM_DEVICES"))
+(constant (#.(lispify "CL_PROGRAM_SOURCE") "CL_PROGRAM_SOURCE"))
+(constant (#.(lispify "CL_PROGRAM_BINARY_SIZES") "CL_PROGRAM_BINARY_SIZES"))
+(constant (#.(lispify "CL_PROGRAM_BINARIES") "CL_PROGRAM_BINARIES"))
+(constant (#.(lispify "CL_PROGRAM_NUM_KERNELS") "CL_PROGRAM_NUM_KERNELS"))
+(constant (#.(lispify "CL_PROGRAM_KERNEL_NAMES") "CL_PROGRAM_KERNEL_NAMES"))
+
+;; cl_program_build_info
+(constant (#.(lispify "CL_PROGRAM_BUILD_STATUS") "CL_PROGRAM_BUILD_STATUS"))
+(constant (#.(lispify "CL_PROGRAM_BUILD_OPTIONS") "CL_PROGRAM_BUILD_OPTIONS"))
+(constant (#.(lispify "CL_PROGRAM_BUILD_LOG") "CL_PROGRAM_BUILD_LOG"))
+(constant (#.(lispify "CL_PROGRAM_BINARY_TYPE") "CL_PROGRAM_BINARY_TYPE"))
+(constant (#.(lispify "CL_PROGRAM_BUILD_GLOBAL_VARIABLE_TOTAL_SIZE") "CL_PROGRAM_BUILD_GLOBAL_VARIABLE_TOTAL_SIZE"))
+    
+;; cl_program_binary_type
+(constant (#.(lispify "CL_PROGRAM_BINARY_TYPE_NONE") "CL_PROGRAM_BINARY_TYPE_NONE"))
+(constant (#.(lispify "CL_PROGRAM_BINARY_TYPE_COMPILED_OBJECT") "CL_PROGRAM_BINARY_TYPE_COMPILED_OBJECT"))
+(constant (#.(lispify "CL_PROGRAM_BINARY_TYPE_LIBRARY") "CL_PROGRAM_BINARY_TYPE_LIBRARY"))
+(constant (#.(lispify "CL_PROGRAM_BINARY_TYPE_EXECUTABLE") "CL_PROGRAM_BINARY_TYPE_EXECUTABLE"))
+
+;; cl_build_status
+(constant (#.(lispify "CL_BUILD_SUCCESS") "CL_BUILD_SUCCESS"))
+(constant (#.(lispify "CL_BUILD_NONE") "CL_BUILD_NONE"))
+(constant (#.(lispify "CL_BUILD_ERROR") "CL_BUILD_ERROR"))
+(constant (#.(lispify "CL_BUILD_IN_PROGRESS") "CL_BUILD_IN_PROGRESS"))
+
+;; cl_kernel_info
+(constant (#.(lispify "CL_KERNEL_FUNCTION_NAME") "CL_KERNEL_FUNCTION_NAME"))
+(constant (#.(lispify "CL_KERNEL_NUM_ARGS") "CL_KERNEL_NUM_ARGS"))
+(constant (#.(lispify "CL_KERNEL_REFERENCE_COUNT") "CL_KERNEL_REFERENCE_COUNT"))
+(constant (#.(lispify "CL_KERNEL_CONTEXT") "CL_KERNEL_CONTEXT"))
+(constant (#.(lispify "CL_KERNEL_PROGRAM") "CL_KERNEL_PROGRAM"))
+(constant (#.(lispify "CL_KERNEL_ATTRIBUTES") "CL_KERNEL_ATTRIBUTES"))
+
+;; cl_kernel_arg_info
+(constant (#.(lispify "CL_KERNEL_ARG_ADDRESS_QUALIFIER") "CL_KERNEL_ARG_ADDRESS_QUALIFIER"))
+(constant (#.(lispify "CL_KERNEL_ARG_ACCESS_QUALIFIER") "CL_KERNEL_ARG_ACCESS_QUALIFIER"))
+(constant (#.(lispify "CL_KERNEL_ARG_TYPE_NAME") "CL_KERNEL_ARG_TYPE_NAME"))
+(constant (#.(lispify "CL_KERNEL_ARG_TYPE_QUALIFIER") "CL_KERNEL_ARG_TYPE_QUALIFIER"))
+(constant (#.(lispify "CL_KERNEL_ARG_NAME") "CL_KERNEL_ARG_NAME"))
+
+;; cl_kernel_arg_address_qualifier
+(constant (#.(lispify "CL_KERNEL_ARG_ADDRESS_GLOBAL") "CL_KERNEL_ARG_ADDRESS_GLOBAL"))
+(constant (#.(lispify "CL_KERNEL_ARG_ADDRESS_LOCAL") "CL_KERNEL_ARG_ADDRESS_LOCAL"))
+(constant (#.(lispify "CL_KERNEL_ARG_ADDRESS_CONSTANT") "CL_KERNEL_ARG_ADDRESS_CONSTANT"))
+(constant (#.(lispify "CL_KERNEL_ARG_ADDRESS_PRIVATE") "CL_KERNEL_ARG_ADDRESS_PRIVATE"))
+
+;; cl_kernel_arg_access_qualifier
+(constant (#.(lispify "CL_KERNEL_ARG_ACCESS_READ_ONLY") "CL_KERNEL_ARG_ACCESS_READ_ONLY"))
+(constant (#.(lispify "CL_KERNEL_ARG_ACCESS_WRITE_ONLY") "CL_KERNEL_ARG_ACCESS_WRITE_ONLY"))
+(constant (#.(lispify "CL_KERNEL_ARG_ACCESS_READ_WRITE") "CL_KERNEL_ARG_ACCESS_READ_WRITE"))
+(constant (#.(lispify "CL_KERNEL_ARG_ACCESS_NONE") "CL_KERNEL_ARG_ACCESS_NONE"))
+    
+;; cl_kernel_arg_type_qualifer
+(constant (#.(lispify "CL_KERNEL_ARG_TYPE_NONE") "CL_KERNEL_ARG_TYPE_NONE"))
+(constant (#.(lispify "CL_KERNEL_ARG_TYPE_CONST") "CL_KERNEL_ARG_TYPE_CONST"))
+(constant (#.(lispify "CL_KERNEL_ARG_TYPE_RESTRICT") "CL_KERNEL_ARG_TYPE_RESTRICT"))
+(constant (#.(lispify "CL_KERNEL_ARG_TYPE_VOLATILE") "CL_KERNEL_ARG_TYPE_VOLATILE"))
+(constant (#.(lispify "CL_KERNEL_ARG_TYPE_PIPE") "CL_KERNEL_ARG_TYPE_PIPE"))
+
+;; cl_kernel_work_group_info
+(constant (#.(lispify "CL_KERNEL_WORK_GROUP_SIZE") "CL_KERNEL_WORK_GROUP_SIZE"))
+(constant (#.(lispify "CL_KERNEL_COMPILE_WORK_GROUP_SIZE") "CL_KERNEL_COMPILE_WORK_GROUP_SIZE"))
+(constant (#.(lispify "CL_KERNEL_LOCAL_MEM_SIZE") "CL_KERNEL_LOCAL_MEM_SIZE"))
+(constant (#.(lispify "CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE") "CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE"))
+(constant (#.(lispify "CL_KERNEL_PRIVATE_MEM_SIZE") "CL_KERNEL_PRIVATE_MEM_SIZE"))
+(constant (#.(lispify "CL_KERNEL_GLOBAL_WORK_SIZE") "CL_KERNEL_GLOBAL_WORK_SIZE"))
+    
+;; cl_kernel_exec_info
+(constant (#.(lispify "CL_KERNEL_EXEC_INFO_SVM_PTRS") "CL_KERNEL_EXEC_INFO_SVM_PTRS"))
+(constant (#.(lispify "CL_KERNEL_EXEC_INFO_SVM_FINE_GRAIN_SYSTEM") "CL_KERNEL_EXEC_INFO_SVM_FINE_GRAIN_SYSTEM"))
+
+;; cl_event_info 
+(constant (#.(lispify "CL_EVENT_COMMAND_QUEUE") "CL_EVENT_COMMAND_QUEUE"))
+(constant (#.(lispify "CL_EVENT_COMMAND_TYPE") "CL_EVENT_COMMAND_TYPE"))
+(constant (#.(lispify "CL_EVENT_REFERENCE_COUNT") "CL_EVENT_REFERENCE_COUNT"))
+(constant (#.(lispify "CL_EVENT_COMMAND_EXECUTION_STATUS") "CL_EVENT_COMMAND_EXECUTION_STATUS"))
+(constant (#.(lispify "CL_EVENT_CONTEXT") "CL_EVENT_CONTEXT"))
+
+;; cl_command_type
+(constant (#.(lispify "CL_COMMAND_NDRANGE_KERNEL") "CL_COMMAND_NDRANGE_KERNEL"))
+(constant (#.(lispify "CL_COMMAND_TASK") "CL_COMMAND_TASK"))
+(constant (#.(lispify "CL_COMMAND_NATIVE_KERNEL") "CL_COMMAND_NATIVE_KERNEL"))
+(constant (#.(lispify "CL_COMMAND_READ_BUFFER") "CL_COMMAND_READ_BUFFER"))
+(constant (#.(lispify "CL_COMMAND_WRITE_BUFFER") "CL_COMMAND_WRITE_BUFFER"))
+(constant (#.(lispify "CL_COMMAND_COPY_BUFFER") "CL_COMMAND_COPY_BUFFER"))
+(constant (#.(lispify "CL_COMMAND_READ_IMAGE") "CL_COMMAND_READ_IMAGE"))
+(constant (#.(lispify "CL_COMMAND_WRITE_IMAGE") "CL_COMMAND_WRITE_IMAGE"))
+(constant (#.(lispify "CL_COMMAND_COPY_IMAGE") "CL_COMMAND_COPY_IMAGE"))
+(constant (#.(lispify "CL_COMMAND_COPY_IMAGE_TO_BUFFER") "CL_COMMAND_COPY_IMAGE_TO_BUFFER"))
+(constant (#.(lispify "CL_COMMAND_COPY_BUFFER_TO_IMAGE") "CL_COMMAND_COPY_BUFFER_TO_IMAGE"))
+(constant (#.(lispify "CL_COMMAND_MAP_BUFFER") "CL_COMMAND_MAP_BUFFER"))
+(constant (#.(lispify "CL_COMMAND_MAP_IMAGE") "CL_COMMAND_MAP_IMAGE"))
+(constant (#.(lispify "CL_COMMAND_UNMAP_MEM_OBJECT") "CL_COMMAND_UNMAP_MEM_OBJECT"))
+(constant (#.(lispify "CL_COMMAND_MARKER") "CL_COMMAND_MARKER"))
+(constant (#.(lispify "CL_COMMAND_ACQUIRE_GL_OBJECTS") "CL_COMMAND_ACQUIRE_GL_OBJECTS"))
+(constant (#.(lispify "CL_COMMAND_RELEASE_GL_OBJECTS") "CL_COMMAND_RELEASE_GL_OBJECTS"))
+(constant (#.(lispify "CL_COMMAND_READ_BUFFER_RECT") "CL_COMMAND_READ_BUFFER_RECT"))
+(constant (#.(lispify "CL_COMMAND_WRITE_BUFFER_RECT") "CL_COMMAND_WRITE_BUFFER_RECT"))
+(constant (#.(lispify "CL_COMMAND_COPY_BUFFER_RECT") "CL_COMMAND_COPY_BUFFER_RECT"))
+(constant (#.(lispify "CL_COMMAND_USER") "CL_COMMAND_USER"))
+(constant (#.(lispify "CL_COMMAND_BARRIER") "CL_COMMAND_BARRIER"))
+(constant (#.(lispify "CL_COMMAND_MIGRATE_MEM_OBJECTS") "CL_COMMAND_MIGRATE_MEM_OBJECTS"))
+(constant (#.(lispify "CL_COMMAND_FILL_BUFFER") "CL_COMMAND_FILL_BUFFER"))
+(constant (#.(lispify "CL_COMMAND_FILL_IMAGE") "CL_COMMAND_FILL_IMAGE"))
+(constant (#.(lispify "CL_COMMAND_SVM_FREE") "CL_COMMAND_SVM_FREE"))
+(constant (#.(lispify "CL_COMMAND_SVM_MEMCPY") "CL_COMMAND_SVM_MEMCPY"))
+(constant (#.(lispify "CL_COMMAND_SVM_MEMFILL") "CL_COMMAND_SVM_MEMFILL"))
+(constant (#.(lispify "CL_COMMAND_SVM_MAP") "CL_COMMAND_SVM_MAP"))
+(constant (#.(lispify "CL_COMMAND_SVM_UNMAP") "CL_COMMAND_SVM_UNMAP"))
+
+;; command execution status
+(constant (#.(lispify "CL_COMPLETE") "CL_COMPLETE"))
+(constant (#.(lispify "CL_RUNNING") "CL_RUNNING"))
+(constant (#.(lispify "CL_SUBMITTED") "CL_SUBMITTED"))
+(constant (#.(lispify "CL_QUEUED") "CL_QUEUED"))
+
+;; cl_buffer_create_type 
+(constant (#.(lispify "CL_BUFFER_CREATE_TYPE_REGION") "CL_BUFFER_CREATE_TYPE_REGION"))
+
+;; cl_profiling_info 
+(constant (#.(lispify "CL_PROFILING_COMMAND_QUEUED") "CL_PROFILING_COMMAND_QUEUED"))
+(constant (#.(lispify "CL_PROFILING_COMMAND_SUBMIT") "CL_PROFILING_COMMAND_SUBMIT"))
+(constant (#.(lispify "CL_PROFILING_COMMAND_START") "CL_PROFILING_COMMAND_START"))
+(constant (#.(lispify "CL_PROFILING_COMMAND_END") "CL_PROFILING_COMMAND_END"))
+(constant (#.(lispify "CL_PROFILING_COMMAND_COMPLETE") "CL_PROFILING_COMMAND_COMPLETE"))
+
