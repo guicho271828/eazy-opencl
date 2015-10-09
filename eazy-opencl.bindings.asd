@@ -37,5 +37,6 @@
                  (:file "3-util")
                  (:file "4-bindings")
                  (:file "4-buffer-bindings")
-                 (:file "4-image-bindings"))))
+                 (:file "4-image-bindings"))
+                :serial t))
   :description "Opencl Binding for Common Lisp: Low-level API bindings")

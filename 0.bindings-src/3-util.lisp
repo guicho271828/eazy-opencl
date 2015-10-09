@@ -25,9 +25,17 @@
   (cl:mapc #'cl:funcall *cl-extension-resetter-list*)
   (cl:setf *cl-extension-resetter-list* cl:nil))
 
+(cl:defparameter *defined-opencl-functions* cl:nil)
 
-(cl:defmacro defclfun (name return-type cl:&body args)
-  `(cffi:defcfun ,name ,return-type ,@args))
+(cl:defmacro defclfun (lisp-and-c-name return-type cl:&body args)
+  (cl:let ((lname (cl:second lisp-and-c-name)))
+    `(cl:progn
+       (cl:push ',lname *defined-opencl-functions*)
+       (cl:export ',lname)
+       (cl:declaim (inline ,lname))
+       (cffi:defcfun ,lisp-and-c-name ,return-type ,@args)
+       (cl:declaim (notinline ,lname)))))
+
 #++
 (cl:defmacro defclfun (name return-type cl:&body args)
   (cl:let ((n (cl:gensym (cl:second name))))
