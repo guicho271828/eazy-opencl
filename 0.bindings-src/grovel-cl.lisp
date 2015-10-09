@@ -138,11 +138,6 @@
               ((#.(lispify-k "INVALID_PIPE_SIZE") "CL_INVALID_PIPE_SIZE"))
               ((#.(lispify-k "INVALID_DEVICE_QUEUE") "CL_INVALID_DEVICE_QUEUE")))
 
-(constant (#.(lispify "VERSION_1_0") "CL_VERSION_1_0"))
-(constant (#.(lispify "VERSION_1_1") "CL_VERSION_1_1"))
-(constant (#.(lispify "VERSION_1_2") "CL_VERSION_1_2"))
-(constant (#.(lispify "VERSION_2_0") "CL_VERSION_2_0"))
-
 (constant (#.(lispify "FALSE") "CL_FALSE"))
 (constant (#.(lispify "TRUE") "CL_TRUE"))
 (constant (#.(lispify "BLOCKING") "CL_BLOCKING"))

@@ -28,6 +28,8 @@
                 ((:file "0.package")
                  (:file "1.library")
                  (:file "2.grovel-tools")
+                 (:cffi-grovel-file "grovel-version")
+                 (:file "2.0.opencl-version-feature")
                  (:cffi-grovel-file "grovel-cl_platform")
                  (:cffi-grovel-file "grovel-cl")
                  (:file "3.util")

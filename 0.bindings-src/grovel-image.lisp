@@ -5,23 +5,23 @@
 
 (include "CL/cl.h")
 
-(cstruct image-format
-  (:image-channel-order channel-order)
-  (:image-channel-data-type channel-type))
+(cstruct image-format "cl_image_format"
+  (:channel-order "image_channel_order" :type #.(lispify "channel_order"))
+  (:channel-data-type "image_channel_data_type" :type #.(lispify "channel_type")))
 
-(cstruct image_desc
-    (:image_type #.(lispify "cl_mem_object_type"))
-    (:image_width  size-t)
-    (:image_height size_t)
-    (:image_depth size_t)
-    (:image_array_size size_t)
-    (:image_row_pitch size_t)
-    (:image_slice_pitch size_t)
-    (:num_mip_levels uint)
-    (:num_samples uint)
-    (#+(or opencl-1.0 opencl-1.1 opencl-1.2)
-     :buffer
-     #+(or opencl-2.0 opencl-2.1)
-     :mem_object
-     mem))
+(cstruct image-desc "cl_image_desc"
+    (#.(lispify-k "image_type") "image_type" :type #.(lispify "mem_object_type"))
+    (#.(lispify-k "image_width") "image_width" :type size-t)
+    (#.(lispify-k "image_height") "image_height" :type size-t)
+    (#.(lispify-k "image_depth") "image_depth" :type size-t)
+    (#.(lispify-k "image_array_size") "image_array_size" :type size-t)
+    (#.(lispify-k "image_row_pitch") "image_row_pitch" :type size-t)
+    (#.(lispify-k "image_slice_pitch") "image_slice_pitch" :type size-t)
+    (#.(lispify-k "num_mip_levels") "num_mip_levels" :type uint)
+    (#.(lispify-k "num_samples") "num_samples" :type uint)
+    (#-(or :opencl-2.0 :opencl-2.1) :buffer
+     #-(or :opencl-2.0 :opencl-2.1) "buffer"
+     #+(or :opencl-2.0 :opencl-2.1) #.(lispify-k "mem_object")
+     #+(or :opencl-2.0 :opencl-2.1) "mem_object"
+     :type mem))
 
