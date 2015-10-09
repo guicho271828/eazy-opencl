@@ -17,12 +17,18 @@
 (in-package :eazy-opencl-asd)
 
 
-(defsystem eazy-opencl
+(defsystem eazy-opencl.host
   :version "0.1"
   :author "Masataro Asai"
   :mailto "guicho2.71828@gmail.com"
   :license "LLGPL"
-  :depends-on ()
-  :components ()
-  :description "Opencl Binding for Common Lisp"
-  :in-order-to ((test-op (test-op :eazy-opencl.test))))
+  :depends-on (:iterate
+               :alexandria
+               :trivia
+               :trivial-garbage
+               :lisp-namespace
+               :eazy-opencl.bindings)
+  :components ((:module "1.host-src"
+                :components
+                ((:file "package"))))
+  :description "Opencl Binding for Common Lisp: User API")

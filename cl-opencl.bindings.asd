@@ -17,12 +17,13 @@
 (in-package :eazy-opencl-asd)
 
 
-(defsystem eazy-opencl
+(defsystem eazy-opencl.bindings
   :version "0.1"
   :author "Masataro Asai"
   :mailto "guicho2.71828@gmail.com"
   :license "LLGPL"
-  :depends-on ()
-  :components ()
-  :description "Opencl Binding for Common Lisp"
-  :in-order-to ((test-op (test-op :eazy-opencl.test))))
+  :depends-on (:alexandria :cffi)
+  :components ((:module "0.bindings-src"
+                :components
+                ((:file "package"))))
+  :description "Opencl Binding for Common Lisp: Low-level API bindings")

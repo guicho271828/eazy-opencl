@@ -6,3 +6,5 @@
 *.x86f
 *~
 .#*
+/cl-opencl-3b/
+/lang/
