@@ -22,9 +22,7 @@
   :author "Masataro Asai"
   :mailto "guicho2.71828@gmail.com"
   :license "LLGPL"
-  :depends-on (:iterate :alexandria :trivia)
-  :components ((:module "src"
-                :components
-                ((:file "package"))))
+  :depends-on ()
+  :components ()
   :description "Opencl Binding for Common Lisp"
   :in-order-to ((test-op (test-op :eazy-opencl.test))))
