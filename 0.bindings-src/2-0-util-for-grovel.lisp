@@ -40,3 +40,7 @@
 
 (cl:defun lispify-k (name cl:&optional flag)
   (lispify name flag (cl:find-package :keyword)))
+
+(cl:defun lispify-k-pair (name cl:&optional flag)
+  (cl:assert (cl:zerop (cl:search "CL_" name)))
+  `(,(lispify (cl:subseq name 3) flag (cl:find-package :keyword)) ,name))
