@@ -16,14 +16,16 @@
   (:use :cl :asdf))
 (in-package :eazy-opencl-asd)
 
-
 (defsystem eazy-opencl.bindings
   :version "0.1"
   :author "Masataro Asai"
   :mailto "guicho2.71828@gmail.com"
   :license "LLGPL"
+  :defsystem-depends-on (:cffi-grovel)
   :depends-on (:alexandria :cffi)
   :components ((:module "0.bindings-src"
                 :components
-                ((:file "package"))))
+                ((:file "0.package")
+                 (:file "1.library")
+                 (:cffi-grovel-file "grovel"))))
   :description "Opencl Binding for Common Lisp: Low-level API bindings")
