@@ -155,7 +155,7 @@
   (param-value-size-ret (:pointer size-t)))
 ;;; queue
 
-#-opencl-2.0
+;; #-opencl-2.0
 (defclfun ("clCreateCommandQueue" create-command-queue) command-queue
   (context context)
   (device device-id)
@@ -183,16 +183,16 @@
   (enable bool)
   (old-properties (:pointer command-queue-properties)))
 
-#-opencl-1.2
+;; #-opencl-1.2
 (defclfun ("clEnqueueMarker" enqueue-marker) error-code
   (command-queue command-queue)
   (event (:pointer event)))
 
-#-opencl-1.2
+;; #-opencl-1.2
 (defclfun ("clEnqueueBarrier" enqueue-barrier) error-code
   (command-queue command-queue))
 
-#-opencl-2.0
+;; #-opencl-2.0
 (defclfun ("clEnqueueTask" enqueue-task) error-code
   (command-queue command-queue)
   (kernel kernel)
@@ -219,7 +219,7 @@
   (event-wait-list (:pointer event))
   (event (:pointer event)))
 
-#-opencl-1.2
+;; #-opencl-1.2
 (defclfun ("clEnqueueWaitForEvents" enqueue-wait-for-events) error-code
   (command-queue command-queue)
   (num-events uint)
@@ -286,7 +286,7 @@
 
 ;;; sampler
 
-#-opencl-2.0
+;; #-opencl-2.0
 (defclfun ("clCreateSampler" create-sampler) sampler
   (context context)
   (normalized-coords bool)
@@ -407,6 +407,6 @@
 (defclfun ("clFinish" finish) error-code
   (command-queue command-queue))
 
-#-opencl-1.2
+;; #-opencl-1.2
 (defclfun ("clUnloadCompiler" unload-compiler) error-code)
 

@@ -16,7 +16,7 @@
   (host-ptr (:pointer :void))
   (errcode-ret (:pointer error-code)))
 
-#-opencl-1.2
+;; #-opencl-1.2
 (defclfun ("clCreateImage2D" create-image-2d) mem
   (context context)
   (flags mem-flags)
@@ -27,7 +27,7 @@
   (host-ptr (:pointer :void))
   (errcode-ret (:pointer error-code)))
 
-#-opencl-1.2
+;; #-opencl-1.2
 (defclfun ("clCreateImage3D" create-image-3d) mem
   (context context)
   (flags mem-flags)
