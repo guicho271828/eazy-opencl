@@ -31,5 +31,6 @@
                  (:cffi-grovel-file "grovel-cl_platform")
                  (:cffi-grovel-file "grovel-cl")
                  (:file "3.util")
-                 (:file "4.bindings"))))
+                 (:file "4.bindings")
+                 (:file "4.buffer-bindings"))))
   :description "Opencl Binding for Common Lisp: Low-level API bindings")
