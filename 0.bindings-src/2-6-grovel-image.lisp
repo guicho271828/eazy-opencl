@@ -19,9 +19,9 @@
     (#.(lispify-k "image_slice_pitch") "image_slice_pitch" :type size-t)
     (#.(lispify-k "num_mip_levels") "num_mip_levels" :type uint)
     (#.(lispify-k "num_samples") "num_samples" :type uint)
-    (#-(or :opencl-2.0 :opencl-2.1) :buffer
-     #-(or :opencl-2.0 :opencl-2.1) "buffer"
-     #+(or :opencl-2.0 :opencl-2.1) #.(lispify-k "mem_object")
-     #+(or :opencl-2.0 :opencl-2.1) "mem_object"
+    (#-opencl-2.0 :buffer
+     #-opencl-2.0 "buffer"
+     #+opencl-2.0 #.(lispify-k "mem_object")
+     #+opencl-2.0 "mem_object"
      :type mem))
 
