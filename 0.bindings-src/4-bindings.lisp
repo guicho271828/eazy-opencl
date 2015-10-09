@@ -82,6 +82,7 @@
   (param-value (:pointer :void))
   (param-value-size-ret :pointer))
 
+#+opencl-1.1
 (defclfun ("clGetKernelWorkGroupInfo" get-kernel-work-group-info) error-code
   (kernel kernel)
   (device device-id)
@@ -150,6 +151,7 @@
   (properties command-queue-properties)
   (errcode-ret (:pointer error-code)))
 
+#-opencl-1.1
 (defclfun ("clSetCommandQueueProperty" set-command-queue-property)
     error-code
   (command-queue command-queue)
@@ -256,6 +258,7 @@
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
 
+#+opencl-1.1
 (defclfun ("clSetMemObjectDestructorCallback"
                set-mem-object-destructor-callback) int
   (memobj mem)
@@ -263,10 +266,6 @@
   (user-data (:pointer :void)))
 
 ;;; event
-(defclfun ("clCreateUserEvent" create-user-event) event
-  (context context)
-  (errcode-ret (:pointer error-code)))
-
 (defclfun ("clReleaseEvent" release-event) error-code
   (event event))
 
@@ -290,15 +289,24 @@
   (param-value-size size-t)
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
+
+#+opencl-1.1
+(defclfun ("clCreateUserEvent" create-user-event) event
+  (context context)
+  (errcode-ret (:pointer error-code)))
+
+#+opencl-1.1
+(defclfun ("clSetUserEventStatus" set-user-event-status) int
+  (event event)
+  (execution-status int))
+
+#+opencl-1.1
 (defclfun ("clSetEventCallback" set-event-callback) int
   (event event)
   (command-exec-callback-type int) ;; CL_COMPLETE = 0x0
   (callback :pointer)
   (user-data (:pointer :void)))
 
-(defclfun ("clSetUserEventStatus" set-user-event-status) int
-  (event event)
-  (execution-status int))
 
 ;;; platform
 (defclfun ("clGetPlatformIDs" get-platform-ids) error-code

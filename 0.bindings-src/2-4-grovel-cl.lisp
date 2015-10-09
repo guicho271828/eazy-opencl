@@ -213,14 +213,23 @@
               ((#.(lispify-k "DEVICE_DOUBLE_FP_CONFIG") "CL_DEVICE_DOUBLE_FP_CONFIG"))
               ;; 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG
               ((#.(lispify-k "DEVICE_PREFERRED_VECTOR_WIDTH_HALF") "CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF"))
+              #+opencl-1.1
               ((#.(lispify-k "DEVICE_HOST_UNIFIED_MEMORY") "CL_DEVICE_HOST_UNIFIED_MEMORY"))
+              #+opencl-1.1
               ((#.(lispify-k "DEVICE_NATIVE_VECTOR_WIDTH_CHAR") "CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR"))
+              #+opencl-1.1
               ((#.(lispify-k "DEVICE_NATIVE_VECTOR_WIDTH_SHORT") "CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT"))
+              #+opencl-1.1
               ((#.(lispify-k "DEVICE_NATIVE_VECTOR_WIDTH_INT") "CL_DEVICE_NATIVE_VECTOR_WIDTH_INT"))
+              #+opencl-1.1
               ((#.(lispify-k "DEVICE_NATIVE_VECTOR_WIDTH_LONG") "CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG"))
+              #+opencl-1.1
               ((#.(lispify-k "DEVICE_NATIVE_VECTOR_WIDTH_FLOAT") "CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT"))
+              #+opencl-1.1
               ((#.(lispify-k "DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE") "CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE"))
+              #+opencl-1.1
               ((#.(lispify-k "DEVICE_NATIVE_VECTOR_WIDTH_HALF") "CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF"))
+              #+opencl-1.1
               ((#.(lispify-k "DEVICE_OPENCL_C_VERSION") "CL_DEVICE_OPENCL_C_VERSION"))
               ((#.(lispify-k "DEVICE_LINKER_AVAILABLE") "CL_DEVICE_LINKER_AVAILABLE"))
               ((#.(lispify-k "DEVICE_BUILT_IN_KERNELS") "CL_DEVICE_BUILT_IN_KERNELS"))
@@ -285,6 +294,7 @@
               ((#.(lispify-k "CONTEXT_REFERENCE_COUNT") "CL_CONTEXT_REFERENCE_COUNT"))
               ((#.(lispify-k "CONTEXT_DEVICES") "CL_CONTEXT_DEVICES"))
               ((#.(lispify-k "CONTEXT_PROPERTIES") "CL_CONTEXT_PROPERTIES"))
+              #+opencl-1.1
               ((#.(lispify-k "CONTEXT_NUM_DEVICES") "CL_CONTEXT_NUM_DEVICES")))
 
 (constantenum #.(lispify "context_properties")
@@ -364,8 +374,11 @@
               ((#.(lispify-k "ARGB") "CL_ARGB"))
               ((#.(lispify-k "INTENSITY") "CL_INTENSITY"))
               ((#.(lispify-k "LUMINANCE") "CL_LUMINANCE"))
+              #+opencl-1.1
               ((#.(lispify-k "Rx") "CL_Rx"))
+              #+opencl-1.1
               ((#.(lispify-k "RGx") "CL_RGx"))
+              #+opencl-1.1
               ((#.(lispify-k "RGBx") "CL_RGBx"))
               ((#.(lispify-k "DEPTH") "CL_DEPTH"))
               ((#.(lispify-k "DEPTH_STENCIL") "CL_DEPTH_STENCIL"))

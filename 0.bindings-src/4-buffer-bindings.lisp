@@ -7,6 +7,7 @@
   (host-ptr (:pointer :void))
   (errcode-ret (:pointer error-code)))
 
+#+opencl-1.1
 (defclfun ("clCreateSubBuffer" create-sub-buffer) mem
   (buffer mem)
   (flags mem-flags)
@@ -60,6 +61,7 @@
   (errcode-ret (:pointer error-code)))
 
 ;;; Rect
+#+opencl-1.1
 (defclfun ("clEnqueueReadBufferRect" enqueue-read-buffer-rect) int
   (command-queue command-queue)
   (buffer mem)
@@ -76,6 +78,7 @@
   (event-wait-list (:pointer event))
   (event (:pointer event)))
 
+#+opencl-1.1
 (defclfun ("clEnqueueWriteBufferRect" enqueue-write-buffer-rect) int
   (command-queue command-queue)
   (buffer mem)
@@ -92,6 +95,7 @@
   (event-wait-list (:pointer event))
   (event (:pointer event)))
 
+#+opencl-1.1
 (defclfun ("clEnqueueCopyBufferRect" enqueue-copy-buffer-rect) int
   (command-queue command-queue)
   (src-buffer mem)
