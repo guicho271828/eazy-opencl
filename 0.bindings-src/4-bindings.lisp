@@ -151,6 +151,19 @@
   (properties command-queue-properties)
   (errcode-ret (:pointer error-code)))
 
+(defclfun ("clReleaseCommandQueue" release-command-queue) error-code
+  (command-queue command-queue))
+
+(defclfun ("clRetainCommandQueue" retain-command-queue) error-code
+  (command-queue command-queue))
+
+(defclfun ("clGetCommandQueueInfo" get-command-queue-info) error-code
+  (command-queue command-queue)
+  (param-name command-queue-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+
 #-opencl-1.1
 (defclfun ("clSetCommandQueueProperty" set-command-queue-property)
     error-code
@@ -173,9 +186,6 @@
   (event-wait-list (:pointer event))
   (event (:pointer event)))
 
-(defclfun ("clReleaseCommandQueue" release-command-queue) error-code
-  (command-queue command-queue))
-
 (defclfun ("clEnqueueUnmapMemObject" enqueue-unmap-mem-object) error-code
   (command-queue command-queue)
   (memobj mem)
@@ -183,13 +193,6 @@
   (num-events-in-wait-list uint)
   (event-wait-list (:pointer event))
   (event (:pointer event)))
-
-(defclfun ("clGetCommandQueueInfo" get-command-queue-info) error-code
-  (command-queue command-queue)
-  (param-name command-queue-info)
-  (param-value-size size-t)
-  (param-value (:pointer :void))
-  (param-value-size-ret (:pointer size-t)))
 
 (defclfun ("clEnqueueNDRangeKernel" enqueue-nd-range-kernel) error-code
   (command-queue command-queue)
@@ -201,9 +204,6 @@
   (num-events-in-wait-list uint)
   (event-wait-list (:pointer event))
   (event (:pointer event)))
-
-(defclfun ("clRetainCommandQueue" retain-command-queue) error-code
-  (command-queue command-queue))
 
 (defclfun ("clEnqueueWaitForEvents" enqueue-wait-for-events) error-code
   (command-queue command-queue)
@@ -219,11 +219,9 @@
   (mem-list (:pointer mem))
   (args-mem-loc (:pointer (:pointer :void)))
   (num-events-in-wait-list uint)
-  (event-wait-list :pointer)
-  (event (:pointer event)));;; mem
+  (event-wait-list :pointer)            ;FIXME : spec suggests (:pointer event) ...
+  (event (:pointer event)))
 
-(defclfun ("clRetainMemObject" retain-mem-object) error-code
-  (memobj mem))
 
 ;;; sampler
 
@@ -249,6 +247,9 @@
 
 ;;; mem
 
+
+(defclfun ("clRetainMemObject" retain-mem-object) error-code
+  (memobj mem))
 (defclfun ("clReleaseMemObject" release-mem-object) error-code
   (memobj mem))
 (defclfun ("clGetMemObjectInfo" get-mem-object-info) error-code
