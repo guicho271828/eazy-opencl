@@ -25,6 +25,7 @@ CONTINUE will ignore the error, then return the result."
              (new-name (intern name)))
          (with-gensyms (result)
            `(progn
+              (export ',new-name)
               (declaim (inline ,new-name))
               (defun ,new-name ,new-args
                 (declare (inline ,lname))
@@ -40,10 +41,12 @@ CONTINUE will ignore the error, then return the result."
                            (continue () (return-from ,new-name ,result)))))
               (declaim (notinline ,new-name))))))
       ((list* _ (list _ (and lname (symbol name))) _ args)
-       (let ((new-args (mapcar (compose #'car #'ensure-list) args)))
+       (let ((new-args (mapcar (compose #'car #'ensure-list) args))
+             (new-name (intern name)))
          `(progn
+            (export ',new-name)
             (declaim (inline ,new-name))
-            (defun ,(intern name) ,new-args
+            (defun ,new-name ,new-args
               (declare (inline ,lname))
               (,lname ,@new-args))
             (declaim (notinline ,new-name))))))))
