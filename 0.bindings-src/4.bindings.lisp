@@ -234,7 +234,7 @@
   (num-devices uint)
   (device-list (:pointer device-id))
   (lengths (:pointer size-t))
-  (binaries (:pointer (:pointer uint8-t)))
+  (binaries (:pointer (:pointer :unsigned-char)))
   (binary-status (:pointer int))
   (errcode-ret (:pointer error-code)))
 
