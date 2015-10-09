@@ -64,6 +64,8 @@
 (ctype #.(lispify "kernel_arg_access_qualifier") "cl_kernel_arg_access_qualifier")
 (ctype #.(lispify "kernel_arg_type_qualifier") "cl_kernel_arg_type_qualifier")
 (ctype #.(lispify "kernel_work_group_info") "cl_kernel_work_group_info")
+#+opencl-2.1
+(ctype #.(lispify "kernel_sub_group_info") "cl_kernel_sub_group_info")
 (ctype #.(lispify "event_info") "cl_event_info")
 (ctype #.(lispify "command_type") "cl_command_type")
 (ctype #.(lispify "profiling_info") "cl_profiling_info")
@@ -548,7 +550,17 @@
               (#.(lispify-k-pair "CL_KERNEL_LOCAL_MEM_SIZE"))
               (#.(lispify-k-pair "CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE"))
               (#.(lispify-k-pair "CL_KERNEL_PRIVATE_MEM_SIZE"))
-              (#.(lispify-k-pair "CL_KERNEL_GLOBAL_WORK_SIZE")))
+              (#.(lispify-k-pair "CL_KERNEL_GLOBAL_WORK_SIZE"))
+              #+opencl-2.1
+              (#.(lispify-k-pair "CL_KERNEL_MAX_NUM_SUB_GROUPS"))
+              #+opencl-2.1
+              (#.(lispify-k-pair "CL_KERNEL_COMPILE_NUM_SUB_GROUPS")))
+
+#+opencl-2.1
+(constantenum #.(lispify "kernel_sub_group_info")
+              (#.(lispify-k-pair "CL_KERNEL_MAX_SUB_GROUP_SIZE_FOR_NDRANGE"))
+              (#.(lispify-k-pair "CL_KERNEL_SUB_GROUP_COUNT_FOR_NDRANGE"))
+              (#.(lispify-k-pair "CL_GET_LOCAL_SIZE_FOR_SUB_GROUP_COUNT")))
 
 (constantenum #.(lispify "kernel_exec_info")
               (#.(lispify-k-pair "CL_KERNEL_EXEC_INFO_SVM_PTRS"))

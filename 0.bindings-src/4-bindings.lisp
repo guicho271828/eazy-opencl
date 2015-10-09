@@ -101,6 +101,17 @@
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
 
+#+opencl-2.1
+(defclfun ("clGetKernelSubGroupInfo" get-kernel-sub-group-info) error-code
+  (kernel kernel)
+  (device device-id)
+  (param-name kernel-sub-group-info)
+  (input-value-size size-t)
+  (input-value (:pointer :void))
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+
 ;;; program
 (defclfun ("clCreateProgramWithSource" create-program-with-source) program
   (context context)
@@ -124,6 +135,14 @@
   (device-list (:pointer device-id))
   (kernel-names :string)
   (errcode-ret (:pointer error-code)))
+
+#+opencl-2.1
+(defclfun ("clCreateProgramWithIL" create-program-with-IL) program
+  (context context)
+  (il (:pointer :void))
+  (lengths (:pointer size-t))
+  (errcode-ret (:pointer error-code)))
+
 
 (defclfun ("clRetainProgram" retain-program) error-code
   (program program))
@@ -410,3 +429,13 @@
 ;; #-opencl-1.2
 (defclfun ("clUnloadCompiler" unload-compiler) error-code)
 
+#+opencl-2.1
+(defclfun ("clGetHostTimer" get-host-timer) error-code
+  (device device-id)
+  (host-timestamp (:pointer ulong)))
+
+#+opencl-2.1
+(defclfun ("clGetDeviceAndHostTimer" get-device-and-host-timer) error-code
+  (device device-id)
+  (device-timestamp (:pointer ulong))
+  (host-timestamp (:pointer ulong)))
