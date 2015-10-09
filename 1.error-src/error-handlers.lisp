@@ -11,9 +11,20 @@
                 (format s "OpenCL error ~s from ~s" code form))))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun wrap-opencl-function (opencl-function-info)
+  (defun wrap-api (function-info)
     "Return a defun form which wraps the original function, inlining the given cffi function."
-    (match opencl-function-info
+    (match function-info
+      ((list* _ _ _ args)
+       (if (equal '(:pointer error-code) (second (lastcar args)))
+           (wrap-api-taking-error-ptr function-info)
+           (trivia.skip:skip)))
+      ((list* _ _ 'error-code _)
+       (wrap-api-returning-error function-info))
+      (_
+       (wrap-api-normal function-info))))
+  
+  (defun wrap-api-normal (function-info &optional (wrapper #'identity))
+    (match function-info
       ((list* _ (list _ (and lname (symbol name))) _ args)
        (let ((new-args (mapcar (compose #'car #'ensure-list) args))
              (new-name (intern name)))
@@ -22,45 +33,71 @@
             (declaim (inline ,new-name))
             (defun ,new-name ,new-args
               (declare (inline ,lname))
-              ,(wrap-opencl-error-handler
-                opencl-function-info
-                `(,lname ,@new-args)))
+              ,(funcall wrapper `(,lname ,@new-args)))
             (declaim (notinline ,new-name)))))))
-
-  (defun wrap-opencl-error-handler (opencl-function-info form)
-    "Return a defun form which wraps the original function when its return
+  
+  (defun wrap-api-returning-error (function-info)
+    "Wraps a form when its return
 type is a EAZY-OPENCL.BINDING:ERROR-CODE. The code signals an error when
 the result is not a :SUCCESS. The error is signalled under the environment
 where :RETRY and CL:CONTINUE restart is in effect.
 
 :RETRY will rerun the call to the underlying cffi function.
 CONTINUE will ignore the error, then return the result."
-    (match opencl-function-info
-      ((list* _ (list _ (and lname (symbol name))) 'error-code args)
-       (let ((new-args (mapcar (compose #'car #'ensure-list) args))
-             (new-name (intern name)))
-         (with-gensyms (result)
-           `(tagbody :start
-                     (restart-case
-                         (let ((,result ,form))
-                           (unless (eq ,result :success)
-                             (error 'opencl-error
-                                    :code ,result
-                                    :form (list ,new-name ,@new-args))))
-                       (:retry () (go :start))
-                       (continue () (return-from ,new-name ,result)))))))
-      (_ form)))
+    (with-gensyms (result)
+      (wrap-api-normal
+       function-info
+       (lambda (form)
+         `(block nil
+            (tagbody
+              :start
+              (restart-case
+                  (let ((,result (foreign-enum-keyword 'error-code ,form)))
+                    (unless (eq ,result :success)
+                      (error 'opencl-error
+                             :code ,result
+                             :form ',form)))
+                (:retry () (go :start))
+                (continue () (return ,result)))))))))
 
-  ;; this should be implemented much later... when functional style is finished
-  ;; (defun wrap-resource-manager (opencl-function-info form)
-  ;;   (match opencl-function-info
-  ;;     ((list* _ (list _ 'create-context) _ args)
-  ;;             ))
-  ;;     (_ form))
-  )
+  (defun wrap-api-taking-error-ptr (function-info)
+    "Wraps a form when it takes a dynamic pointer to
+EAZY-OPENCL.BINDING:ERROR-CODE in its argument.
+The code signals an error when the result is not a :SUCCESS. The error is
+signalled under the environment where :RETRY and CL:CONTINUE restart is
+in effect.
 
-(defmacro wrap-opencl-functions ()
-  `(progn ,@(mapcar #'wrap-opencl-function *defined-opencl-functions*)))
+:RETRY will rerun the call to the underlying cffi function.
+CONTINUE will ignore the error, then return the result."
+    (with-gensyms (result e e-keyword)
+      (wrap-api-normal
+       (butlast function-info)
+       (lambda (form)
+         `(block nil
+            (tagbody
+              :start
+              (restart-case
+                  (with-foreign-object (,e 'error-code)
+                    (let* ((,result (,@form ,e))
+                           (,e-keyword (foreign-enum-keyword 'error-code ,e)))
+                      (if (eq ,e-keyword :success)
+                          ,result
+                          (error 'opencl-error
+                                 :code ,e-keyword
+                                 :form ',form))))
+                (:retry () (go :start))
+                (continue () (return ,result))))))))))
 
-(wrap-opencl-functions)
+;; this should be implemented much later... when functional style is finished
+;; (defun wrap-resource-manager (function-info form)
+;;   (match function-info
+;;     ((list* _ (list _ 'create-context) _ args)
+;;             ))
+;;     (_ form))
+
+
+(defmacro wrap-apis ()
+  `(progn ,@(mapcar #'wrap-api *defined-opencl-functions*)))
+
+(wrap-apis)
 

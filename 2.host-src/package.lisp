@@ -6,3 +6,9 @@
 (in-package :cl-user)
 (defpackage eazy-opencl.host
   (:use :cl :alexandria :trivia :eazy-opencl.error :trivial-garbage))
+(in-package :eazy-opencl.host)
+
+;; convert the imperative C apis -> functional apis
+
+
+

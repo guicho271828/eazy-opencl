@@ -5,7 +5,7 @@
 
 (in-package :cl-user)
 (defpackage eazy-opencl.error
-  (:use :cl :alexandria :trivia)
+  (:use :cl :alexandria :trivia :cffi)
   (:import-from :eazy-opencl.bindings
                 #:error-code
                 #:*defined-opencl-functions*)

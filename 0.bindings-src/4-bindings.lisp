@@ -31,6 +31,7 @@
   (pfn-notify :pointer) ;; fixme: full type?
   (user-data (:pointer :void))
   (errcode-ret (:pointer error-code)))
+
 (defclfun ("clCreateContextFromType" create-context-from-type) context
   (properties (:pointer context-properties))
   (device-type device-type)
