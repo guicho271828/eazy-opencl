@@ -30,5 +30,6 @@
                :eazy-opencl.bindings)
   :components ((:module "1.host-src"
                 :components
-                ((:file "package"))))
+                ((:file "package")
+                 (:file "error-handlers"))))
   :description "Opencl Binding for Common Lisp: User API")
