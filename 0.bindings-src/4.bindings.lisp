@@ -238,6 +238,13 @@
   (binary-status (:pointer int))
   (errcode-ret (:pointer error-code)))
 
+(defclfun ("clCreateProgramWithBuiltInKernels" create-program-with-builtin-kernels) program
+  (context context)
+  (num-devices uint)
+  (device-list (:pointer device-id))
+  (kernel-names :string)
+  (errcode-ret (:pointer error-code)))
+
 (defclfun ("clRetainProgram" retain-program) error-code
   (program program))
 
