@@ -22,7 +22,6 @@
   :author "Masataro Asai"
   :mailto "guicho2.71828@gmail.com"
   :license "LLGPL"
-  :depends-on ()
-  :components ()
+  :depends-on (:eazy-opencl.host)
   :description "Opencl Binding for Common Lisp"
   :in-order-to ((test-op (test-op :eazy-opencl.test))))

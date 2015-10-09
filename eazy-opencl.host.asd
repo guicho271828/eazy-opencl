@@ -22,14 +22,12 @@
   :author "Masataro Asai"
   :mailto "guicho2.71828@gmail.com"
   :license "LLGPL"
-  :depends-on (:iterate
-               :alexandria
+  :depends-on (:alexandria
                :trivia
                :trivial-garbage
                :lisp-namespace
-               :eazy-opencl.bindings)
-  :components ((:module "1.host-src"
+               :eazy-opencl.error)
+  :components ((:module "2.host-src"
                 :components
-                ((:file "package")
-                 (:file "error-handlers"))))
+                ((:file "package"))))
   :description "Opencl Binding for Common Lisp: User API")
