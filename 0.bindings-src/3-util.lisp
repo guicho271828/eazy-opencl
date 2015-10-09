@@ -1,5 +1,6 @@
 (cl:in-package #:eazy-opencl.bindings)
 
+;; deprecated in opencl1.2?
 (cffi:defcfun ("clGetExtensionFunctionAddress" get-extension-function-address)
     (:pointer :void)
   (function-name :string))

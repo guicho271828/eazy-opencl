@@ -75,6 +75,7 @@
   (arg-index uint)
   (arg-size size-t)
   (arg-value (:pointer :void)))
+
 (defclfun ("clGetKernelInfo" get-kernel-info) error-code
   (kernel-name kernel)
   (param-name kernel-info)
@@ -87,6 +88,15 @@
   (kernel kernel)
   (device device-id)
   (param-name kernel-work-group-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+
+#+opencl-1.2
+(defclfun ("clGetKernelArgInfo" get-kernel-arg-info) error-code
+  (kernel-name kernel)
+  (arg-index uint)
+  (param-name kernel-arg-info)
   (param-value-size size-t)
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
@@ -145,6 +155,7 @@
   (param-value-size-ret (:pointer size-t)))
 ;;; queue
 
+#-opencl-2.0
 (defclfun ("clCreateCommandQueue" create-command-queue) command-queue
   (context context)
   (device device-id)
@@ -172,13 +183,16 @@
   (enable bool)
   (old-properties (:pointer command-queue-properties)))
 
+#-opencl-1.2
 (defclfun ("clEnqueueMarker" enqueue-marker) error-code
   (command-queue command-queue)
   (event (:pointer event)))
 
+#-opencl-1.2
 (defclfun ("clEnqueueBarrier" enqueue-barrier) error-code
   (command-queue command-queue))
 
+#-opencl-2.0
 (defclfun ("clEnqueueTask" enqueue-task) error-code
   (command-queue command-queue)
   (kernel kernel)
@@ -205,6 +219,7 @@
   (event-wait-list (:pointer event))
   (event (:pointer event)))
 
+#-opencl-1.2
 (defclfun ("clEnqueueWaitForEvents" enqueue-wait-for-events) error-code
   (command-queue command-queue)
   (num-events uint)
@@ -222,9 +237,56 @@
   (event-wait-list :pointer)            ;FIXME : spec suggests (:pointer event) ...
   (event (:pointer event)))
 
+#+opencl-1.2
+(defclfun ("clEnqueueFillBuffer" enqueue-fill-buffer) error-code
+  (command-queue command-queue)
+  (buffer mem)
+  (pattern (:pointer :void))
+  (pattern-size size-t)
+  (offset size-t)
+  (size size-t)
+  (num-events-in-wait-list uint)
+  (event-wait-list :pointer)
+  (event (:pointer event)))
+
+#+opencl-1.2
+(defclfun ("clEnqueueFillImage" enqueue-fill-image) error-code
+  (command-queue command-queue)
+  (image mem)
+  (fill-color (:pointer :void))
+  (origin (:pointer size-t))
+  (region (:pointer size-t))
+  (num-events-in-wait-list uint)
+  (event-wait-list :pointer)
+  (event (:pointer event)))
+
+#+opencl-1.2
+(defclfun ("clEnqueueMigrateMemObjects" enqueue-migrate-mem-objects) error-code
+  (command-queue command-queue)
+  (num-mem-objects uint)
+  (mem-objects (:pointer mem))
+  (flags mem-migration-flags)
+  (num-events-in-wait-list uint)
+  (event-wait-list :pointer)
+  (event (:pointer event)))
+
+#+opencl-1.2
+(defclfun ("clEnqueueMarkerWithWaitList" enqueue-marker-with-wait-list) error-code
+  (command-queue command-queue)
+  (num-events-in-wait-list uint)
+  (event-wait-list :pointer)
+  (event (:pointer event)))
+
+#+opencl-1.2
+(defclfun ("clEnqueueBarrierWithWaitList" enqueue-barrier-with-wait-list) error-code
+  (command-queue command-queue)
+  (num-events-in-wait-list uint)
+  (event-wait-list :pointer)
+  (event (:pointer event)))
 
 ;;; sampler
 
+#-opencl-2.0
 (defclfun ("clCreateSampler" create-sampler) sampler
   (context context)
   (normalized-coords bool)
@@ -345,5 +407,6 @@
 (defclfun ("clFinish" finish) error-code
   (command-queue command-queue))
 
+#-opencl-1.2
 (defclfun ("clUnloadCompiler" unload-compiler) error-code)
 

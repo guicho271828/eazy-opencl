@@ -15,6 +15,7 @@
   (bufobj gl-uint)
   (errcode-ret (:pointer cl-error-codes)))
 
+#-opencl-1.2
 (defclfun ("clCreateFromGLTexture2D" create-from-gl-texture-2d) mem
   (context context)
   (flags mem-flags)
@@ -23,7 +24,7 @@
   (texture gl-uint)
   (errcode-ret (:pointer cl-error-codes)))
 
-;; 1.0
+#-opencl-1.2
 (defclfun ("clCreateFromGLTexture3D" create-from-gl-texture-3d) mem
   (context context)
   (flags mem-flags)

@@ -7,8 +7,16 @@
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
 
+#+opencl-1.2
+(defclfun ("clCreateImage" create-image) mem
+  (context context)
+  (flags mem-flags)
+  (image-format (:pointer image-format))
+  (image-desc  (:pointer image-desc))
+  (host-ptr (:pointer :void))
+  (errcode-ret (:pointer error-code)))
 
-#+(or opencl-1.0 opencl-1.1)
+#-opencl-1.2
 (defclfun ("clCreateImage2D" create-image-2d) mem
   (context context)
   (flags mem-flags)
@@ -19,7 +27,7 @@
   (host-ptr (:pointer :void))
   (errcode-ret (:pointer error-code)))
 
-#+(or opencl-1.0 opencl-1.1)
+#-opencl-1.2
 (defclfun ("clCreateImage3D" create-image-3d) mem
   (context context)
   (flags mem-flags)

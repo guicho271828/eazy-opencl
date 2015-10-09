@@ -185,6 +185,7 @@
               ((#.(lispify-k "DEVICE_MAX_PARAMETER_SIZE") "CL_DEVICE_MAX_PARAMETER_SIZE"))
               ((#.(lispify-k "DEVICE_MAX_SAMPLERS") "CL_DEVICE_MAX_SAMPLERS"))
               ((#.(lispify-k "DEVICE_MEM_BASE_ADDR_ALIGN") "CL_DEVICE_MEM_BASE_ADDR_ALIGN"))
+              #-opencl-1.2
               ((#.(lispify-k "DEVICE_MIN_DATA_TYPE_ALIGN_SIZE") "CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE"))
               ((#.(lispify-k "DEVICE_SINGLE_FP_CONFIG") "CL_DEVICE_SINGLE_FP_CONFIG"))
               ((#.(lispify-k "DEVICE_GLOBAL_MEM_CACHE_TYPE") "CL_DEVICE_GLOBAL_MEM_CACHE_TYPE"))
@@ -201,7 +202,10 @@
               ((#.(lispify-k "DEVICE_AVAILABLE") "CL_DEVICE_AVAILABLE"))
               ((#.(lispify-k "DEVICE_COMPILER_AVAILABLE") "CL_DEVICE_COMPILER_AVAILABLE"))
               ((#.(lispify-k "DEVICE_EXECUTION_CAPABILITIES") "CL_DEVICE_EXECUTION_CAPABILITIES"))
+              #-opencl-2.0
               ((#.(lispify-k "DEVICE_QUEUE_PROPERTIES") "CL_DEVICE_QUEUE_PROPERTIES"))
+              ;; in opencl-2.0, CL_DEVICE_QUEUE_PROPERTIES is replaced by CL_DEVICE_QUEUE_ON_HOST_PROPERTIES
+              #+opencl-2.0
               ((#.(lispify-k "DEVICE_QUEUE_ON_HOST_PROPERTIES") "CL_DEVICE_QUEUE_ON_HOST_PROPERTIES"))
               ((#.(lispify-k "DEVICE_NAME") "CL_DEVICE_NAME"))
               ((#.(lispify-k "DEVICE_VENDOR") "CL_DEVICE_VENDOR"))
@@ -213,7 +217,7 @@
               ((#.(lispify-k "DEVICE_DOUBLE_FP_CONFIG") "CL_DEVICE_DOUBLE_FP_CONFIG"))
               ;; 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG
               ((#.(lispify-k "DEVICE_PREFERRED_VECTOR_WIDTH_HALF") "CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF"))
-              #+opencl-1.1
+              #+(and opencl-1.1 (not opencl-2.0))
               ((#.(lispify-k "DEVICE_HOST_UNIFIED_MEMORY") "CL_DEVICE_HOST_UNIFIED_MEMORY"))
               #+opencl-1.1
               ((#.(lispify-k "DEVICE_NATIVE_VECTOR_WIDTH_CHAR") "CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR"))
@@ -437,6 +441,7 @@
               ((#.(lispify-k "IMAGE_HEIGHT") "CL_IMAGE_HEIGHT"))
               ((#.(lispify-k "IMAGE_DEPTH") "CL_IMAGE_DEPTH"))
               ((#.(lispify-k "IMAGE_ARRAY_SIZE") "CL_IMAGE_ARRAY_SIZE"))
+              #-opencl-2.0
               ((#.(lispify-k "IMAGE_BUFFER") "CL_IMAGE_BUFFER"))
               ((#.(lispify-k "IMAGE_NUM_MIP_LEVELS") "CL_IMAGE_NUM_MIP_LEVELS"))
               ((#.(lispify-k "IMAGE_NUM_SAMPLES") "CL_IMAGE_NUM_SAMPLES")))
@@ -469,6 +474,7 @@
 (bitfield #.(lispify "map_flags")
           ((#.(lispify-k "MAP_READ") "CL_MAP_READ"))
           ((#.(lispify-k "MAP_WRITE") "CL_MAP_WRITE"))
+          #+opencl-1.2
           ((#.(lispify-k "MAP_WRITE_INVALIDATE_REGION") "CL_MAP_WRITE_INVALIDATE_REGION")))
 
 (constantenum #.(lispify "program_info")
