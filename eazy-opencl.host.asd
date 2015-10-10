@@ -22,7 +22,8 @@
   :author "Masataro Asai"
   :mailto "guicho2.71828@gmail.com"
   :license "LLGPL"
-  :depends-on (:alexandria
+  :depends-on (:iterate
+               :alexandria
                :trivia
                :trivial-garbage
                :lisp-namespace
