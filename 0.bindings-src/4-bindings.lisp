@@ -61,7 +61,7 @@
 
 (defclfun ("clCreateKernelsInProgram" create-kernels-in-program) error-code
   (program program)
-  (num_kernels uint)
+  (num-kernels uint)
   (kernels (:pointer kernel))
   (num-kernels-ret (:pointer uint)))
 

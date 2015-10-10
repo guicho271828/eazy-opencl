@@ -100,3 +100,8 @@ binging: (variable value-form finalizer-form*)
 (define-finalized-api user-event (context)
   :releaser release-event)
 
+;; TODO: array of kernels
+#+nil
+(define-finalized-api kernels-in-program (program num-kernels kernels num-kernels-ret)
+  :releaser release-kernel)
+
