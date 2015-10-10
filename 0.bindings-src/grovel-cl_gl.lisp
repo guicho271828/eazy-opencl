@@ -37,3 +37,21 @@
 (defcenum (gl-texture-info uint)
   (:texture-target #x2004)
   (:mipmap-level   #x2005))
+
+;; clCreateContext, clCreateContextFromType, and clGetGLContextInfoKHR
+;; CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR
+;; -1000
+;; 
+;; clGetGLContextInfoKHR
+;; CL_CURRENT_DEVICE_FOR_GL_CONTEXT_KHR
+;;  0x2006
+;; CL_DEVICES_FOR_GL_CONTEXT_KHR
+;;  0x2007
+
+;; clCreateContext and clCreateContextFromTypeCL_GL_CONTEXT_KHR
+;; CL_EGL_DISPLAY_KHR
+;; CL_GLX_DISPLAY_KHR
+;; CL_WGL_HDC_KHR
+;; CL_CGL_SHAREGROUP_KHR
+
+;; clCreateEventFromGLsyncKHR

@@ -705,3 +705,51 @@
   (device device-id)
   (device-timestamp (:pointer ulong))
   (host-timestamp (:pointer ulong)))
+
+
+;;; extensions
+
+;;;; GL
+
+;; clCreateEventFromEGLSyncKHR
+;; clCreateEventFromGLsyncKHR
+;; clCreateFromEGLImageKHR
+;; clCreateFromGLBuffer
+;; clCreateFromGLRenderbuffer
+;; clCreateFromGLTexture
+;; clEnqueueAcquireEGLObjectsKHR
+;; clEnqueueAcquireGLObjects
+;; clEnqueueReleaseEGLObjectsKHR
+;; clEnqueueReleaseGLObjects
+;; clGetGLObjectInfo
+;; clGetGLTextureInfo
+
+;;;; DX11, D3D
+
+;; clCreateFromDX9MediaSurfaceKHR
+;; clCreateFromD3D10BufferKHR
+;; clCreateFromD3D10Texture2DKHR
+;; clCreateFromD3D10Texture3DKHR
+;; clCreateFromD3D11BufferKHR
+;; clCreateFromD3D11Texture2DKHR
+;; clCreateFromD3D11Texture3DKHR
+
+;; clEnqueueAcquireDX9MediaSurfacesKHR
+;; clEnqueueAcquireD3D10ObjectsKHR
+;; clEnqueueAcquireD3D11ObjectsKHR
+
+;; clEnqueueReleaseDX9MediaSurfacesKHR
+;; clEnqueueReleaseD3D10ObjectsKHR
+;; clEnqueueReleaseD3D11ObjectsKHR
+
+;; clGetDeviceIDsFromD3D10KHR
+;; clGetDeviceIDsFromD3D11KHR
+;; clGetDeviceIDsFromDX9MediaAdapterKHR
+
+;;;; others
+
+;; clGetExtensionFunctionAddressForPlatform
+;; clGetKernelInfo
+;; clGetKernelSubGroupInfoKHR
+;; clIcdGetPlatformIDsKHR
+;; clTerminateContextKHR
