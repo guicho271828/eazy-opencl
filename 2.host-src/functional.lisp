@@ -21,90 +21,116 @@ Largely forked from cl-opencl-3b.
   (with-gensyms (count-temp foreign-value fsize s param)
     `(defun ,name (,@args)
        (ecase ,param
-         ,@(loop
-             for form in body
-             for (pname type count-param flag) = form
-             for base-type = (if (eq flag :plist)
-                                 ;; fixme: any exported way to do this?
-                                 (cffi::canonicalize-foreign-type type)
-                                 type)
-             when (and type count-param)
-               collect `(,pname
-                          (let ((,count-temp ,(if (numberp count-param)
-                                                  count-param
-                                                  `(,name ,@(butlast args 1) ,count-param))))
-                            (with-foreign-object (,foreign-value ',base-type ,count-temp)
-                              (check-return
-                               (,fun ,@args
-                                     (* ,(foreign-type-size type)
-                                        ,count-temp)
-                                     ,foreign-value
-                                     (cffi:null-pointer)))
-                              (loop for i below ,count-temp
-                                    for v = (mem-aref ,foreign-value ',type i)
-                                    ,@ (when (eq flag :plist)
-                                         `(for prop = t then (not prop)
-                                               when (and prop (not (zerop v)))
-                                               collect (foreign-enum-keyword ',type v)
-                                               else))
-                                    collect v))))
-             ;; using NIL to indicate params that return an array of
-             ;; unknown length, detecting it this way is a bit ugly,
-             ;; possibly should just move all the ELSE/COLLECT into
-             ;; COLLECT (destructuring-bind ... (cond ...)) so we can check
-             ;; for presence of 3rd arg directly?
-             else if (and (> (length form) 2)
-                          (eq (third form) nil))
-                    collect `(,pname
-                               (with-foreign-object (,fsize '%cl::uint)
-                                 (check-return (,fun ,@args
-                                                     0 (cffi::null-pointer)
-                                                     ,fsize))
-                                 (let ((,count-temp (floor (mem-aref ,fsize '%cl::uint)
-                                                           ,(foreign-type-size type))))
-                                   (with-foreign-object (,foreign-value ',base-type ,count-temp)
-                                     (check-return
-                                      (,fun ,@args
-                                            (* ,(foreign-type-size type)
-                                               ,count-temp)
-                                            ,foreign-value
-                                            (cffi:null-pointer)))
-                                     (loop for i below ,count-temp
-                                           for v = (mem-aref ,foreign-value ',base-type i)
-                                           ,@ (when (eq flag :plist)
-                                                `(for prop = t then (not prop)
-                                                      when (and prop (not (zerop v)))
-                                                      collect (foreign-enum-keyword ',type v)
-                                                      else))
-                                           collect v)))))
-             ;; special case for remaining exceptions, just embed some
-             ;; code directly...
-             else if (> (length form) 2)
-                    collect `(,pname ,(third form))
-             ;; strings could (should?) probably be implemented in terms of the
-             ;; unknown-length array stuff...
-             else if (eq type :string)
-                    collect `(,pname
-                               (with-foreign-object (,fsize '%cl::uint)
-                                 (check-return (,fun ,@args
-                                                     0 (cffi::null-pointer)
-                                                     ,fsize))
-                                 (let ((,count-temp (mem-aref  ,fsize'%cl::uint)))
-                                   (with-foreign-object (,s :uchar (1+ ,count-temp))
-                                     (check-return (,fun ,@args (1+ ,count-temp)
-                                                         ,s
-                                                         (cffi::null-pointer)))
-                                     (foreign-string-to-lisp ,s)))))
-             else
-               collect `(,pname
-                          (with-foreign-object (,foreign-value ',type)
-                            (check-return
-                             (,fun ,@args
-                                   ,(foreign-type-size type)
-                                   ,foreign-value
-                                   (cffi:null-pointer)))
-                            (mem-aref ,foreign-value ',type)))))))
+         ,@(mapcar (curry #'info-getter-case-form args fun) body)))))
 
+(defun info-getter-case-form (args fun form)
+  (ematch form
+    ((list* pname _ _ _)
+     `(,pname ,(%normal-case args fun form)))
+    ;;
+    ;; using NIL to indicate params that return an array of
+    ;; unknown length, detecting it this way is a bit ugly,
+    ;; possibly should just move all the ELSE/COLLECT into
+    ;; COLLECT (destructuring-bind ... (cond ...)) so we can check
+    ;; for presence of 3rd arg directly?
+    ((list* pname _ nil _)
+     `(,pname ,(%array-unknown-length args fun form)))
+    ;;
+    ;; special case for remaining exceptions, just embed some
+    ;; code directly...
+    ((list* pname _ code _)
+     `(,pname ,code))
+    ;; strings could (should?) probably be implemented in terms of the
+    ;; unknown-length array stuff...
+    ((list pname :string)
+     `(,pname ,(%string-case args fun)))
+    ((list pname _)
+     `(,pname ,(%simple-case args fun form)))))
+
+(defun %base-type (form)
+  (destructuring-bind (&optional pname type count-param flag) form
+    (declare (ignorable count-param pname))
+    (if (eq flag :plist)
+        ;; fixme: any exported way to do this?
+        (cffi::canonicalize-foreign-type type)
+        type)))
+
+(defun %normal-case (args fun form)
+  (let ((base-type (%base-type form)))
+    (with-gensyms (foreign-value count-temp)
+      (match form
+        ((list _ type count-param flag)
+         `(let ((,count-temp ,(if (numberp count-param)
+                                  count-param
+                                  `(,name ,@(butlast args 1) ,count-param))))
+            (with-foreign-object (,foreign-value ',base-type ,count-temp)
+              (check-return
+               (,fun ,@args
+                     (* ,(foreign-type-size type) ,count-temp)
+                     ,foreign-value
+                     (cffi:null-pointer)))
+              (loop for i below ,count-temp
+                    for v = (mem-aref ,foreign-value ',type i)
+                    ,@(when (eq flag :plist)
+                        `(for prop = t then (not prop)
+                              when (and prop (not (zerop v)))
+                              collect (foreign-enum-keyword ',type v)
+                              else))
+                    collect v))))))))
+
+(defun %array-unknown-length (args fun form)
+  (let ((base-type (%base-type form)))
+    (with-gensyms (foreign-value count-temp fsize)
+      (match form
+        ((list _ type nil flag)
+         `(with-foreign-object (,fsize '%cl::uint)
+            (check-return (,fun ,@args
+                                0 (cffi::null-pointer)
+                                ,fsize))
+            (let ((,count-temp (floor (mem-aref ,fsize '%cl::uint)
+                                      ,(foreign-type-size type))))
+              (with-foreign-object (,foreign-value ',base-type ,count-temp)
+                (check-return
+                 (,fun ,@args
+                       (* ,(foreign-type-size type)
+                          ,count-temp)
+                       ,foreign-value
+                       (cffi:null-pointer)))
+                (loop for i below ,count-temp
+                      for v = (mem-aref ,foreign-value ',base-type i)
+                      ,@ (when (eq flag :plist)
+                           `(for prop = t then (not prop)
+                                 when (and prop (not (zerop v)))
+                                 collect (foreign-enum-keyword ',type v)
+                                 else))
+                      collect v)))))))))
+
+(defun %string-case (args fun)
+  (with-gensyms (count-temp fsize s)
+    `(with-foreign-object (,fsize '%cl::uint)
+       (check-return (,fun ,@args
+                           0 (cffi::null-pointer)
+                           ,fsize))
+       (let ((,count-temp (mem-aref  ,fsize'%cl::uint)))
+         (with-foreign-object (,s :uchar (1+ ,count-temp))
+           (check-return (,fun ,@args (1+ ,count-temp)
+                               ,s
+                               (cffi::null-pointer)))
+           (foreign-string-to-lisp ,s))))))
+
+(defun %simple-case (args fun form)
+  (with-gensyms (foreign-value)
+    (match form
+      ((list _ type)
+       `(with-foreign-object (,foreign-value ',type)
+          (check-return
+           (,fun ,@args
+                 ,(foreign-type-size type)
+                 ,foreign-value
+                 (cffi:null-pointer)))
+          (mem-aref ,foreign-value ',type))))))
+
+;;; info-getter definitions
 
 (define-info-getter get-device-info (device-id param) %cl:get-device-info
   (:type %cl:device-type)
