@@ -32,6 +32,7 @@
                 :components
                 ((:file "package")
                  (:file "resource")
-                 (:file "functional"))
+                 (:file "functional")
+                 (:file "functional-definitions"))
                 :serial t))
   :description "Opencl Binding for Common Lisp: User API")
