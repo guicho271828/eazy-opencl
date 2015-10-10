@@ -4,20 +4,20 @@ Copyright (c) 2015 Masataro Asai (guicho2.71828@gmail.com)
 
 Design:
 
-* Convert the imperative C apis -> functional apis.
-
-Error handling is already achieved by the previous layer.
-What we do now is to convert to/from foreign type,
-or to handle the apis which sets the result to the given pointer and
-returns an error code.
-
-* Garbage collection policy
+* Garbage collection policy (resource.lisp)
 
 We do not use RETAIN interface, and instead use the garbage collector of
 the host lisp. If the object is unreachable from the memory space of the
 host lisp, then it RELEASE the object once, decrementing the reference
 count. (There might be more references from the opencl
-implementation itself.) This is realized through trivial-garbage:finalize.
+implementation itself, in which case the object is not freed immediately.)
+This is realized through trivial-garbage:finalize.
+
+* Convert the imperative C apis -> functional apis. (functional.lisp)
+
+Error handling is already achieved by the previous layer.
+What we do now is to convert to/from foreign type,
+or to handle the apis which sets the result to the given pointer.
 
 * Class Wrapper?
 
