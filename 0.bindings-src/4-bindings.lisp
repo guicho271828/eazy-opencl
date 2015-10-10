@@ -1,28 +1,33 @@
-;;;; based on files with following copyright:
-;;;;
-;;;; * Copyright (c) 2008-2009 The Khronos Group Inc.
-;;;; *
-;;;; * Permission is hereby granted, free of charge, to any person obtaining a
-;;;; * copy of this software and/or associated documentation files (the
-;;;; * "Materials"), to deal in the Materials without restriction, including
-;;;; * without limitation the rights to use, copy, modify, merge, publish,
-;;;; * distribute, sublicense, and/or sell copies of the Materials, and to
-;;;; * permit persons to whom the Materials are furnished to do so, subject to
-;;;; * the following conditions:
-;;;; *
-;;;; * The above copyright notice and this permission notice shall be included
-;;;; * in all copies or substantial portions of the Materials.
-;;;; *
-;;;; * THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-;;;; * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-;;;; * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-;;;; * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-;;;; * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-;;;; * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-;;;; * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
-
 (cl:in-package #:eazy-opencl.bindings)
 ;;; Ordered in create-release-retain-get/set-info order
+;;; platform
+(defclfun ("clGetPlatformIDs" get-platform-ids) error-code
+  (num-entries uint)
+  (platforms (:pointer platform-id))
+  (num-platforms (:pointer uint)))
+
+(defclfun ("clGetPlatformInfo" get-platform-info) error-code
+  (platform platform-id)
+  (param-name platform-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+
+;;; device
+(defclfun ("clGetDeviceIDs" get-device-ids) error-code
+  (platform platform-id)
+  (device-type device-type)
+  (num-entries uint)
+  (devices (:pointer device-id))
+  (num-devices (:pointer uint)))
+
+(defclfun ("clGetDeviceInfo" get-device-info) error-code
+  (device device-id)
+  (param-name device-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+
 ;;; context
 (defclfun ("clCreateContext" create-context) context
   (properties (:pointer context-properties))
@@ -53,148 +58,6 @@
   (param-value-size-ret (:pointer size-t)));;; program
 
 
-;;; kernel
-(defclfun ("clCreateKernel" create-kernel) kernel
-  (program program)
-  (kernel-name :string)
-  (errcode-ret (:pointer error-code)))
-
-(defclfun ("clCreateKernelsInProgram" create-kernels-in-program) error-code
-  (program program)
-  (num-kernels uint)
-  (kernels (:pointer kernel))
-  (num-kernels-ret (:pointer uint)))
-
-(defclfun ("clReleaseKernel" release-kernel) error-code
-  (kernel kernel))
-
-(defclfun ("clRetainKernel" retain-kernel) error-code
-  (kernel kernel))
-
-(defclfun ("clSetKernelArg" set-kernel-arg) error-code
-  (kernel kernel)
-  (arg-index uint)
-  (arg-size size-t)
-  (arg-value (:pointer :void)))
-
-(defclfun ("clGetKernelInfo" get-kernel-info) error-code
-  (kernel-name kernel)
-  (param-name kernel-info)
-  (param-value-size size-t)
-  (param-value (:pointer :void))
-  (param-value-size-ret :pointer))
-
-#+opencl-1.1
-(defclfun ("clGetKernelWorkGroupInfo" get-kernel-work-group-info) error-code
-  (kernel kernel)
-  (device device-id)
-  (param-name kernel-work-group-info)
-  (param-value-size size-t)
-  (param-value (:pointer :void))
-  (param-value-size-ret (:pointer size-t)))
-
-#+opencl-1.2
-(defclfun ("clGetKernelArgInfo" get-kernel-arg-info) error-code
-  (kernel-name kernel)
-  (arg-index uint)
-  (param-name kernel-arg-info)
-  (param-value-size size-t)
-  (param-value (:pointer :void))
-  (param-value-size-ret (:pointer size-t)))
-
-#+opencl-2.1
-(defclfun ("clGetKernelSubGroupInfo" get-kernel-sub-group-info) error-code
-  (kernel kernel)
-  (device device-id)
-  (param-name kernel-sub-group-info)
-  (input-value-size size-t)
-  (input-value (:pointer :void))
-  (param-value-size size-t)
-  (param-value (:pointer :void))
-  (param-value-size-ret (:pointer size-t)))
-
-;;; program
-(defclfun ("clCreateProgramWithSource" create-program-with-source) program
-  (context context)
-  (count uint)
-  (strings (:pointer :string))
-  (lengths (:pointer size-t))
-  (errcode-ret (:pointer error-code)))
-
-(defclfun ("clCreateProgramWithBinary" create-program-with-binary) program
-  (context context)
-  (num-devices uint)
-  (device-list (:pointer device-id))
-  (lengths (:pointer size-t))
-  (binaries (:pointer (:pointer :unsigned-char)))
-  (binary-status (:pointer int))
-  (errcode-ret (:pointer error-code)))
-
-(defclfun ("clCreateProgramWithBuiltInKernels" create-program-with-builtin-kernels) program
-  (context context)
-  (num-devices uint)
-  (device-list (:pointer device-id))
-  (kernel-names :string)
-  (errcode-ret (:pointer error-code)))
-
-#+opencl-2.1
-(defclfun ("clCreateProgramWithIL" create-program-with-IL) program
-  (context context)
-  (il (:pointer :void))
-  (lengths (:pointer size-t))
-  (errcode-ret (:pointer error-code)))
-
-
-(defclfun ("clRetainProgram" retain-program) error-code
-  (program program))
-
-(defclfun ("clReleaseProgram" release-program) error-code
-  (program program))
-
-(defclfun ("clGetProgramInfo" get-program-info) error-code
-  (program program)
-  (param-name program-info)
-  (param-value-size size-t)
-  (param-value (:pointer :void))
-  (param-value-size-ret (:pointer size-t)))
-
-(defclfun ("clBuildProgram" build-program) error-code
-  (program program)
-  (num-devices uint)
-  (device-list (:pointer device-id))
-  (options :string)
-  (pfn-notify :pointer) ;; FIXME: function pointer type
-  (user-data (:pointer :void)))
-#+opencl-2.0
-(defclfun ("clCompileProgram" compile-program) error-code
-  (program program)
-  (num-devices uint)
-  (device-list (:pointer device-id))
-  (options :string)
-  (num-input-headers uint)
-  (input-headers (:pointer program))
-  (header-include-names (:pointer :string))
-  (pfn-notify :pointer) ;; FIXME: function pointer type
-  (user-data (:pointer :void)))
-#+opencl-2.0
-(defclfun ("clLinkProgram" link-program) program
-  (program program)
-  (num-devices uint)
-  (device-list (:pointer device-id))
-  (options :string)
-  (num-input-headers uint)
-  (input-headers (:pointer program))
-  (pfn-notify :pointer) ;; FIXME: function pointer type
-  (user-data (:pointer :void))
-  (errcode-ret (:pointer error-code)))
-
-(defclfun ("clGetProgramBuildInfo" get-program-build-info) error-code
-  (program program)
-  (device device-id)
-  (param-name program-build-info)
-  (param-value-size size-t)
-  (param-value (:pointer :void))
-  (param-value-size-ret (:pointer size-t)))
 ;;; queue
 
 ;; #-opencl-2.0
@@ -333,25 +196,259 @@
   (event-wait-list :pointer)
   (event (:pointer event)))
 
-;;; sampler
-
-;; #-opencl-2.0
-(defclfun ("clCreateSampler" create-sampler) sampler
+;;; buffer
+(defclfun ("clCreateBuffer" create-buffer) mem
   (context context)
-  (normalized-coords bool)
-  (addressing-mode addressing-mode)
-  (filter-mode filter-mode)
+  (flags mem-flags)
+  (size size-t)
+  (host-ptr (:pointer :void))
   (errcode-ret (:pointer error-code)))
 
-(defclfun ("clReleaseSampler" release-sampler) error-code
-  (sampler sampler))
+#+opencl-1.1
+(defclfun ("clCreateSubBuffer" create-sub-buffer) mem
+  (buffer mem)
+  (flags mem-flags)
+  (buffer-create-type buffer-create-type)
+  (buffer-create-info (:pointer :void))
+  (errcode-ret (:pointer error-code)))
 
-(defclfun ("clRetainSampler" retain-sampler) error-code
-  (sampler sampler))
+(defclfun ("clEnqueueReadBuffer" enqueue-read-buffer) error-code
+  (command-queue command-queue)
+  (buffer mem)
+  (blocking-read-p bool)
+  (offset size-t)
+  (cb size-t)
+  (ptr (:pointer :void))
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
 
-(defclfun ("clGetSamplerInfo" get-sampler-info) error-code
-  (sampler sampler)
-  (param-name sampler-info)
+(defclfun ("clEnqueueWriteBuffer" enqueue-write-buffer) error-code
+  (command-queue command-queue)
+  (buffer mem)
+  (blocking-write-p bool)
+  (offset size-t)
+  (cb size-t)
+  (ptr (:pointer :void))
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+(defclfun ("clEnqueueCopyBuffer" enqueue-copy-buffer) error-code
+  (command-queue command-queue)
+  (src-buffer mem)
+  (dst-buffer mem)
+  (src-offset size-t)
+  (dst-offset size-t)
+  (cb size-t)
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+(defclfun ("clEnqueueMapBuffer" enqueue-map-buffer) (:pointer :void)
+  (command-queue command-queue)
+  (buffer mem)
+  (blocking-map-p bool)
+  (map-flags map-flags)
+  (offset size-t)
+  (cb size-t)
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event))
+  (errcode-ret (:pointer error-code)))
+
+#+opencl-1.1
+(defclfun ("clEnqueueReadBufferRect" enqueue-read-buffer-rect) int
+  (command-queue command-queue)
+  (buffer mem)
+  (blocking-read-p bool)
+  (buffer-origin (:pointer size-t)) ;;[3]
+  (host-origin (:pointer size-t)) ;;[3]
+  (region (:pointer size-t)) ;;[3]
+  (buffer-row-pitch size-t)
+  (buffer-slice-pitch size-t)
+  (host-row-pitch size-t)
+  (host-slice-pitch size-t)
+  (pointer (:pointer :void))
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+#+opencl-1.1
+(defclfun ("clEnqueueWriteBufferRect" enqueue-write-buffer-rect) int
+  (command-queue command-queue)
+  (buffer mem)
+  (blocking-write-p bool)
+  (buffer-origin (:pointer size-t)) ;;[3]
+  (host-origin (:pointer size-t)) ;;[3]
+  (region (:pointer size-t)) ;;[3]
+  (buffer-row-pitch size-t)
+  (buffer-slice-pitch size-t)
+  (host-row-pitch size-t)
+  (host-slice-pitch size-t)
+  (pointer :pointer)
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+#+opencl-1.1
+(defclfun ("clEnqueueCopyBufferRect" enqueue-copy-buffer-rect) int
+  (command-queue command-queue)
+  (src-buffer mem)
+  (dst-buffer mem)
+  (src-origin (:pointer size-t)) ;;[3]
+  (dst-origin (:pointer size-t)) ;;[3]
+  (region (:pointer size-t)) ;;[3]
+  (src-row-pitch size-t)
+  (src-slice-pitch size-t)
+  (dst-row-pitch size-t)
+  (dst-slice-pitch size-t)
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+;;; image
+
+(defclfun ("clGetImageInfo" get-image-info) error-code
+  (image mem)
+  (param-name image-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+
+#+opencl-1.2
+(defclfun ("clCreateImage" create-image) mem
+  (context context)
+  (flags mem-flags)
+  (image-format (:pointer image-format))
+  (image-desc  (:pointer image-desc))
+  (host-ptr (:pointer :void))
+  (errcode-ret (:pointer error-code)))
+
+;; #-opencl-1.2
+(defclfun ("clCreateImage2D" create-image-2d) mem
+  (context context)
+  (flags mem-flags)
+  (image-format (:pointer image-format))
+  (image-width size-t)
+  (image-height size-t)
+  (image-row-pitch size-t)
+  (host-ptr (:pointer :void))
+  (errcode-ret (:pointer error-code)))
+
+;; #-opencl-1.2
+(defclfun ("clCreateImage3D" create-image-3d) mem
+  (context context)
+  (flags mem-flags)
+  (image-format :pointer)
+  (image-width size-t)
+  (image-height size-t)
+  (image-depth size-t)
+  (image-row-pitch size-t)
+  (image-slice-pitch size-t)
+  (host-ptr (:pointer :void))
+  (error-code-ret (:pointer error-code)))
+
+(defclfun ("clGetSupportedImageFormats" get-supported-image-formats)
+    error-code
+  (context context)
+  (flags mem-flags)
+  (image-type mem-object-type)
+  (num-entries uint)
+  (image-formats (:pointer image-format))
+  (num-image-format (:pointer uint)))
+
+(defclfun ("clEnqueueWriteImage" enqueue-write-image) error-code
+  (command-queue command-queue)
+  (image mem)
+  (blocking-write bool)
+  (origin (:pointer size-t)) ;; todo: special type for these size_t[3] args?
+  (region (:pointer size-t))
+  (input-row-pitch size-t)
+  (input-slice-pitch size-t)
+  (ptr (:pointer :void))
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+(defclfun ("clEnqueueCopyImageToBuffer" enqueue-copy-image-to-buffer)
+    error-code
+  (command-queue command-queue)
+  (src-image mem)
+  (dst-buffer mem)
+  (src-origin (:pointer size-t))
+  (region (:pointer size-t))
+  (dst-offset size-t)
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+(defclfun ("clEnqueueMapImage" enqueue-map-image) (:pointer :void)
+  (command-queue command-queue)
+  (image mem)
+  (blocking-map bool)
+  (map-flags map-flags)
+  (origin (:pointer size-t)) ;; [3]
+  (region (:pointer size-t)) ;; [3]
+  (image-row-pitch (:pointer size-t))
+  (image-slice-pitch (:pointer size-t))
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event))
+  (errcode-ret (:pointer error-code)))
+
+(defclfun ("clEnqueueReadImage" enqueue-read-image) error-code
+  (command-queue command-queue)
+  (image mem)
+  (blocking-read bool)
+  (origin (:pointer size-t)) ;;[3]
+  (region (:pointer size-t)) ;;[3]
+  (row-pitch size-t)
+  (slice-pitch size-t)
+  (ptr (:pointer :void))
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+
+(defclfun ("clEnqueueCopyBufferToImage" enqueue-copy-buffer-to-image)
+    error-code
+  (command-queue command-queue)
+  (src-buffer mem)
+  (dst-image mem)
+  (src-offset size-t)
+  (dst-origin (:pointer size-t)) ;;[3]
+  (region (:pointer size-t)) ;;[3]
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+(defclfun ("clEnqueueCopyImage" enqueue-copy-image) error-code
+  (command-queue command-queue)
+  (src-image mem)
+  (dst-image mem)
+  (src-origin (:pointer size-t)) ;;[3]
+  (dst-origin (:pointer size-t)) ;;[3]
+  (region (:pointer size-t)) ;;[3]
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+;;; pipe
+
+#+opencl-2.0
+(defclfun ("clCreatePipe" create-pipe) mem
+  (context context)
+  (flags mem-flags)
+  (pipe-packet-size (:pointer uint))
+  (pipe-max-packets  (:pointer uint))
+  (properties (:pointer pipe-properties))
+  (errcode-ret (:pointer error-code)))
+
+#+opencl-2.0
+(defclfun ("clGetPipeInfo" get-pipe-info) error-code
+  (pipe mem)
+  (param-name pipe-info)
   (param-value-size size-t)
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
@@ -376,6 +473,173 @@
   (memobj mem)
   (callback :pointer)
   (user-data (:pointer :void)))
+
+;;; Shared Virtual Memory : TODO
+
+;;; sampler
+
+;; #-opencl-2.0
+(defclfun ("clCreateSampler" create-sampler) sampler
+  (context context)
+  (normalized-coords bool)
+  (addressing-mode addressing-mode)
+  (filter-mode filter-mode)
+  (errcode-ret (:pointer error-code)))
+
+(defclfun ("clReleaseSampler" release-sampler) error-code
+  (sampler sampler))
+
+(defclfun ("clRetainSampler" retain-sampler) error-code
+  (sampler sampler))
+
+(defclfun ("clGetSamplerInfo" get-sampler-info) error-code
+  (sampler sampler)
+  (param-name sampler-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+
+;;; program
+(defclfun ("clCreateProgramWithSource" create-program-with-source) program
+  (context context)
+  (count uint)
+  (strings (:pointer :string))
+  (lengths (:pointer size-t))
+  (errcode-ret (:pointer error-code)))
+
+(defclfun ("clCreateProgramWithBinary" create-program-with-binary) program
+  (context context)
+  (num-devices uint)
+  (device-list (:pointer device-id))
+  (lengths (:pointer size-t))
+  (binaries (:pointer (:pointer :unsigned-char)))
+  (binary-status (:pointer int))
+  (errcode-ret (:pointer error-code)))
+
+(defclfun ("clCreateProgramWithBuiltInKernels" create-program-with-builtin-kernels) program
+  (context context)
+  (num-devices uint)
+  (device-list (:pointer device-id))
+  (kernel-names :string)
+  (errcode-ret (:pointer error-code)))
+
+#+opencl-2.1
+(defclfun ("clCreateProgramWithIL" create-program-with-IL) program
+  (context context)
+  (il (:pointer :void))
+  (lengths (:pointer size-t))
+  (errcode-ret (:pointer error-code)))
+
+
+(defclfun ("clRetainProgram" retain-program) error-code
+  (program program))
+
+(defclfun ("clReleaseProgram" release-program) error-code
+  (program program))
+
+(defclfun ("clGetProgramInfo" get-program-info) error-code
+  (program program)
+  (param-name program-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+
+(defclfun ("clBuildProgram" build-program) error-code
+  (program program)
+  (num-devices uint)
+  (device-list (:pointer device-id))
+  (options :string)
+  (pfn-notify :pointer) ;; FIXME: function pointer type
+  (user-data (:pointer :void)))
+#+opencl-2.0
+(defclfun ("clCompileProgram" compile-program) error-code
+  (program program)
+  (num-devices uint)
+  (device-list (:pointer device-id))
+  (options :string)
+  (num-input-headers uint)
+  (input-headers (:pointer program))
+  (header-include-names (:pointer :string))
+  (pfn-notify :pointer) ;; FIXME: function pointer type
+  (user-data (:pointer :void)))
+#+opencl-2.0
+(defclfun ("clLinkProgram" link-program) program
+  (program program)
+  (num-devices uint)
+  (device-list (:pointer device-id))
+  (options :string)
+  (num-input-headers uint)
+  (input-headers (:pointer program))
+  (pfn-notify :pointer) ;; FIXME: function pointer type
+  (user-data (:pointer :void))
+  (errcode-ret (:pointer error-code)))
+
+(defclfun ("clGetProgramBuildInfo" get-program-build-info) error-code
+  (program program)
+  (device device-id)
+  (param-name program-build-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+;;; kernel
+(defclfun ("clCreateKernel" create-kernel) kernel
+  (program program)
+  (kernel-name :string)
+  (errcode-ret (:pointer error-code)))
+
+(defclfun ("clCreateKernelsInProgram" create-kernels-in-program) error-code
+  (program program)
+  (num-kernels uint)
+  (kernels (:pointer kernel))
+  (num-kernels-ret (:pointer uint)))
+
+(defclfun ("clReleaseKernel" release-kernel) error-code
+  (kernel kernel))
+
+(defclfun ("clRetainKernel" retain-kernel) error-code
+  (kernel kernel))
+
+(defclfun ("clSetKernelArg" set-kernel-arg) error-code
+  (kernel kernel)
+  (arg-index uint)
+  (arg-size size-t)
+  (arg-value (:pointer :void)))
+
+(defclfun ("clGetKernelInfo" get-kernel-info) error-code
+  (kernel-name kernel)
+  (param-name kernel-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret :pointer))
+
+#+opencl-1.1
+(defclfun ("clGetKernelWorkGroupInfo" get-kernel-work-group-info) error-code
+  (kernel kernel)
+  (device device-id)
+  (param-name kernel-work-group-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+
+#+opencl-1.2
+(defclfun ("clGetKernelArgInfo" get-kernel-arg-info) error-code
+  (kernel-name kernel)
+  (arg-index uint)
+  (param-name kernel-arg-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
+
+#+opencl-2.1
+(defclfun ("clGetKernelSubGroupInfo" get-kernel-sub-group-info) error-code
+  (kernel kernel)
+  (device device-id)
+  (param-name kernel-sub-group-info)
+  (input-value-size size-t)
+  (input-value (:pointer :void))
+  (param-value-size size-t)
+  (param-value (:pointer :void))
+  (param-value-size-ret (:pointer size-t)))
 
 ;;; event
 (defclfun ("clReleaseEvent" release-event) error-code
@@ -419,34 +683,6 @@
   (callback :pointer)
   (user-data (:pointer :void)))
 
-
-;;; platform
-(defclfun ("clGetPlatformIDs" get-platform-ids) error-code
-  (num-entries uint)
-  (platforms (:pointer platform-id))
-  (num-platforms (:pointer uint)))
-
-(defclfun ("clGetPlatformInfo" get-platform-info) error-code
-  (platform platform-id)
-  (param-name platform-info)
-  (param-value-size size-t)
-  (param-value (:pointer :void))
-  (param-value-size-ret (:pointer size-t)))
-
-;;; device
-(defclfun ("clGetDeviceIDs" get-device-ids) error-code
-  (platform platform-id)
-  (device-type device-type)
-  (num-entries uint)
-  (devices (:pointer device-id))
-  (num-devices (:pointer uint)))
-
-(defclfun ("clGetDeviceInfo" get-device-info) error-code
-  (device device-id)
-  (param-name device-info)
-  (param-value-size size-t)
-  (param-value (:pointer :void))
-  (param-value-size-ret (:pointer size-t)))
 
 ;;; others
 
