@@ -8,7 +8,7 @@
   (:vendor-id                     %cl:uint)
   (:max-compute-units             %cl:uint)
   (:max-work-item-dimensions      %cl:uint)
-  (:max-work-item-sizes           %cl:size-t :max-work-item-dimensions)
+  (:max-work-item-sizes           %cl:size-t :querysize :max-work-item-dimensions)
   (:max-work-group-size           %cl:size-t)
   (:preferred-vector-width-char   %cl:uint)
   (:preferred-vector-width-short  %cl:uint)
@@ -68,8 +68,8 @@
 
 (define-info-getter get-context-info (context param) %cl/e:get-context-info
  (:reference-count %cl:uint)
- (:devices         %cl:device-id :array)
- (:properties      %cl:context-properties :array :plist))
+ (:devices         %cl:device-id :array t)
+ (:properties      %cl:context-properties :array t :plist t))
 ;; fixme : support plist stuff: alternating enum/value pairs terminated by a single 0
 
 (define-info-getter get-command-queue-info (command-queue param) %cl/e:get-command-queue-info
@@ -90,7 +90,6 @@
   (:associated-memobject %cl:mem)
   (:offset               %cl:size-t))
 
-
 (define-info-getter get-image-info (image param) %cl/e:get-image-info
   (:format       %cl:image-format)
   (:element-size %cl:size-t)
@@ -100,7 +99,6 @@
   (:height       %cl:size-t)
   (:depth        %cl:size-t))
 
-
 (define-info-getter get-sampler-info (sampler param) %cl/e:get-sampler-info
   (:reference-count   %cl:uint)
   (:context           %cl:context)
@@ -108,14 +106,13 @@
   (:addressing-mode   %cl:addressing-mode)
   (:filter-mode       %cl:filter-mode))
 
-
 (define-info-getter get-program-info (program param) %cl/e:get-program-info
   (:reference-count %cl:uint)
   (:context         %cl:context)
   (:num-devices     %cl:uint)
-  (:devices         %cl:device-id :array)
+  (:devices         %cl:device-id :array t)
   (:source          :string)
-  (:binary-sizes    %cl:size-t :array)
+  (:binary-sizes    %cl:size-t :array t)
   (:binaries
    nil
    :form
@@ -125,23 +122,21 @@
      (with-foreign-pointer (buffer total-size)
        (with-foreign-object (pointers '(:pointer :void) (length sizes))
          (loop for j = 0 then (+ size j)
-            for size in sizes
-            for i from 0
-            do (setf (mem-aref pointers :pointer i) (inc-pointer buffer j)))
+               for size in sizes
+               for i from 0
+               do (setf (mem-aref pointers :pointer i) (inc-pointer buffer j)))
          (%cl/e:get-program-info program :binaries
                                  (* (foreign-type-size :pointer) (length sizes))
                                  pointers
                                  (cffi:null-pointer))
          (loop for i from 0
-            for size in sizes
-            collect
-              (loop with array = (make-array size
-                                             :element-type '(unsigned-byte 8))
-                 for j below size
-                 do (setf (aref array j)
-                          (mem-aref (mem-aref pointers :pointer i)
-                                    :uchar j))
-                 finally (return array))))))))
+               for size in sizes
+               collect
+               (loop with array = (make-array size :element-type '(unsigned-byte 8))
+                     for j below size
+                     do (setf (aref array j)
+                              (mem-aref (mem-aref pointers :pointer i) :uchar j))
+                     finally (return array))))))))
 
 (define-info-getter get-program-build-info (program device param) %cl/e:get-program-build-info
   (:status  %cl:build-status)

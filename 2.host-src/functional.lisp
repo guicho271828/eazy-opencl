@@ -62,11 +62,11 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
 
 (defun info-getter-case-form (name args fun form)
   (ematch form
-    ((list pname _ :fixedsize (number))
+    ((list* pname _ (plist :fixedsize (number)))
      `(,pname ,(%fixed-size-case args fun form)))
-    ((list pname _ :querysize (keyword))
+    ((list* pname _ (plist :querysize (keyword)))
      `(,pname ,(%dynamic-size-case name args fun form)))
-    ((list pname _ :array)
+    ((list* pname _ (plist :array t))
      `(,pname ,(%array-case args fun form)))
     ((list pname _ :form code)
      `(,pname ,code))
@@ -76,9 +76,9 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
      `(,pname ,(%simple-case args fun form)))))
 
 (defun %base-type (form)
-  (destructuring-bind (&optional pname type count-param flag) form
-    (declare (ignorable count-param pname))
-    (if (eq flag :plist)
+  (destructuring-bind (pname type &key plist &allow-other-keys) form
+    (declare (ignorable pname))
+    (if plist
         ;; fixme: any exported way to do this?
         (cffi::canonicalize-foreign-type type)
         type)))
@@ -87,7 +87,9 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
   (let ((base-type (%base-type form)))
     (with-gensyms (foreign-value count-temp)
       (ematch form
-        ((list* _ type count-param (or nil (cons flag _)))
+        ((list* _ type (plist :fixedsize count-param
+                              :plist flag))
+
          `(let ((,count-temp ,count-param))
             (with-foreign-object (,foreign-value ',base-type ,count-temp)
               (,fun ,@args
@@ -107,7 +109,9 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
   (let ((base-type (%base-type form)))
     (with-gensyms (foreign-value count-temp)
       (ematch form
-        ((list* _ type count-param (or nil (cons flag _)))
+        ((list* _ type (plist :querysize count-param
+                              :plist flag))
+
          `(let ((,count-temp
                  ;; further call to NAME for obtaining the size
                  (,name ,@(butlast args 1) ,count-param)))
@@ -129,7 +133,8 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
   (let ((base-type (%base-type form)))
     (with-gensyms (foreign-value count-temp fsize)
       (ematch form
-        ((list _ type :array flag)
+        ((list* _ type (plist :plist flag))
+
          `(with-foreign-object (,fsize '%cl:uint)
             (,fun ,@args
                   0 (cffi::null-pointer)
