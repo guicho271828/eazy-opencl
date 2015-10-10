@@ -33,10 +33,22 @@ binging: (variable value-form finalizer-form*)
                       (release-command-queue cq)))
     cq))
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun creater (name)
+    (or (find-symbol (format nil "CREATE-~a" (symbol-name name))
+                     (find-package :EAZY-OPENCL.ERROR))
+        (error "no creater of ~a found!" name)))
+
+
+  (defun releaser (name)
+    (or (find-symbol (format nil "RELEASE-~a" (symbol-name name))
+                     (find-package :EAZY-OPENCL.ERROR))
+        (error "no releaser of ~a found!" name))))
+
 (defmacro define-finalized-api (base-name args
                                 &key
-                                  (creater (symbolicate 'create- base-name))
-                                  (releaser (symbolicate 'release- base-name)))
+                                  (creater (creater base-name))
+                                  (releaser (releaser base-name)))
   (with-gensyms (obj)
     (let ((creater-call `(,creater ,@args))
           (releaser-call `(,releaser ,obj)))

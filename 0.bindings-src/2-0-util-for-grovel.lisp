@@ -52,18 +52,17 @@
 ;;; grovel-cl_platform
 (cl:export
  (cl:list
-  ;; problematic if exported
-  ;; (lispify "char")
-  ;; (lispify "uchar")
-  ;; (lispify "short")
-  ;; (lispify "ushort")
-  ;; (lispify "int")
-  ;; (lispify "uint")
-  ;; (lispify "long")
-  ;; (lispify "ulong")
-  ;; (lispify "half")
-  ;; (lispify "float")
-  ;; (lispify "double")
+  (lispify "char")
+  (lispify "uchar")
+  (lispify "short")
+  (lispify "ushort")
+  (lispify "int")
+  (lispify "uint")
+  (lispify "long")
+  (lispify "ulong")
+  (lispify "half")
+  (lispify "float")
+  (lispify "double")
 
   (lispify "cl_char2")
   (lispify "cl_uchar2")

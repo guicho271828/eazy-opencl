@@ -35,5 +35,4 @@ consider changing the algorithm or even stop using GPGPU.
 
 (in-package :cl-user)
 (defpackage eazy-opencl.host
-  (:use :cl :cffi :iterate :alexandria :trivia :eazy-opencl.error :trivial-garbage)
-  (:shadowing-import-from :eazy-opencl.error :finish))
+  (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage))
