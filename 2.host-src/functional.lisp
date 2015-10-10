@@ -18,15 +18,10 @@ Largely forked from cl-opencl-3b.
 ;;; info-getter
 
 (defmacro define-info-getter (name (&rest args) fun &body body)
-  (let ((count-temp (gensym))
-        (foreign-value (gensym))
-        (fsize (gensym))
-        (s (gensym))
-        ;(object (car args))
-        (param (car (last args))))
+  (with-gensyms (count-temp foreign-value fsize s param)
     `(defun ,name (,@args)
-      (ecase ,param
-        ,@(loop
+       (ecase ,param
+         ,@(loop
              for form in body
              for (pname type count-param flag) = form
              for base-type = (if (eq flag :plist)
@@ -34,25 +29,25 @@ Largely forked from cl-opencl-3b.
                                  (cffi::canonicalize-foreign-type type)
                                  type)
              when (and type count-param)
-             collect `(,pname
-                       (let ((,count-temp ,(if (numberp count-param)
-                                               count-param
-                                               `(,name ,@(butlast args 1) ,count-param))))
-                         (with-foreign-object (,foreign-value ',base-type ,count-temp)
-                           (check-return
-                            (,fun ,@args
-                                  (* ,(foreign-type-size type)
-                                     ,count-temp)
-                                  ,foreign-value
-                                  (cffi:null-pointer)))
-                           (loop for i below ,count-temp
-                              for v = (mem-aref ,foreign-value ',type i)
-                              ,@ (when (eq flag :plist)
-                                   `(for prop = t then (not prop)
-                                         when (and prop (not (zerop v)))
-                                         collect (foreign-enum-keyword ',type v)
-                                         else))
-                              collect v))))
+               collect `(,pname
+                          (let ((,count-temp ,(if (numberp count-param)
+                                                  count-param
+                                                  `(,name ,@(butlast args 1) ,count-param))))
+                            (with-foreign-object (,foreign-value ',base-type ,count-temp)
+                              (check-return
+                               (,fun ,@args
+                                     (* ,(foreign-type-size type)
+                                        ,count-temp)
+                                     ,foreign-value
+                                     (cffi:null-pointer)))
+                              (loop for i below ,count-temp
+                                    for v = (mem-aref ,foreign-value ',type i)
+                                    ,@ (when (eq flag :plist)
+                                         `(for prop = t then (not prop)
+                                               when (and prop (not (zerop v)))
+                                               collect (foreign-enum-keyword ',type v)
+                                               else))
+                                    collect v))))
              ;; using NIL to indicate params that return an array of
              ;; unknown length, detecting it this way is a bit ugly,
              ;; possibly should just move all the ELSE/COLLECT into
@@ -60,55 +55,55 @@ Largely forked from cl-opencl-3b.
              ;; for presence of 3rd arg directly?
              else if (and (> (length form) 2)
                           (eq (third form) nil))
-             collect `(,pname
-                       (with-foreign-object (,fsize '%cl::uint)
-                         (check-return (,fun ,@args
-                                             0 (cffi::null-pointer)
-                                             ,fsize))
-                         (let ((,count-temp (floor (mem-aref ,fsize '%cl::uint)
-                                                   ,(foreign-type-size type))))
-                           (with-foreign-object (,foreign-value ',base-type ,count-temp)
-                             (check-return
-                              (,fun ,@args
-                                    (* ,(foreign-type-size type)
-                                       ,count-temp)
-                                    ,foreign-value
-                                    (cffi:null-pointer)))
-                             (loop for i below ,count-temp
-                                for v = (mem-aref ,foreign-value ',base-type i)
-                                ,@ (when (eq flag :plist)
-                                     `(for prop = t then (not prop)
-                                           when (and prop (not (zerop v)))
-                                           collect (foreign-enum-keyword ',type v)
-                                           else))
-                                collect v)))))
+                    collect `(,pname
+                               (with-foreign-object (,fsize '%cl::uint)
+                                 (check-return (,fun ,@args
+                                                     0 (cffi::null-pointer)
+                                                     ,fsize))
+                                 (let ((,count-temp (floor (mem-aref ,fsize '%cl::uint)
+                                                           ,(foreign-type-size type))))
+                                   (with-foreign-object (,foreign-value ',base-type ,count-temp)
+                                     (check-return
+                                      (,fun ,@args
+                                            (* ,(foreign-type-size type)
+                                               ,count-temp)
+                                            ,foreign-value
+                                            (cffi:null-pointer)))
+                                     (loop for i below ,count-temp
+                                           for v = (mem-aref ,foreign-value ',base-type i)
+                                           ,@ (when (eq flag :plist)
+                                                `(for prop = t then (not prop)
+                                                      when (and prop (not (zerop v)))
+                                                      collect (foreign-enum-keyword ',type v)
+                                                      else))
+                                           collect v)))))
              ;; special case for remaining exceptions, just embed some
              ;; code directly...
              else if (> (length form) 2)
-             collect `(,pname ,(third form))
+                    collect `(,pname ,(third form))
              ;; strings could (should?) probably be implemented in terms of the
              ;; unknown-length array stuff...
              else if (eq type :string)
-             collect `(,pname
-                       (with-foreign-object (,fsize '%cl::uint)
-                         (check-return (,fun ,@args
-                                             0 (cffi::null-pointer)
-                                             ,fsize))
-                         (let ((,count-temp (mem-aref  ,fsize'%cl::uint)))
-                           (with-foreign-object (,s :uchar (1+ ,count-temp))
-                             (check-return (,fun ,@args (1+ ,count-temp)
-                                                 ,s
-                                                 (cffi::null-pointer)))
-                             (foreign-string-to-lisp ,s)))))
+                    collect `(,pname
+                               (with-foreign-object (,fsize '%cl::uint)
+                                 (check-return (,fun ,@args
+                                                     0 (cffi::null-pointer)
+                                                     ,fsize))
+                                 (let ((,count-temp (mem-aref  ,fsize'%cl::uint)))
+                                   (with-foreign-object (,s :uchar (1+ ,count-temp))
+                                     (check-return (,fun ,@args (1+ ,count-temp)
+                                                         ,s
+                                                         (cffi::null-pointer)))
+                                     (foreign-string-to-lisp ,s)))))
              else
-             collect `(,pname
-                       (with-foreign-object (,foreign-value ',type)
-                         (check-return
-                          (,fun ,@args
-                                ,(foreign-type-size type)
-                                ,foreign-value
-                                (cffi:null-pointer)))
-                         (mem-aref ,foreign-value ',type))))))))
+               collect `(,pname
+                          (with-foreign-object (,foreign-value ',type)
+                            (check-return
+                             (,fun ,@args
+                                   ,(foreign-type-size type)
+                                   ,foreign-value
+                                   (cffi:null-pointer)))
+                            (mem-aref ,foreign-value ',type)))))))
 
 
 (define-info-getter get-device-info (device-id param) %cl:get-device-info
