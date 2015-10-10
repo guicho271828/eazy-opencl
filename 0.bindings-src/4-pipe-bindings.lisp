@@ -6,7 +6,7 @@
   (flags mem-flags)
   (pipe-packet-size (:pointer uint))
   (pipe-max-packets  (:pointer uint))
-  (properties (:pointer :pipe-properties))
+  (properties (:pointer pipe-properties))
   (errcode-ret (:pointer error-code)))
 
 #+opencl-2.0
