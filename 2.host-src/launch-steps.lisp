@@ -42,6 +42,16 @@ unit tests.
 
 
 
+(defun get-device-ids (platform-id &rest device-types)
+  "get a list of device IDs on specified platform matching any of DEVICE-TYPES
+\(:cpu, :gpu, :accelerator, :default, :all)"
+  ;; fixme: probably should catch not-found error and just return NIL
+  ;; in that case?
+  (get-counted-list %cl:get-device-ids (platform-id device-types)
+                    '%cl:device-id))
+
+
 (defun get-supported-image-formats (context flags image-type)
   (get-counted-list %cl:get-supported-image-formats (context flags image-type)
                     '%cl:image-format))
+
