@@ -3,6 +3,15 @@
 
 ;;; info-getter definitions
 
+;; "returns specified info about a platform-id
+;;  param = :profile, :version, :name, :vendor, :extensions"
+(define-info-getter get-platform-info (platform-id param) %cl/e:get-platform-info
+  (:profile     :string)
+  (:version     :string)
+  (:name        :string)
+  (:vendor      :string)
+  (:extensions  :string))
+
 (define-info-getter get-device-info (device-id param) %cl/e:get-device-info
   (:type                          %cl:device-type)
   (:vendor-id                     %cl:uint)

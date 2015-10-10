@@ -34,12 +34,13 @@ unit tests.
   `(progn ,@body))
 
 (defun get-platform-ids ()
-  "returns a list of available OpenCL Platform IDs (opaque, don't need to be
-manually released)"
+  "returns a list of available OpenCL Platform IDs"
   ;; FIXME: figure out if returning same pointer twice is correct,
   ;; possibly remove-duplicates on it if so?
   (without-fp-traps
     (get-counted-list %cl/e:get-platform-ids () '%cl:platform-id)))
+
+
 
 (defun get-supported-image-formats (context flags image-type)
   (get-counted-list %cl:get-supported-image-formats (context flags image-type)
