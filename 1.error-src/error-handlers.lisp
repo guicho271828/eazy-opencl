@@ -52,7 +52,7 @@ CONTINUE will ignore the error, then return the result."
             (tagbody
               :start
               (restart-case
-                  (let ((,result (foreign-enum-keyword 'error-code ,form)))
+                  (let ((,result ,form))
                     (unless (eq ,result :success)
                       (error 'opencl-error
                              :code ,result
