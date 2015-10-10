@@ -5,15 +5,7 @@ Largely forked from cl-opencl-3b.
 
 |#
 
-
-
 (in-package :eazy-opencl.host)
-
-;;; non-info-getter
-
-(defun get-supported-image-formats (context flags image-type)
-  (get-counted-list %cl:get-supported-image-formats (context flags image-type)
-                    '%cl:image-format))
 
 ;;; info-getter
 
