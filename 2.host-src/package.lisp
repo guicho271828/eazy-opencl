@@ -105,3 +105,28 @@ binging: (variable value-form finalizer-form*)
 (define-finalized-api kernels-in-program (program num-kernels kernels num-kernels-ret)
   :releaser release-kernel)
 
+;; mem objects
+
+(define-finalized-api buffer (context flags size host-ptr)
+  :releaser release-mem-object)
+
+#+opencl-1.1
+(define-finalized-api sub-buffer (buffer flags buffer-create-type buffer-create-info)
+  :releaser release-mem-object)
+
+#+opencl-1.2
+(define-finalized-api image (context flags image-format image-desc host-ptr)
+  :releaser release-mem-object)
+
+;; #-opencl-1.2
+(define-finalized-api image-2d (context flags image-format image-width image-height image-row-pitch host-ptr)
+  :releaser release-mem-object)
+
+;; #-opencl-1.2
+(define-finalized-api image-3d (context flags image-format image-width image-height image-depth image-row-pitch image-slice-pitch host-ptr)
+  :releaser release-mem-object)
+
+#+opencl-2.0
+(define-finalized-api pipe (context flags pipe-packet-size pipe-max-packets properties)
+  :releaser release-mem-object)
+
