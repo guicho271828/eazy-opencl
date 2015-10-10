@@ -162,9 +162,31 @@
   (program program)
   (num-devices uint)
   (device-list (:pointer device-id))
-  (potions :string)
-  (pfn-notify :pointer) ;; type
+  (options :string)
+  (pfn-notify :pointer) ;; FIXME: function pointer type
   (user-data (:pointer :void)))
+#+opencl-2.0
+(defclfun ("clCompileProgram" compile-program) error-code
+  (program program)
+  (num-devices uint)
+  (device-list (:pointer device-id))
+  (options :string)
+  (num-input-headers uint)
+  (input-headers (:pointer program))
+  (header-include-names (:pointer :string))
+  (pfn-notify :pointer) ;; FIXME: function pointer type
+  (user-data (:pointer :void)))
+#+opencl-2.0
+(defclfun ("clLinkProgram" link-program) program
+  (program program)
+  (num-devices uint)
+  (device-list (:pointer device-id))
+  (options :string)
+  (num-input-headers uint)
+  (input-headers (:pointer program))
+  (pfn-notify :pointer) ;; FIXME: function pointer type
+  (user-data (:pointer :void))
+  (errcode-ret (:pointer error-code)))
 
 (defclfun ("clGetProgramBuildInfo" get-program-build-info) error-code
   (program program)
@@ -180,6 +202,13 @@
   (context context)
   (device device-id)
   (properties command-queue-properties)
+  (errcode-ret (:pointer error-code)))
+
+#+opencl-2.0
+(defclfun ("clCreateCommandQueueWithProperties" create-command-queue-with-properties) command-queue
+  (context context)
+  (device device-id)
+  (properties queue-properties)
   (errcode-ret (:pointer error-code)))
 
 (defclfun ("clReleaseCommandQueue" release-command-queue) error-code
