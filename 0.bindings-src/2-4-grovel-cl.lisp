@@ -3,6 +3,7 @@
 (in-package #:eazy-opencl.bindings)
 
 (include "CL/cl.h")
+(include "CL/cl_ext.h")
 
 ;;; types
 
