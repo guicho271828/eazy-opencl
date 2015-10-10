@@ -138,7 +138,9 @@
               (#.(lispify-k-pair "CL_INVALID_LINKER_OPTIONS"))
               (#.(lispify-k-pair "CL_INVALID_DEVICE_PARTITION_COUNT"))
               (#.(lispify-k-pair "CL_INVALID_PIPE_SIZE"))
-              (#.(lispify-k-pair "CL_INVALID_DEVICE_QUEUE")))
+              (#.(lispify-k-pair "CL_INVALID_DEVICE_QUEUE"))
+              #+opencl-2.0
+              (#.(lispify-k-pair "CL_PLATFORM_NOT_FOUND_KHR")))
 
 (constant (#.(lispify "FALSE") "CL_FALSE"))
 (constant (#.(lispify "TRUE") "CL_TRUE"))
@@ -150,7 +152,10 @@
               (#.(lispify-k-pair "CL_PLATFORM_VERSION"))
               (#.(lispify-k-pair "CL_PLATFORM_NAME"))
               (#.(lispify-k-pair "CL_PLATFORM_VENDOR"))
-              (#.(lispify-k-pair "CL_PLATFORM_EXTENSIONS")))
+              (#.(lispify-k-pair "CL_PLATFORM_EXTENSIONS"))
+              #+opencl-2.0
+              (#.(lispify-k-pair "CL_PLATFORM_ICD_SUFFIX_KHR"))
+              )
 
 (bitfield #.(lispify "device_type")
           (#.(lispify-k-pair "CL_DEVICE_TYPE_DEFAULT"))
