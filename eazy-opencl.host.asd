@@ -30,5 +30,8 @@
                :eazy-opencl.error)
   :components ((:module "2.host-src"
                 :components
-                ((:file "package"))))
+                ((:file "package")
+                 (:file "resource")
+                 (:file "functional"))
+                :serial t))
   :description "Opencl Binding for Common Lisp: User API")
