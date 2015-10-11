@@ -5,12 +5,13 @@
 
 ;; "returns specified info about a platform-id
 ;;  param = :profile, :version, :name, :vendor, :extensions"
-(define-info-getter get-platform-info (platform-id param) %cl/e:get-platform-info
-  (:platform-profile     :string)
-  (:platform-version     :string)
-  (:platform-name        :string)
-  (:platform-vendor      :string)
-  (:platform-extensions  :string))
+(define-info-getter get-platform-info (platform-id param) %cl/e:get-platform-info ;;(%cl/e:get-platform-info %cl:platform-info)
+  (:platform-profile        :string)
+  (:platform-version        :string)
+  (:platform-name           :string)
+  (:platform-vendor         :string)
+  (:platform-extensions     :string)
+  (:platform-icd-suffix-khr :string))
 
 (define-info-getter get-device-info (device-id param) %cl/e:get-device-info
   (:type                          %cl:device-type)
