@@ -486,6 +486,12 @@
   (filter-mode filter-mode)
   (errcode-ret (:pointer error-code)))
 
+#+opencl-2.0
+(defclfun ("clCreateSamplerWithProperties" create-sampler-with-properties) sampler
+  (context context)
+  (sampler-properties sampler-properties)
+  (errcode-ret (:pointer error-code)))
+
 (defclfun ("clReleaseSampler" release-sampler) error-code
   (sampler sampler))
 
