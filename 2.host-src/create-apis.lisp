@@ -25,15 +25,15 @@ case converted into (list devices)"
     (with-opencl-plist (props '%cl:context-properties properties)
       (with-foreign-array (devs '%cl:device-id devices)
         (create-context props (length devices) devs
-                        (cffi:null-pointer)
-                        (cffi:null-pointer))))))
+                        (null-pointer)
+                        (null-pointer))))))
 
 (defun context-from-type (type &rest properties &key platform)
   (declare (ignore callback platform interop-user-sync))
   (with-opencl-plist (props '%cl:context-properties properties)
     (create-context-from-type props type
-                              (cffi:null-pointer)
-                              (cffi:null-pointer))))
+                              (null-pointer)
+                              (null-pointer))))
 
 ;;; 5.1 command queues
 
