@@ -31,9 +31,11 @@
   :components ((:module "2.host-src"
                 :components
                 ((:file "package")
+                 (:file "util")
                  (:file "resource")
                  (:file "functional")
                  (:file "functional-definitions")
+                 (:file "list-apis")
                  (:file "launch-steps"))
                 :serial t))
   :description "Opencl Binding for Common Lisp: User API")
