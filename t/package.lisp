@@ -6,7 +6,7 @@
 (in-package :cl-user)
 (defpackage :eazy-opencl.test
   (:use :cl
-        :eazy-opencl
+        :eazy-opencl.host
         :fiveam
         :iterate :alexandria :trivia))
 (in-package :eazy-opencl.test)
@@ -18,9 +18,17 @@
 
 ;; run test with (run! test-name) 
 
-(test eazy-opencl
+(test platform
+      (is-true (get-platform-ids))
+      (match (get-platform-ids)
+        ((list* id _)
+         (is (typep (print (get-platform-info id :platform-profile)) 'string))
+         (is (typep (print (get-platform-info id :platform-version)) 'string))
+         (is (typep (print (get-platform-info id :platform-name)) 'string))
+         (is (typep (print (get-platform-info id :platform-vendor)) 'string))
+         (is (typep (print (get-platform-info id :platform-extensions)) 'string)))))
 
-  )
+
 
 
 
