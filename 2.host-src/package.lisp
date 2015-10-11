@@ -35,4 +35,29 @@ consider changing the algorithm or even stop using GPGPU.
 
 (in-package :cl-user)
 (defpackage eazy-opencl.host
-  (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage))
+  (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage)
+  (:export
+   #:get-platform-info
+   #:get-device-info
+   #:get-context-info
+   #:get-command-queue-info
+   #:get-mem-object-info
+   #:get-image-info
+   #:get-sampler-info
+   #:get-program-info
+   #:get-program-build-info
+   #:get-kernel-info
+   #:get-kernel-work-group-info
+   #:get-event-info
+   #:get-event-profiling-info
+   #:context
+   #:context-from-type
+   #:command-queue
+   #:command-queue-with-properties
+   #:buffer
+   #:load-source
+   #:build-program
+   #:create-kernels-in-program
+   #:get-platform-ids
+   #:get-device-ids
+   #:get-supported-image-formats))
