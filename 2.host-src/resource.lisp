@@ -2,6 +2,8 @@
 
 (in-package :eazy-opencl.host)
 
+;;; utility macros
+
 (defmacro finalized-let (extended-bindings &body body)
   "Ensure the let-bound object is finalized through a finalizer form while
   being reclaimed by GC
@@ -49,10 +51,15 @@ binging: (variable value-form finalizer-form*)
                                 &key
                                   (creater (creater base-name))
                                   (e/creater (e/creater base-name))
-                                  (releaser (releaser base-name)))
+                                  (releaser (releaser base-name))
+                                  sufficient-api)
+  "If the api is sufficient (sufficient-api is non-nil),
+then base-name is used as the function name.
+ Otherwise, a new interned symbol with the same name as e/creater is used."
   (with-gensyms (obj)
     (let ((e/creater-call `(,e/creater ,@args))
-          (releaser-call `(,releaser ,obj)))
+          (releaser-call `(,releaser ,obj))
+          (defun-name (if sufficient-api base-name creater)))
       `(progn
          ;; heap version
          (defun ,creater ,args
@@ -70,12 +77,18 @@ binging: (variable value-form finalizer-form*)
 ;;; same creater/releaser name
 (define-finalized-api command-queue (context device properties))
 (define-finalized-api context (properties num-devices devices pfn-notify user-data))
-(define-finalized-api kernel (program kernel-name))
+(define-finalized-api kernel (program kernel-name)
+  :sufficient-api t)
 (define-finalized-api sampler (context normalized-coords addressing-mode filter-mode))
 
 ;;; variations
 (define-finalized-api command-queue-with-properties (context device properties)
   :releaser %cl/e:release-command-queue)
+
+#+opencl-2.0
+(define-finalized-api sampler-with-properties (context sampler-properties)
+  :releaser %cl/e:release-sampler)
+
 (define-finalized-api context-from-type (properties device-type pfn-notify user-data)
   :releaser %cl/e:release-context)
 (define-finalized-api program-with-binary (context num-devices device-list lengths binaries binary-status)
@@ -99,7 +112,8 @@ binging: (variable value-form finalizer-form*)
 
 #+opencl-1.1
 (define-finalized-api sub-buffer (buffer flags buffer-create-type buffer-create-info)
-  :releaser %cl/e:release-mem-object)
+  :releaser %cl/e:release-mem-object
+  :sufficient-api t)
 
 #+opencl-1.2
 (define-finalized-api image (context flags image-format image-desc host-ptr)
@@ -116,4 +130,5 @@ binging: (variable value-form finalizer-form*)
 #+opencl-2.0
 (define-finalized-api pipe (context flags pipe-packet-size pipe-max-packets properties)
   :releaser %cl/e:release-mem-object)
+
 

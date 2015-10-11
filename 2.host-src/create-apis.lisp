@@ -60,3 +60,62 @@ Properties should be a list of :out-of-order-exec-mode-enable and :profiling-ena
     (create-command-queue-with-properties context device props)))
 
 
+
+;;; 5.2.1 Creating Buffer Objects
+
+;; fixme: should this support preallocated host memory area?
+;; skipping for now, since it exposes ffi level stuff...
+;; possibly just support copy-host-ptr mode, with copy from lisp array?
+(defun buffer (context flags size &optional (host-ptr (null-pointer)))
+  (create-buffer context flags size host-ptr))
+
+;;; 5.3.1 Creating Image Objects
+
+
+;;; 5.6.1 Creating Program Objects
+
+;; I don't see any benefit in passing multiple strings to
+;; create-program-with-source.
+
+(defun load-source (context source)
+  (check-type source string)
+  (with-foreign-string (cstring source)
+    (with-foreign-object (p :pointer)
+      (setf (mem-ref p :pointer) cstring)
+      (create-program-with-source context 1 p (null-pointer)))))
+
+;; todo: create-program-with-binary
+;; todo: create-program-with-builtin-kernels
+;; todo: create-program-with-IL
+
+;;; 5.6.2 Building Program Executables
+
+;; todo: add notify callback support
+;;  - requiring callers to pass a cffi callback is a bit ugly
+;;  - using an interbal cffi callback and trying to map back to caller's
+;;    lisp callback is probably nicer API, but harder to implement
+;;  - also need to deal with thread safety stuff... not sure if it might
+;;    be called from arbitrary threads or not
+;; todo: add keywords for know options?
+(defun build-program (program &key devices (options-string "") callback)
+  (with-foreign-object (device-list :pointer (length devices))
+    (with-foreign-string (options options-string)
+     (check-return (%cl:build-program program (length devices)
+                                      (if devices device-list (null-pointer))
+                                      options-string
+                                      (null-pointer) (null-pointer))
+       ;; nv drivers return :invalid-binary for undefined functions,
+       ;; so treat that like build failure for now...
+       ((:build-program-failure :invalid-binary)
+        (let ((status (loop for i in (get-program-info program :devices)
+                         collect (list (get-program-build-info program i :status)
+                                       (get-program-build-info program i :log)))))
+          (error "Build-program returned :build-program-failure:~:{~&~s : ~s~}" status)))))))
+
+;;; 5.7.1 Creating Kernel Objects
+
+
+(defun create-kernels-in-program (program)
+  ;; fixme: verify calling this twice is the correct way to figure out
+  ;; how many kernels are in program...
+  (get-counted-list %cl:create-kernels-in-program (program) '%cl:kernel))
