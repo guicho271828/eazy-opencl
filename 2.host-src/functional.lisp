@@ -3,6 +3,9 @@
 Opencl interface is completely imperative, so we need a good interface.
 Largely forked from cl-opencl-3b.
 
+This file contain only the definition of the macro define-info-getter.
+Actual use of this macro is in functional-definitions.lisp.
+
 |#
 
 (in-package :eazy-opencl.host)
