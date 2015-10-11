@@ -17,8 +17,6 @@ binging: (variable value-form finalizer-form*)
                  extended-bindings)
      ,@body))
 
-
-
 #+mock
 (finalized-let ((cq (create-command-queue context device properties)
                     (release-command-queue cq)))
@@ -35,10 +33,12 @@ binging: (variable value-form finalizer-form*)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun creater (name)
+    (intern (format nil "CREATE-~a" (symbol-name name))))
+
+  (defun e/creater (name)
     (or (find-symbol (format nil "CREATE-~a" (symbol-name name))
                      (find-package :EAZY-OPENCL.ERROR))
         (error "no creater of ~a found!" name)))
-
 
   (defun releaser (name)
     (or (find-symbol (format nil "RELEASE-~a" (symbol-name name))
@@ -48,18 +48,20 @@ binging: (variable value-form finalizer-form*)
 (defmacro define-finalized-api (base-name args
                                 &key
                                   (creater (creater base-name))
+                                  (e/creater (e/creater base-name))
                                   (releaser (releaser base-name)))
   (with-gensyms (obj)
-    (let ((creater-call `(,creater ,@args))
+    (let ((e/creater-call `(,e/creater ,@args))
           (releaser-call `(,releaser ,obj)))
       `(progn
          ;; heap version
-         (defun ,base-name ,args
-           (finalized-let ((,obj ,creater-call ,releaser-call))
+         (defun ,creater ,args
+           (finalized-let ((,obj ,e/creater-call ,releaser-call))
              ,obj))
-         ;; stack version
+         ;; stack version --- disabled, since we need one more layer for lisp api
+         #+nil
          (defmacro ,(symbolicate 'with- base-name) ((var ,@args) &body body)
-           `(let ((,var (,',creater ,,@args)))
+           `(let ((,var (,',e/creater ,,@args)))
               (unwind-protect
                   (progn
                     ,@body)
@@ -73,43 +75,43 @@ binging: (variable value-form finalizer-form*)
 
 ;;; variations
 (define-finalized-api context-from-type (properties device-type pfn-notify user-data)
-  :releaser release-context)
+  :releaser %cl/e:release-context)
 (define-finalized-api program-with-binary (context num-devices device-list lengths binaries binary-status)
-  :releaser release-program)
+  :releaser %cl/e:release-program)
 (define-finalized-api program-with-builtin-kernels (context num-devices device-list kernel-names)
-  :releaser release-program)
+  :releaser %cl/e:release-program)
 (define-finalized-api program-with-source (context count strings lengths)
-  :releaser release-program)
+  :releaser %cl/e:release-program)
 (define-finalized-api user-event (context)
-  :releaser release-event)
+  :releaser %cl/e:release-event)
 
 ;;; TODO: array of kernels
 #+nil
 (define-finalized-api kernels-in-program (program num-kernels kernels num-kernels-ret)
-  :releaser release-kernel)
+  :releaser %cl/e:release-kernel)
 
 ;;; mem objects
 
 (define-finalized-api buffer (context flags size host-ptr)
-  :releaser release-mem-object)
+  :releaser %cl/e:release-mem-object)
 
 #+opencl-1.1
 (define-finalized-api sub-buffer (buffer flags buffer-create-type buffer-create-info)
-  :releaser release-mem-object)
+  :releaser %cl/e:release-mem-object)
 
 #+opencl-1.2
 (define-finalized-api image (context flags image-format image-desc host-ptr)
-  :releaser release-mem-object)
+  :releaser %cl/e:release-mem-object)
 
 ;; #-opencl-1.2
 (define-finalized-api image-2d (context flags image-format image-width image-height image-row-pitch host-ptr)
-  :releaser release-mem-object)
+  :releaser %cl/e:release-mem-object)
 
 ;; #-opencl-1.2
 (define-finalized-api image-3d (context flags image-format image-width image-height image-depth image-row-pitch image-slice-pitch host-ptr)
-  :releaser release-mem-object)
+  :releaser %cl/e:release-mem-object)
 
 #+opencl-2.0
 (define-finalized-api pipe (context flags pipe-packet-size pipe-max-packets properties)
-  :releaser release-mem-object)
+  :releaser %cl/e:release-mem-object)
 
