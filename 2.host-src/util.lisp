@@ -32,14 +32,15 @@ SEQUENCE, TYPE are evaluated.
 
 (declaim (inline call-with-foreign-array))
 (defun call-with-foreign-array (type sequence callback)
-  (with-foreign-object (pointer type len)
-    (loop for i below (length sequence)
-          do
-       (setf (mem-aref pointer type i)
-             ;; sbcl optimize it away when the type of sequence is known.
-             ;; note: this function is inlined.
-             (elt sequence i)))
-    (funcall callback pointer)))
+  (let ((len (length sequence)))
+    (with-foreign-object (pointer type len)
+      (loop for i below len
+            do
+         (setf (mem-aref pointer type i)
+               ;; sbcl optimize it away when the type of sequence is known.
+               ;; note: this function is inlined.
+               (elt sequence i)))
+      (funcall callback pointer))))
 (declaim (notinline call-with-foreign-array))
 
 
@@ -58,13 +59,13 @@ containing property and property-value alternatingly.
 Run BODY where VAR is bound to an OpenCL property list (foreign)
 converted from PLIST (evaluated).
 
-TYPE is not evaluated. To evaluate it runtime, use call-with-foreign-array.
+TYPE (evaluated).
 "
   `(locally
        (declare (inline call-with-opencl-plist))
      (call-with-opencl-plist
       ,plist
-      ',type
+      ,type
       (lambda (,var) ,@body))))
 
 (declaim (inline call-with-opencl-plist))

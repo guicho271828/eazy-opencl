@@ -74,6 +74,8 @@ binging: (variable value-form finalizer-form*)
 (define-finalized-api sampler (context normalized-coords addressing-mode filter-mode))
 
 ;;; variations
+(define-finalized-api command-queue-with-properties (context device properties)
+  :releaser %cl/e:release-command-queue)
 (define-finalized-api context-from-type (properties device-type pfn-notify user-data)
   :releaser %cl/e:release-context)
 (define-finalized-api program-with-binary (context num-devices device-list lengths binaries binary-status)

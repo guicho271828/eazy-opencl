@@ -36,6 +36,7 @@
                  (:file "functional")
                  (:file "functional-definitions")
                  (:file "list-apis")
+                 (:file "create-apis")
                  (:file "launch-steps"))
                 :serial t))
   :description "Opencl Binding for Common Lisp: User API")
