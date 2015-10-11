@@ -4,6 +4,10 @@
 
 Both [cl-opencl](https://github.com/malkia/cl-opencl) and [cl-opencl-3b](https://github.com/3b/cl-opencl-3b) seems the abondoned projects. I'm trying to supersede it with something better.
 
+## Testing
+
+`(asdf:test-system :eazy-opencl)`
+
 ## Supported OpenCL Versions
 
 + opencl-1.2
@@ -14,6 +18,7 @@ OpenCL is a framework for running a massively parallel computation enhanced by c
 While NVIDIA used to be largely inactive in supporting OpenCL and like to maintain the vendor-lock-in using CUDA, as of 2015-05-07, there are [large number of NVIDIA's products finally passed the opencl 1.2 conformance test](https://www.khronos.org/conformance/adopters/conformant-products). 
 
 This library is developped with AMD APPSDK v3.0 (OpenCL 2.0) and Radeon HD 5770.
+
 
 ## Dependencies
 This library is at least tested on implementation listed below:
