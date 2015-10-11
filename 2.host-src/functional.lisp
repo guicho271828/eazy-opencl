@@ -66,7 +66,7 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
     ((list pname _ :form code)
      `(,pname ,code))
     ((list pname :string)
-     `(,pname ,(%string-case args fun)))
+     `(,pname ,(%string-case args fun pname)))
     ((list pname _)
      `(,pname ,(%simple-case args fun form)))))
 
@@ -82,12 +82,12 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
   (let ((base-type (%base-type form)))
     (with-gensyms (foreign-value count-temp)
       (ematch form
-        ((list* _ type (plist :fixedsize count-param
+        ((list* pname type (plist :fixedsize count-param
                               :plist flag))
 
          `(let ((,count-temp ,count-param))
             (with-foreign-object (,foreign-value ',base-type ,count-temp)
-              (,fun ,@args
+              (,fun ,@(butlast args) ,pname
                     (* ,(foreign-type-size type) ,count-temp)
                     ,foreign-value
                     (cffi:null-pointer))
@@ -104,14 +104,14 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
   (let ((base-type (%base-type form)))
     (with-gensyms (foreign-value count-temp)
       (ematch form
-        ((list* _ type (plist :querysize count-param
+        ((list* pname type (plist :querysize count-param
                               :plist flag))
 
          `(let ((,count-temp
                  ;; further call to NAME for obtaining the size
-                 (,name ,@(butlast args 1) ,count-param)))
+                 (,name ,@(butlast args) ,count-param)))
             (with-foreign-object (,foreign-value ',base-type ,count-temp)
-              (,fun ,@args
+              (,fun ,@(butlast args) ,pname
                     (* ,(foreign-type-size type) ,count-temp)
                     ,foreign-value
                     (cffi:null-pointer))
@@ -128,16 +128,16 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
   (let ((base-type (%base-type form)))
     (with-gensyms (foreign-value count-temp fsize)
       (ematch form
-        ((list* _ type (plist :plist flag))
+        ((list* pname type (plist :plist flag))
 
          `(with-foreign-object (,fsize '%cl:uint)
-            (,fun ,@args
+            (,fun ,@(butlast args) ,pname
                   0 (cffi::null-pointer)
                   ,fsize)
             (let ((,count-temp (floor (mem-aref ,fsize '%cl:uint)
                                       ,(foreign-type-size type))))
               (with-foreign-object (,foreign-value ',base-type ,count-temp)
-                (,fun ,@args
+                (,fun ,@(butlast args) ,pname
                       (* ,(foreign-type-size type)
                          ,count-temp)
                       ,foreign-value
@@ -151,21 +151,21 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
                                  else))
                       collect v)))))))))
 
-(defun %string-case (args fun)
+(defun %string-case (args fun pname)
   (with-gensyms (count-temp fsize s)
     `(with-foreign-object (,fsize '%cl:uint)
-       (,fun ,@args 0 (cffi::null-pointer) ,fsize)
+       (,fun ,@(butlast args) ,pname 0 (cffi::null-pointer) ,fsize)
        (let ((,count-temp (mem-aref ,fsize '%cl:uint)))
          (with-foreign-object (,s :uchar (1+ ,count-temp))
-           (,fun ,@args (1+ ,count-temp) ,s (cffi::null-pointer))
+           (,fun ,@(butlast args) ,pname (1+ ,count-temp) ,s (cffi::null-pointer))
            (foreign-string-to-lisp ,s))))))
 
 (defun %simple-case (args fun form)
   (with-gensyms (foreign-value)
     (ematch form
-      ((list _ type)
+      ((list pname type)
        `(with-foreign-object (,foreign-value ',type)
-          (,fun ,@args ,(foreign-type-size type) ,foreign-value (cffi:null-pointer))
+          (,fun ,@(butlast args) ,pname ,(foreign-type-size type) ,foreign-value (cffi:null-pointer))
           (mem-aref ,foreign-value ',type))))))
 
 

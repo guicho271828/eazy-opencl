@@ -97,20 +97,23 @@ Properties should be a list of :out-of-order-exec-mode-enable and :profiling-ena
 ;;  - also need to deal with thread safety stuff... not sure if it might
 ;;    be called from arbitrary threads or not
 ;; todo: add keywords for know options?
-(defun build-program (program &key devices (options-string "") callback)
-  (with-foreign-object (device-list :pointer (length devices))
-    (with-foreign-string (options options-string)
-     (check-return (%cl:build-program program (length devices)
-                                      (if devices device-list (null-pointer))
-                                      options-string
-                                      (null-pointer) (null-pointer))
-       ;; nv drivers return :invalid-binary for undefined functions,
-       ;; so treat that like build failure for now...
-       ((:build-program-failure :invalid-binary)
-        (let ((status (loop for i in (get-program-info program :devices)
-                         collect (list (get-program-build-info program i :status)
-                                       (get-program-build-info program i :log)))))
-          (error "Build-program returned :build-program-failure:~:{~&~s : ~s~}" status)))))))
+(defun build-program (program &key devices (options ""))
+  (check-type options string)
+  (with-foreign-array (devices-foreign '%cl:device-id devices)
+    (%cl/e:build-program program (length devices)
+                         devices-foreign
+                         options
+                         (null-pointer) (null-pointer))))
+
+;; TODO: below comment is in the original opencl.lisp by 3b.
+;; 
+;; ;; nv drivers return :invalid-binary for undefined functions,
+;; ;; so treat that like build failure for now...
+;; ((:build-program-failure :invalid-binary)
+;;  (let ((status (loop for i in (get-program-info program :devices)
+;;                      collect (list (get-program-build-info program i :status)
+;;                                    (get-program-build-info program i :log)))))
+;;    (error "Build-program returned :build-program-failure:~:{~&~s : ~s~}" status))))))
 
 ;;; 5.7.1 Creating Kernel Objects
 
