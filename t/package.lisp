@@ -6,6 +6,7 @@
 (in-package :cl-user)
 (defpackage :eazy-opencl.test
   (:use :cl
+        :cffi
         :eazy-opencl.host
         :fiveam
         :iterate :alexandria :trivia))
@@ -25,13 +26,12 @@
   `(is (typep ,form 'string) ,@reason-args))
 
 (defun all-enums (foreign-typename)
-  (alexandria:hash-table-values
-   (cffi::value-keywords
-    (cffi::parse-type foreign-typename))))
+  "just an alias"
+  (foreign-enum-keyword-list foreign-typename))
 
 (defun all-bitfields (foreign-typename)
-  (cffi:foreign-bitfield-symbol-list
-   foreign-typename))
+  "just an alias"
+  (foreign-bitfield-symbol-list foreign-typename))
 
 (test setup
   (is-true (get-platform-ids))
