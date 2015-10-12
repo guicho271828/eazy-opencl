@@ -29,17 +29,25 @@
    (cffi::value-keywords
     (cffi::parse-type foreign-typename))))
 
+(defun all-bitfields (foreign-typename)
+  (cffi:foreign-bitfield-symbol-list
+   foreign-typename))
+
 (test setup
   (is-true (get-platform-ids))
-  (iter (for id in (get-platform-ids))
+  (iter (for pid in (get-platform-ids))
         (iter (for param in (all-enums '%cl:platform-info))
-              (is-string (get-platform-info id param)))
+              (is-string (get-platform-info pid param)))
         (is-true
-         (iter (for type in (all-enums '%cl:device-type))
-               (for dids = (pie (get-device-ids pid type)))
-               (unless dids (next-iteration))
-               (iter (for param in (all-enums '%cl:device-info))
-                     (is-true (pie (get-device-info pid param)))))
+         (iter (with result = nil)
+               (for type in (all-bitfields '%cl:device-type))
+               (for dids = (pie (get-device-ids pid (list type))))
+               (when dids (setf result t))
+               (iter (for did in dids)
+                     (is-true
+                      (iter (for param in (all-enums '%cl:device-info))
+                            (always (print (get-device-info did param))))))
+               (finally (return result)))
          "At least one device type should be accepted!")))
 
 (test context

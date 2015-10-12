@@ -1,7 +1,7 @@
 
 (cl:defpackage #:eazy-opencl.bindings
   (:use :cffi)
-  (:import-from :cl :float)
+  ;; (:import-from :cl :float)
   (:nicknames :%cl)
   (:export
    #:*defined-opencl-functions*

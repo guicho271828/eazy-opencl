@@ -17,9 +17,7 @@
                    (helper (cl:cdr lst) 'lower (cl:cons (cl:char-upcase c) rest)))
                   ((cl:digit-char-p c)
                    (helper (cl:cdr lst) 'digit 
-                           (cl:case last
-                             ((upper lower) (cl:list* c #\- rest))
-                             (cl:t (cl:cons c rest)))))
+                           (cl:cons c rest)))
                   ((cl:char-equal c #\_)
                    (helper (cl:cdr lst) '_ (cl:cons #\- rest)))
                   (cl:t

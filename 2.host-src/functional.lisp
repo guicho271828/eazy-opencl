@@ -12,11 +12,12 @@ Actual use of this macro is in functional-definitions.lisp.
 
 ;;; info-getter
 
-(defmacro define-info-getter (name (&rest args) fun &body body)
+(defmacro define-info-getter (name (&rest args) (fun type) &body body)
   "Define a functional wrapper for get-XXX-info apis.
 NAME: The name of the resulting wrapper.
 ARGS: The parameters of the resulting wrapper.
 FUN:  Underlying api in EAZY-OPENCL.ERROR.
+TYPE: enum type accepted by FUN as a parameter.
 BODY: Query specification of the getter, the most complicated part of the OpenCL API.
       Each element of the body may take either of the 4 forms:
 
@@ -53,21 +54,27 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
   (let ((param (lastcar args)))
     `(defun ,name (,@args)
        (ecase ,param
-         ,@(mapcar (curry #'info-getter-case-form name args fun) body)))))
+         ,@(mapcar (curry #'info-getter-case-form name args fun type) body)))))
 
-(defun info-getter-case-form (name args fun form)
+(defun info-getter-case-form (name args fun type form)
   (ematch form
     ((list* pname _ (plist :fixedsize (number)))
+     (assert (foreign-enum-value type pname))
      `(,pname ,(%fixed-size-case args fun form)))
     ((list* pname _ (plist :querysize (keyword)))
+     (assert (foreign-enum-value type pname))
      `(,pname ,(%dynamic-size-case name args fun form)))
     ((list* pname _ (plist :array t))
+     (assert (foreign-enum-value type pname))
      `(,pname ,(%array-case args fun form)))
     ((list pname _ :form code)
+     (assert (foreign-enum-value type pname))
      `(,pname ,code))
     ((list pname :string)
+     (assert (foreign-enum-value type pname))
      `(,pname ,(%string-case args fun pname)))
     ((list pname _)
+     (assert (foreign-enum-value type pname))
      `(,pname ,(%simple-case args fun form)))))
 
 (defun %base-type (form)
