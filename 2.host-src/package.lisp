@@ -36,6 +36,7 @@ consider changing the algorithm or even stop using GPGPU.
 (in-package :cl-user)
 (defpackage eazy-opencl.host
   (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage)
+  (:nicknames :%cl/h)
   (:export
    #:get-platform-info
    #:get-device-info
