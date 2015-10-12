@@ -476,9 +476,11 @@
               (#.(lispify-k-pair "CL_SAMPLER_NORMALIZED_COORDS"))
               (#.(lispify-k-pair "CL_SAMPLER_ADDRESSING_MODE"))
               (#.(lispify-k-pair "CL_SAMPLER_FILTER_MODE"))
-              (#.(lispify-k-pair "CL_SAMPLER_MIP_FILTER_MODE"))
-              (#.(lispify-k-pair "CL_SAMPLER_LOD_MIN"))
-              (#.(lispify-k-pair "CL_SAMPLER_LOD_MAX")))
+              ;; extensions, not included
+              ;; (#.(lispify-k-pair "CL_SAMPLER_MIP_FILTER_MODE"))
+              ;; (#.(lispify-k-pair "CL_SAMPLER_LOD_MIN"))
+              ;; (#.(lispify-k-pair "CL_SAMPLER_LOD_MAX"))
+              )
 
 (bitfield #.(lispify "map_flags")
           (#.(lispify-k-pair "CL_MAP_READ"))

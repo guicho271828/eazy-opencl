@@ -29,7 +29,7 @@ case converted into (list devices)"
                         (null-pointer))))))
 
 (defun context-from-type (type &rest properties &key platform)
-  (declare (ignore callback platform interop-user-sync))
+  (declare (ignore platform))
   (with-opencl-plist (props '%cl:context-properties properties)
     (create-context-from-type props type
                               (null-pointer)

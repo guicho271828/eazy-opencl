@@ -135,10 +135,16 @@
   (:image-slice-pitch  %cl:size-t)
   (:image-width        %cl:size-t)
   (:image-height       %cl:size-t)
-  (:image-depth        %cl:size-t))
+  (:image-depth        %cl:size-t)
+  (:image-num-samples %cl:uint)
+  (:image-num-mip-levels %cl:uint)
+  #+opencl-1.2
+  (:image-buffer %cl:mem)
+  (:image-array-size %cl:size-t))
 
 (define-info-getter get-kernel-info (kernel param) (%cl:kernel-info)
-  (:kernel-function-name :string)
+  (:kernel-attributes      :string)
+  (:kernel-function-name   :string)
   (:kernel-num-args        %cl:uint)
   (:kernel-reference-count %cl:uint)
   (:kernel-context         %cl:context)
@@ -198,6 +204,10 @@
   (:program-devices         %cl:device-id :array t)
   (:program-source          :string)
   (:program-binary-sizes    %cl:size-t :array t)
+  #+opencl-1.2
+  (:program-kernel-names    :string)
+  #+opencl-1.2
+  (:program-num-kernels     %cl:size-t)
   (:program-binaries
    nil
    :form
@@ -228,7 +238,12 @@
   (:sampler-context           %cl:context)
   (:sampler-normalized-coords %cl:bool)
   (:sampler-addressing-mode   %cl:addressing-mode)
-  (:sampler-filter-mode       %cl:filter-mode))
+  (:sampler-filter-mode       %cl:filter-mode)
+  ;; extensions, not included
+  ;; (:sampler-lod-max %cl:)
+  ;; (:sampler-lod-min %cl:)
+  ;; (:sampler-mip-filter-mode %cl:)
+  )
 
 
 

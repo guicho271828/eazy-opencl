@@ -30,5 +30,5 @@
 
 (define-list-api get-platform-ids () %cl/e:get-platform-ids %cl:platform-id)
 (define-list-api get-device-ids (platform-id device-types) %cl/e:get-device-ids %cl:device-id)
-(define-list-api get-supported-image-formats (context flags image-type) %cl/e:get-supported-image-formats %cl:image-format)
+(define-list-api get-supported-image-formats (context flags image-type) %cl/e:get-supported-image-formats (:pointer (:struct %cl:image-format)))
 
