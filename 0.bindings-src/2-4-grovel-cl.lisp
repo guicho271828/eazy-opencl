@@ -568,6 +568,7 @@
               (#.(lispify-k-pair "CL_KERNEL_SUB_GROUP_COUNT_FOR_NDRANGE"))
               (#.(lispify-k-pair "CL_GET_LOCAL_SIZE_FOR_SUB_GROUP_COUNT")))
 
+#+opencl-2.0
 (constantenum #.(lispify "kernel_exec_info")
               (#.(lispify-k-pair "CL_KERNEL_EXEC_INFO_SVM_PTRS"))
               (#.(lispify-k-pair "CL_KERNEL_EXEC_INFO_SVM_FINE_GRAIN_SYSTEM")))

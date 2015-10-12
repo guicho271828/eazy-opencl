@@ -1,5 +1,7 @@
-(cl:in-package #:eazy-opencl.bindings)
 ;;; Ordered in create-release-retain-get/set-info order
+
+(cl:in-package #:eazy-opencl.bindings)
+
 ;;; platform
 (defclfun ("clGetPlatformIDs" get-platform-ids) error-code
   (num-entries uint)
@@ -617,6 +619,13 @@
   (param-value-size size-t)
   (param-value (:pointer :void))
   (param-value-size-ret :pointer))
+
+#+opencl-2.0
+(defclfun ("clGetKernelExecInfo" get-kernel-exec-info) error-code
+  (kernel-name kernel)
+  (param-name kernel-exec-info)
+  (param-value-size size-t)
+  (param-value (:pointer :void)))
 
 #+opencl-1.1
 (defclfun ("clGetKernelWorkGroupInfo" get-kernel-work-group-info) error-code
