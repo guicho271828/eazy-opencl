@@ -62,7 +62,7 @@ then base-name is used as the function name.
           (defun-name (if sufficient-api base-name creater)))
       `(progn
          ;; heap version
-         (defun ,creater ,args
+         (defun ,defun-name ,args
            (finalized-let ((,obj ,e/creater-call ,releaser-call))
              ,obj))
          ;; stack version --- disabled, since we need one more layer for lisp api
