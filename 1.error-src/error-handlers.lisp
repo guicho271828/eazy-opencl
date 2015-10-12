@@ -60,11 +60,10 @@ CONTINUE will ignore the error, then return the result."
                 (continue () (return ,result)))))))))
 
   (defun wrap-api-taking-error-ptr (function-info)
-    "Wraps a form when it takes a dynamic pointer to
-EAZY-OPENCL.BINDING:ERROR-CODE in its argument.
-The code signals an error when the result is not a :SUCCESS. The error is
-signalled under the environment where :RETRY and CL:CONTINUE restart is
-in effect.
+    "Wraps a form when it takes a pointer to EAZY-OPENCL.BINDING:ERROR-CODE
+in its argument.  The code signals an error when the resulting value in the
+pointer is not a :SUCCESS. The error is signalled under the environment
+where :RETRY and CL:CONTINUE restart is in effect.
 
 :RETRY will rerun the call to the underlying cffi function.
 CONTINUE will ignore the error, then return the result."
@@ -78,7 +77,7 @@ CONTINUE will ignore the error, then return the result."
               (restart-case
                   (with-foreign-object (,e 'error-code)
                     (let* ((,result (,@form ,e))
-                           (,e-keyword (foreign-enum-keyword 'error-code ,e)))
+                           (,e-keyword (mem-ref ,e 'error-code)))
                       (if (eq ,e-keyword :success)
                           ,result
                           (error 'opencl-error
