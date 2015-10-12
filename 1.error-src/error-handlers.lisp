@@ -3,8 +3,8 @@
 ;; blah blah blah.
 
 (define-condition opencl-error (error)
-  ((code :accessor code :initarg :code :initform (error 'simple-program-error :format-control "~a is a mandatory slot" :code))
-   (form :accessor form :initarg :form :initform (error 'simple-program-error :format-control "~a is a mandatory slot" :form)))
+  ((code :accessor opencl-error-code :initarg :code :initform (error 'simple-program-error :format-control "~a is a mandatory slot" :code))
+   (form :accessor opencl-error-form :initarg :form :initform (error 'simple-program-error :format-control "~a is a mandatory slot" :form)))
   (:report (lambda (c s)
              (with-slots (code form) c
                 (format s "OpenCL error ~s from ~s" code form)))))

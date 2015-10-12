@@ -13,4 +13,6 @@
   (:export
    #:opencl-error
    #:code
-   #:form))
+   #:form
+   #:opencl-error-code
+   #:opencl-error-form))

@@ -37,16 +37,27 @@
   (is-true (get-platform-ids))
   (iter (for pid in (get-platform-ids))
         (iter (for param in (all-enums '%cl:platform-info))
-              (is-string (get-platform-info pid param)))
+              (finishes
+                (handler-case
+                    (format t "~%OpenCL Info:  ~s for query ~a to platform ~a"
+                            (get-platform-info pid param) param pid)
+                  (%cl/e:opencl-error (c)
+                    (format t "~%OpenCL Error: ~s for query ~a to platform ~a"
+                            (%cl/e:opencl-error-code c) param pid)))))
         (is-true
          (iter (with result = nil)
                (for type in (all-bitfields '%cl:device-type))
                (for dids = (pie (get-device-ids pid (list type))))
                (when dids (setf result t))
                (iter (for did in dids)
-                     (is-true
-                      (iter (for param in (all-enums '%cl:device-info))
-                            (always (print (get-device-info did param))))))
+                     (iter (for param in (all-enums '%cl:device-info))
+                           (finishes
+                             (handler-case
+                                 (format t "~%OpenCL Info:  ~s for query ~a to device ~a"
+                                         (get-device-info did param) param did)
+                               (%cl/e:opencl-error (c)
+                                 (format t "~%OpenCL Error: ~s for query ~a to device ~a"
+                                         (%cl/e:opencl-error-code c) param did))))))
                (finally (return result)))
          "At least one device type should be accepted!")))
 
