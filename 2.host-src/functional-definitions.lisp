@@ -5,20 +5,20 @@
 
 ;; "returns specified info about a platform-id
 ;;  param = :profile, :version, :name, :vendor, :extensions"
-(define-info-getter get-command-queue-info (command-queue param) (%cl/e:get-command-queue-info %cl:command-queue-info)
+(define-info-getter get-command-queue-info (command-queue param) (%cl:command-queue-info)
   (:queue-context         %cl:context)
   (:queue-device          %cl:device-id)
   (:queue-reference-count %cl:uint)
   (:queue-properties      %cl:command-queue-properties)
   (:queue-size            %cl:uint))
 
-(define-info-getter get-context-info (context param) (%cl/e:get-context-info %cl:context-info)
+(define-info-getter get-context-info (context param) (%cl:context-info)
  (:context-reference-count %cl:uint)
  (:context-devices         %cl:device-id :array t)
  (:context-properties      %cl:context-properties :array t :plist t))
 ;; fixme : support plist stuff: alternating enum/value pairs terminated by a single 0
 
-(define-info-getter get-device-info (device-id param) (%cl/e:get-device-info %cl:device-info)
+(define-info-getter get-device-info (device-id param) (%cl:device-info)
   (:device-type                          %cl:device-type)
   (:device-vendor-id                     %cl:uint)
   (:device-max-compute-units             %cl:uint)
@@ -81,7 +81,7 @@
   (:device-native-vector-width-double    %cl:uint)
   (:device-opencl-c-version :string))
 
-(define-info-getter get-event-info (event param) (%cl/e:get-event-info %cl:event-info)
+(define-info-getter get-event-info (event param) (%cl:event-info)
   (:event-command-queue            %cl:command-queue)
   #+opencl-1.1
   (:event-context                  %cl:context)
@@ -89,7 +89,7 @@
   (:event-command-execution-status %cl:int)
   (:event-reference-count          %cl:uint))
 
-(define-info-getter get-event-profiling-info (event param) (%cl/e:get-event-profiling-info %cl:profiling-info)
+(define-info-getter get-event-profiling-info (event param) (%cl:profiling-info)
   (:profiling-command-queued %cl:ulong)
   (:profiling-command-submit %cl:ulong)
   (:profiling-command-start  %cl:ulong)
@@ -97,7 +97,7 @@
   #+opencl-2.0
   (:profiling-command-complete %cl:ulong))
 
-(define-info-getter get-image-info (image param) (%cl/e:get-image-info %cl:image-info)
+(define-info-getter get-image-info (image param) (%cl:image-info)
   (:image-format       %cl:image-format)
   (:image-element-size %cl:size-t)
   (:image-row-pitch    %cl:size-t)
@@ -106,7 +106,7 @@
   (:image-height       %cl:size-t)
   (:image-depth        %cl:size-t))
 
-(define-info-getter get-kernel-info (kernel param) (%cl/e:get-kernel-info %cl:kernel-info)
+(define-info-getter get-kernel-info (kernel param) (%cl:kernel-info)
   (:kernel-function-name :string)
   (:kernel-num-args        %cl:uint)
   (:kernel-reference-count %cl:uint)
@@ -114,11 +114,11 @@
   (:kernel-program         %cl:program))
 
 #+opencl-2.0
-(define-info-getter get-kernel-exec-info (kernel param) (%cl/e:get-kernel-exec-info %cl:kernel-exec-info)
+(define-info-getter get-kernel-exec-info (kernel param) (%cl:kernel-exec-info)
   (:kernel-exec-info-svm-ptrs (:pointer :void) :array t)
   (:kernel-exec-info-svm-fine-grain-system %cl:bool))
 
-(define-info-getter get-kernel-work-group-info (kernel device param) (%cl/e:get-kernel-work-group-info %cl:kernel-work-group-info)
+(define-info-getter get-kernel-work-group-info (kernel device param) (%cl:kernel-work-group-info)
   (:kernel-global-work-size                   %cl:size-t :fixedsize 3)
   (:kernel-work-group-size                    %cl:size-t)
   (:kernel-compile-work-group-size            %cl:size-t :fixedsize 3)
@@ -127,7 +127,7 @@
   (:kernel-private-mem-size                   %cl:ulong))
 
 
-(define-info-getter get-mem-object-info (memobj param) (%cl/e:get-mem-object-info %cl:mem-info)
+(define-info-getter get-mem-object-info (memobj param) (%cl:mem-info)
   (:mem-type                 %cl:mem-object-type)
   (:mem-flags                %cl:mem-flags)
   (:mem-size                 %cl:size-t)
@@ -141,11 +141,11 @@
   (:mem-uses-svm-pointer  %cl:bool))
 
 #+opencl-2.0
-(define-info-getter get-pipe-info (pipe param) (%cl/e:get-pipe-info %cl:pipe-info)
+(define-info-getter get-pipe-info (pipe param) (%cl:pipe-info)
   (:pipe-packet-size %cl:uint)
   (:pipe-max-packets %cl:uint))
 
-(define-info-getter get-platform-info (platform-id param) (%cl/e:get-platform-info %cl:platform-info)
+(define-info-getter get-platform-info (platform-id param) (%cl:platform-info)
   (:platform-profile        :string)
   (:platform-version        :string)
   (:platform-name           :string)
@@ -153,14 +153,14 @@
   (:platform-extensions     :string)
   (:platform-icd-suffix-khr :string))
 
-(define-info-getter get-program-build-info (program device param) (%cl/e:get-program-build-info %cl:program-build-info)
+(define-info-getter get-program-build-info (program device param) (%cl:program-build-info)
   (:program-build-status  %cl:build-status)
   (:program-build-options                    :string)
   (:program-build-log                        :string)
   (:program-binary-type                      :string)
   (:program-build-global-variable-total-size :string))
 
-(define-info-getter get-program-info (program param) (%cl/e:get-program-info %cl:program-info)
+(define-info-getter get-program-info (program param) (%cl:program-info)
   (:program-reference-count %cl:uint)
   (:program-context         %cl:context)
   (:program-num-devices     %cl:uint)
@@ -192,7 +192,7 @@
                               (mem-aref (mem-aref pointers :pointer i) :uchar j))
                      finally (return array))))))))
 
-(define-info-getter get-sampler-info (sampler param) (%cl/e:get-sampler-info %cl:sampler-info)
+(define-info-getter get-sampler-info (sampler param) (%cl:sampler-info)
   (:sampler-reference-count   %cl:uint)
   (:sampler-context           %cl:context)
   (:sampler-normalized-coords %cl:bool)

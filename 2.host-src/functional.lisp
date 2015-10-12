@@ -12,11 +12,10 @@ Actual use of this macro is in functional-definitions.lisp.
 
 ;;; info-getter
 
-(defmacro define-info-getter (name (&rest args) (fun type) &body body)
+(defmacro define-info-getter (name (&rest args) (type) &body body)
   "Define a functional wrapper for get-XXX-info apis.
-NAME: The name of the resulting wrapper.
+NAME: The name of the resulting wrapper. MUST be the same name as the underlying api in EAZY-OPENCL.ERROR.
 ARGS: The parameters of the resulting wrapper.
-FUN:  Underlying api in EAZY-OPENCL.ERROR.
 TYPE: enum type accepted by FUN as a parameter.
 BODY: Query specification of the getter, the most complicated part of the OpenCL API.
       Each element of the body may take either of the 4 forms:
