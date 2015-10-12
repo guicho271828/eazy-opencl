@@ -50,30 +50,40 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
  Last resort. In place of the default behavior, FORM is used in the expansion.
 
 "
-  (let ((param (lastcar args)))
+  (let ((param (lastcar args))
+        (fun (find-symbol (symbol-name name) (find-package "%CL/E"))))
+    ;; check if each parameter is valid
+    (iter (for form in body)
+          (ematch form
+            ((list* pname _)
+             (assert (foreign-enum-value type pname)))))
+    ;; check if there is no missing parameter
+    (unless (set-equal (mapcar #'first body)
+                       (foreign-enum-keyword-list type))
+      (simple-style-warning
+       "~<These paramters are not implemented: ~a Contact the author and check ~a~:@>"
+       (list (set-difference (foreign-enum-keyword-list type)
+                             (mapcar #'first body))
+             (asdf:system-relative-pathname
+              :eazy-opencl
+              "2.host-src/functional-definitions.lisp"))))
     `(defun ,name (,@args)
        (ecase ,param
-         ,@(mapcar (curry #'info-getter-case-form name args fun type) body)))))
+         ,@(mapcar (curry #'info-getter-case-form name args fun) body)))))
 
-(defun info-getter-case-form (name args fun type form)
+(defun info-getter-case-form (name args fun form)
   (ematch form
     ((list* pname _ (plist :fixedsize (number)))
-     (assert (foreign-enum-value type pname))
      `(,pname ,(%fixed-size-case args fun form)))
     ((list* pname _ (plist :querysize (keyword)))
-     (assert (foreign-enum-value type pname))
      `(,pname ,(%dynamic-size-case name args fun form)))
     ((list* pname _ (plist :array t))
-     (assert (foreign-enum-value type pname))
      `(,pname ,(%array-case args fun form)))
     ((list pname _ :form code)
-     (assert (foreign-enum-value type pname))
      `(,pname ,code))
     ((list pname :string)
-     (assert (foreign-enum-value type pname))
      `(,pname ,(%string-case args fun pname)))
     ((list pname _)
-     (assert (foreign-enum-value type pname))
      `(,pname ,(%simple-case args fun form)))))
 
 (defun %base-type (form)
