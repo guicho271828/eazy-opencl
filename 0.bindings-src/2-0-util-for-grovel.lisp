@@ -11,7 +11,7 @@
                   ((cl:upper-case-p c)
                    (helper (cl:cdr lst) 'upper
                            (cl:case last
-                             ((lower digit) (cl:list* c #\- rest))
+                             ((lower) (cl:list* c #\- rest))
                              (cl:t (cl:cons c rest)))))
                   ((cl:lower-case-p c)
                    (helper (cl:cdr lst) 'lower (cl:cons (cl:char-upcase c) rest)))
