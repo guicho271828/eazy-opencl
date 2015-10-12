@@ -63,7 +63,7 @@
   (:device-max-samplers                         %cl:uint)
   (:device-max-work-group-size                  %cl:size-t)
   (:device-max-work-item-dimensions             %cl:uint)
-  (:device-max-work-item-sizes                  %cl:size-t :querysize :max-work-item-dimensions)
+  (:device-max-work-item-sizes                  %cl:size-t :querysize :device-max-work-item-dimensions)
   (:device-max-write-image-args                 %cl:uint)
   (:device-mem-base-addr-align                  %cl:uint)
   (:device-min-data-type-align-size             %cl:uint)
