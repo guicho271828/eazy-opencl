@@ -6,9 +6,8 @@
   ((code :accessor code :initarg :code :initform (error 'simple-program-error :format-control "~a is a mandatory slot" :code))
    (form :accessor form :initarg :form :initform (error 'simple-program-error :format-control "~a is a mandatory slot" :form)))
   (:report (lambda (c s)
-             (match c
-               ((opencl-error code form)
-                (format s "OpenCL error ~s from ~s" code form))))))
+             (with-slots (code form) c
+                (format s "OpenCL error ~s from ~s" code form)))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun wrap-api (function-info)
