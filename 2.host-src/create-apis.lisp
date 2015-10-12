@@ -7,26 +7,17 @@
 ;; todo: error callback, better handling of properties stuff
 ;; properties arg is ugly since it mixes pointers with enums
 ;; only one option though, so handling it explicitly for now
-(defun context (devices
-                callback
-                &rest properties
-                &key
-                  platform
-                  interop-user-sync
-                  ;; gl/dx-related args are not added here
-                  &allow-other-keys)
-  "Unlike original create-context, DEVICES can be a single atom, in which
-case converted into (list devices)"
-  (declare (ignore callback platform interop-user-sync))
-  ;; (declare (ignore gl-context-khr glx-display-khr
-  ;;                  wgl-hdc-khr cgl-sharegroup-khr egl-display-khr
-  ;;                  context-property-use-cgl-sharegroup-apple))
-  (let ((devices (alexandria:ensure-list devices)))
-    (with-opencl-plist (props '%cl:context-properties properties)
-      (with-foreign-array (devs '%cl:device-id devices)
-        (create-context props (length devices) devs
-                        (null-pointer)
-                        (null-pointer))))))
+(defun context #.`(devices
+                   &rest properties
+                   &key
+                   ,@(enum-keywords-as-symbols '%cl:context-properties)
+                   &allow-other-keys)
+  (declare #.`(ignore ,@(enum-keywords-as-symbols '%cl:context-properties)))
+  (with-opencl-plist (props '%cl:context-properties properties)
+    (with-foreign-array (devs '%cl:device-id devices)
+      (create-context props (length devices) devs
+                      (null-pointer)
+                      (null-pointer)))))
 
 (defun context-from-type (type &rest properties &key platform)
   (declare (ignore platform))
