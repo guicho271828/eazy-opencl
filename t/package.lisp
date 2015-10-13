@@ -46,17 +46,25 @@
               (format t "~%OpenCL Error: ~s for query ~a to ~a ~a"
                       (%cl/e:opencl-error-code c) param name thing))))))
 
+
+(trace %cl/h::context %cl/h::create-context %cl/e::create-context %cl::create-context
+       %cl/h::call-with-foreign-array %cl/h::call-with-opencl-plist)
 (test setup
   (is-true (get-platform-ids))
   (iter (for pid in (get-platform-ids))
         (test-all-infos pid (all-enums '%cl:platform-info) :platform #'get-platform-info)
         (finishes
           (iter (for type in (all-bitfields '%cl:device-type))
+                (format t "~&list of device ids with platform-id ~a and type ~a:" pid (list type))
                 (for dids = (pie (get-device-ids pid (list type))))
                 (iter (for did in dids)
                       (test-all-infos did (all-enums '%cl:device-info) :device #'get-device-info)
+                      (format t "~& getting a context from device ~A and platform ~A" did pid)
                       (for ctx = (context (list did) :context-platform pid)) ; :context-platform pid
-                      (test-all-infos ctx (all-enums '%cl:context-info) :context #'get-context-info))))))
+                      ;; (for ctx2 = (context (list did)))
+                      ;;(for ctx3 = (context (list did) :context-interop-user-sync t))
+                      (test-all-infos ctx (all-enums '%cl:context-info) :context #'get-context-info)
+                      )))))
 
 
 
