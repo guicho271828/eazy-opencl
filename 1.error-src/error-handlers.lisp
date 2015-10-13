@@ -50,14 +50,14 @@ CONTINUE will ignore the error, then return the result."
          `(block nil
             (tagbody
               :start
-              (restart-case
                   (let ((,result ,form))
                     (unless (eq ,result :success)
+                  (restart-case
                       (error 'opencl-error
                              :code ,result
-                             :form ',form)))
+                             :form ',form)
                 (:retry () (go :start))
-                (continue () (return ,result)))))))))
+                    (continue () (return ,result)))))))))))
 
   (defun wrap-api-taking-error-ptr (function-info)
     "Wraps a form when it takes a pointer to EAZY-OPENCL.BINDING:ERROR-CODE
@@ -74,17 +74,17 @@ CONTINUE will ignore the error, then return the result."
          `(block nil
             (tagbody
               :start
-              (restart-case
                   (with-foreign-object (,e 'error-code)
                     (let* ((,result (,@form ,e))
                            (,e-keyword (mem-ref ,e 'error-code)))
                       (if (eq ,e-keyword :success)
                           ,result
+                      (restart-case
                           (error 'opencl-error
                                  :code ,e-keyword
-                                 :form ',form))))
+                                 :form ',form)
                 (:retry () (go :start))
-                (continue () (return ,result))))))))))
+                        (continue () (return ,result)))))))))))))
 
 ;; this should be implemented much later... when functional style is finished
 ;; (defun wrap-resource-manager (function-info form)
