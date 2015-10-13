@@ -27,14 +27,17 @@
 
 (defun all-enums (foreign-typename)
   "just an alias"
-  (foreign-enum-keyword-list foreign-typename))
+  (sort (copy-list (foreign-enum-keyword-list foreign-typename)) #'string<))
 
 (defun all-bitfields (foreign-typename)
   "just an alias"
-  (foreign-bitfield-symbol-list foreign-typename))
+  (sort (copy-list (foreign-bitfield-symbol-list foreign-typename)) #'string<))
 
 (defun test-all-infos (thing params name fn)
   (iter (for param in params)
+        (format t "~%OpenCL Test: querying ~a to ~a ~a" param name thing)
+        (clear-output *standard-output*)
+        ;;(sleep 0.1)
         (finishes
           (handler-case
               (format t "~%OpenCL Info:  ~s for query ~a to ~a ~a"
