@@ -232,6 +232,10 @@
           (#.(lispify-k-pair "CL_QUEUE_ON_DEVICE"))
           (#.(lispify-k-pair "CL_QUEUE_ON_DEVICE_DEFAULT")))
 
+(constantenum (#.(lispify "queue_properties") :base-type #.(lispify "__queue_properties"))
+              (#.(lispify-k-pair "CL_QUEUE_PROPERTIES"))
+              (#.(lispify-k-pair "CL_QUEUE_SIZE")))
+
 (constantenum (#.(lispify "context_info") :base-type #.(lispify "__context_info")) 
               (#.(lispify-k-pair "CL_CONTEXT_REFERENCE_COUNT"))
               (#.(lispify-k-pair "CL_CONTEXT_DEVICES"))
@@ -388,6 +392,9 @@
               (#.(lispify-k-pair "CL_PIPE_PACKET_SIZE"))
               (#.(lispify-k-pair "CL_PIPE_MAX_PACKETS")))
 
+(constantenum (#.(lispify "pipe_properties") :base-type #.(lispify "__pipe_properties")))
+
+
 (constantenum (#.(lispify "addressing_mode") :base-type #.(lispify "__addressing_mode"))
               (#.(lispify-k-pair "CL_ADDRESS_NONE"))
               (#.(lispify-k-pair "CL_ADDRESS_CLAMP_TO_EDGE"))
@@ -410,6 +417,11 @@
               ;; (#.(lispify-k-pair "CL_SAMPLER_LOD_MIN"))
               ;; (#.(lispify-k-pair "CL_SAMPLER_LOD_MAX"))
               )
+
+(constantenum (#.(lispify "sampler_properties") :base-type #.(lispify "__sampler_properties"))
+              (#.(lispify-k-pair "CL_SAMPLER_NORMALIZED_COORDS"))
+              (#.(lispify-k-pair "CL_SAMPLER_ADDRESSING_MODE"))
+              (#.(lispify-k-pair "CL_SAMPLER_FILTER_MODE")))
 
 (bitfield (#.(lispify "map_flags") :base-type #.(lispify "__map_flags"))
           (#.(lispify-k-pair "CL_MAP_READ"))
@@ -474,7 +486,7 @@
               (#.(lispify-k-pair "CL_KERNEL_ARG_ACCESS_READ_WRITE"))
               (#.(lispify-k-pair "CL_KERNEL_ARG_ACCESS_NONE")))
 
-(constantenum (#.(lispify "kernel_arg_type_qualifer") :base-type #.(lispify "__kernel_arg_type_qualifer"))
+(constantenum (#.(lispify "kernel_arg_type_qualifier") :base-type #.(lispify "__kernel_arg_type_qualifier"))
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_NONE"))
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_CONST"))
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_RESTRICT"))
@@ -544,7 +556,6 @@
               (#.(lispify-k-pair "CL_COMMAND_SVM_UNMAP")))
 
 (constantenum (command-execution-status :base-type int)
-              (#.(lispify-k-pair "CL_COMPLETE"))
               (#.(lispify-k-pair "CL_COMPLETE"))
               (#.(lispify-k-pair "CL_RUNNING"))
               (#.(lispify-k-pair "CL_SUBMITTED"))
