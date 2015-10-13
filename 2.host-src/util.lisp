@@ -81,13 +81,13 @@ destructively modify the region"
       ;; setup array
       (loop for i below len by 2
             for (p v) on properties by #'cddr
-            do (setf (mem-aref foreign-array type i)
-                     p
-                     (mem-aref foreign-array type (1+ i))
+            do
+         (setf (mem-aref foreign-array type i) p)
+         (setf (mem-aref foreign-array type (1+ i))
                      (if (pointerp v)
                          (pointer-address v)
                          v)))
-      (setf (mem-aref foreign-array type foreign-len) 0)
+      (setf (mem-aref foreign-array type len) 0)
       (funcall callback foreign-array))))
 (declaim (notinline call-with-opencl-plist))
 
