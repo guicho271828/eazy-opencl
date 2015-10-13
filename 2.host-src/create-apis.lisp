@@ -10,8 +10,7 @@
 (defun context #.`(devices
                    &rest properties
                    &key
-                   ,@(enum-keywords-as-symbols '%cl:context-properties)
-                   &allow-other-keys)
+                   ,@(enum-keywords-as-symbols '%cl:context-properties))
   (declare #.`(ignore ,@(enum-keywords-as-symbols '%cl:context-properties)))
   (with-opencl-plist (props '%cl:context-properties properties)
     (with-foreign-array (devs '%cl:device-id devices)
@@ -19,7 +18,10 @@
                       (null-pointer)
                       (null-pointer)))))
 
-(defun context-from-type (type &rest properties &key platform)
+(defun context-from-type #.`(type
+                             &rest properties
+                             &key
+                             ,@(enum-keywords-as-symbols '%cl:context-properties))
   (declare (ignore platform))
   (with-opencl-plist (props '%cl:context-properties properties)
     (create-context-from-type props type
@@ -34,23 +36,17 @@
 ;;   (mapcar #'car (remove-if-not #'car (plist-alist properties))))
 
 (defun command-queue (context device &optional properties)
-  "This interface is deprecated in opencl 2.0!
+  "This interface is deprecated in OpenCL2.0 !
 Properties should be a list of :out-of-order-exec-mode-enable and :profiling-enable."
-  #+opencl-2.0
-  (format *error-output* "This interface is deprecated in opencl 2.0! Use create-command-queue-with-properties.")
-  (assert (every (lambda (el)
-                   (member el '(:out-of-order-exec-mode-enable
-                                :profiling-enable)))
-                 properties))
+  (simple-style-warning "This interface is deprecated in opencl 2.0! Use create-command-queue-with-properties.")
   (create-command-queue context device properties))
 
 #+opencl-2.0
-(defun command-queue-with-properties (context device &rest properties &key queue-properties queue-size)
+(defun command-queue-with-properties
+    #.`(type &rest properties &key ,@(enum-keywords-as-symbols '%cl:queue-properties))
   (declare (ignore queue-properties queue-size))
   (with-opencl-plist (props '%cl:queue-properties properties)
     (create-command-queue-with-properties context device props)))
-
-
 
 ;;; 5.2.1 Creating Buffer Objects
 

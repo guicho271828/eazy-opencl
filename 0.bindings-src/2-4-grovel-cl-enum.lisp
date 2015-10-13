@@ -229,7 +229,9 @@
 (bitfield (#.(lispify "command_queue_properties") :base-type #.(lispify "__command_queue_properties"))
           (#.(lispify-k-pair "CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE"))
           (#.(lispify-k-pair "CL_QUEUE_PROFILING_ENABLE"))
+          #+opencl-2.0
           (#.(lispify-k-pair "CL_QUEUE_ON_DEVICE"))
+          #+opencl-2.0
           (#.(lispify-k-pair "CL_QUEUE_ON_DEVICE_DEFAULT")))
 
 (constantenum (#.(lispify "queue_properties") :base-type #.(lispify "__queue_properties"))

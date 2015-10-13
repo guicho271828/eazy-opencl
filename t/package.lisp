@@ -59,16 +59,16 @@
                       (test-all-infos did (all-enums '%cl:device-info) :device #'get-device-info)
                       (format t "~& getting a context from device ~A and platform ~A" did pid)
                       (for ctx = (context (list did) :context-platform pid)) ; :context-platform pid
-                      ;; (for ctx2 = (context (list did)))
-                      ;;(for ctx3 = (context (list did) :context-interop-user-sync t))
                       (test-all-infos ctx (all-enums '%cl:context-info) :context #'get-context-info)
-                      )))))
-
-
-
-(test context
-  
-  )
+                      (for cq = (pie (command-queue ctx did)))
+                      (for cq2 = (pie (command-queue-with-properties ctx did)))
+                      (when cq
+                        (test-all-infos cq (all-enums '%cl:command-queue-info) :command-queue #'get-command-queue-info))
+                      (when cq2
+                        (test-all-infos cq2 (all-enums '%cl:command-queue-info) :command-queue #'get-command-queue-info)))
+                (for ctx-type = (pie (context-from-type type :context-platform pid)))
+                (when ctx-type
+                  (test-all-infos ctx-type (all-enums '%cl:context-info) :context #'get-context-info))))))
 
 (test program
   )
