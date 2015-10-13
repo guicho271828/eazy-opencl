@@ -322,8 +322,8 @@
 (defclfun ("clCreateImage" create-image) mem
   (context context)
   (flags mem-flags)
-  (image-format (:pointer image-format))
-  (image-desc  (:pointer image-desc))
+  (image-format (:pointer (:struct image-format)))
+  (image-desc  (:pointer (:struct image-desc)))
   (host-ptr (:pointer :void))
   (errcode-ret (:pointer error-code)))
 
@@ -331,7 +331,7 @@
 (defclfun ("clCreateImage2D" create-image-2d) mem
   (context context)
   (flags mem-flags)
-  (image-format (:pointer image-format))
+  (image-format (:pointer (:struct image-format)))
   (image-width size-t)
   (image-height size-t)
   (image-row-pitch size-t)
@@ -357,7 +357,7 @@
   (flags mem-flags)
   (image-type mem-object-type)
   (num-entries uint)
-  (image-formats (:pointer image-format))
+  (image-formats (:pointer (:struct image-format)))
   (num-image-format (:pointer uint)))
 
 (defclfun ("clEnqueueWriteImage" enqueue-write-image) error-code
