@@ -50,13 +50,13 @@ CONTINUE will ignore the error, then return the result."
          `(block nil
             (tagbody
               :start
-                  (let ((,result ,form))
-                    (unless (eq ,result :success)
+              (let ((,result ,form))
+                (unless (eq ,result :success)
                   (restart-case
                       (error 'opencl-error
                              :code ,result
                              :form ',form)
-                (:retry () (go :start))
+                    (:retry () (go :start))
                     (continue () (return ,result)))))))))))
 
   (defun wrap-api-taking-error-ptr (function-info)
@@ -74,16 +74,17 @@ CONTINUE will ignore the error, then return the result."
          `(block nil
             (tagbody
               :start
-                  (with-foreign-object (,e 'error-code)
-                    (let* ((,result (,@form ,e))
-                           (,e-keyword (mem-ref ,e 'error-code)))
-                      (if (eq ,e-keyword :success)
-                          ,result
+              (with-foreign-object (,e 'error-code)
+                (let* ((,result (,@form ,e))
+                       (,e-keyword (mem-ref ,e 'error-code)))
+                  ;;(format t "~&Result: ~a" ,result)
+                  (if (eq ,e-keyword :success)
+                      (return ,result)
                       (restart-case
                           (error 'opencl-error
                                  :code ,e-keyword
                                  :form ',form)
-                (:retry () (go :start))
+                        (:retry () (go :start))
                         (continue () (return ,result)))))))))))))
 
 ;; this should be implemented much later... when functional style is finished
