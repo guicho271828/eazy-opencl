@@ -33,35 +33,32 @@
   "just an alias"
   (foreign-bitfield-symbol-list foreign-typename))
 
+(defun test-all-infos (thing params name fn)
+  (iter (for param in params)
+        (finishes
+          (handler-case
+              (format t "~%OpenCL Info:  ~s for query ~a to ~a ~a"
+                      (funcall fn thing param) param name thing)
+            (%cl/e:opencl-error (c)
+              (format t "~%OpenCL Error: ~s for query ~a to ~a ~a"
+                      (%cl/e:opencl-error-code c) param name thing))))))
+
 (test setup
   (is-true (get-platform-ids))
   (iter (for pid in (get-platform-ids))
-        (iter (for param in (all-enums '%cl:platform-info))
-              (finishes
-                (handler-case
-                    (format t "~%OpenCL Info:  ~s for query ~a to platform ~a"
-                            (get-platform-info pid param) param pid)
-                  (%cl/e:opencl-error (c)
-                    (format t "~%OpenCL Error: ~s for query ~a to platform ~a"
-                            (%cl/e:opencl-error-code c) param pid)))))
-        (is-true
-         (iter (with result = nil)
-               (for type in (all-bitfields '%cl:device-type))
-               (for dids = (pie (get-device-ids pid (list type))))
-               (when dids (setf result t))
-               (iter (for did in dids)
-                     (iter (for param in (all-enums '%cl:device-info))
-                           (finishes
-                             (handler-case
-                                 (format t "~%OpenCL Info:  ~s for query ~a to device ~a"
-                                         (get-device-info did param) param did)
-                               (%cl/e:opencl-error (c)
-                                 (format t "~%OpenCL Error: ~s for query ~a to device ~a"
-                                         (%cl/e:opencl-error-code c) param did))))))
-               (finally (return result)))
-         "At least one device type should be accepted!")))
+        (test-all-infos pid (all-enums '%cl:platform-info) :platform #'get-platform-info)
+        (finishes
+          (iter (for type in (all-bitfields '%cl:device-type))
+                (for dids = (pie (get-device-ids pid (list type))))
+                (iter (for did in dids)
+                      (test-all-infos did (all-enums '%cl:device-info) :device #'get-device-info)
+                      (for ctx = (context (list did) :context-platform pid)) ; :context-platform pid
+                      (test-all-infos ctx (all-enums '%cl:context-info) :context #'get-context-info))))))
+
+
 
 (test context
+  
   )
 
 (test program
@@ -72,7 +69,6 @@
 
 (test queue
   )
-
 
 
 
