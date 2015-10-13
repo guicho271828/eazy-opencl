@@ -32,6 +32,7 @@
                  (:file "2-2-opencl-version-feature")
                  (:cffi-grovel-file "2-3-grovel-cl_platform")
                  (:cffi-grovel-file "2-4-grovel-cl")
+                 (:cffi-grovel-file "2-4-grovel-cl-enum")
                  (:cffi-grovel-file "2-5-grovel-buffer")
                  (:cffi-grovel-file "2-6-grovel-image")
                  (:file "3-util")
