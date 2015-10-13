@@ -47,8 +47,6 @@
                       (%cl/e:opencl-error-code c) param name thing))))))
 
 
-(trace %cl/h::context %cl/h::create-context %cl/e::create-context %cl::create-context
-       %cl/h::call-with-foreign-array %cl/h::call-with-opencl-plist)
 (test setup
   (is-true (get-platform-ids))
   (iter (for pid in (get-platform-ids))
