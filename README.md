@@ -10,6 +10,8 @@ Before testing and using this library, you have to install OpenCL developmental 
 
 Other than that, just load it in the quicklisp local-project directory.
 
+**Be sure** that the intended version is loaded by lisp. For example, CFFI may load the old `libOpenCL.so` which was installed by `apt` and supports OpenCL1.2 only, not the latest one which comes with AMD developper SDK or similar. To find out which `libOpenCL.so` it is loading, use `lsof` on your running lisp and see if the intended `libOpenCL.so` is present. It is characteristic when you installed OpenCL-2.0-conformant library but CFFI complains with `Undefined alien: "clCreateCommandQueueWithProperties"` and similar messages.
+
 ## Supported OpenCL Versions
 
 + opencl-1.0
@@ -20,7 +22,7 @@ Other than that, just load it in the quicklisp local-project directory.
 This library is developped with AMD APPSDK v3.0 (OpenCL 2.0), Radeon HD 5770 and PhenomII X6.
 
 OpenCL has a *specification* independent from *implementations*, much like in ANSI Common Lisp.
-It generally maintains the backward-compatibility: If you have a conformant OpenCL 2.0 implementation, then any programs written with earlier versions of OpenCL should work. However, my CFFI interface may try to find nonexistent symbol when you have an earlier version only. Drop some bug report to the [issues](issues/) page in that case.
+It generally maintains the backward-compatibility: If you have a conformant OpenCL 2.0 implementation, then any programs written with earlier versions of OpenCL should work. However, this CFFI interface may try to find symbols not in your implementation. If you notice this, drop some bug report to the [issues](issues/) page.
 
 ## Testing
 
@@ -30,7 +32,7 @@ For platforms whose OpenCL versions are different from MY environment (OpenCL 2.
 
 ## Devices
 
-OpenCL supports wide variety of hardware. As far as I know, it works on the following hardwares. The official, comprehensive device list is available [here](https://www.khronos.org/conformance/adopters/conformant-products).
+OpenCL supports wide variety of hardwares including CPU. As far as I know, it works on the following hardwares. The official, comprehensive device list is available [here](https://www.khronos.org/conformance/adopters/conformant-products).
 
 + CPU with SSE2.X instruction (AMD), SSE4.2 instruction (Intel), many-core ARM mobile CPUs (qualcomm snapdragon etc.)
 + CPU with embedded GPU (latest Intel, or AMD A-series)
