@@ -61,4 +61,7 @@ consider changing the algorithm or even stop using GPGPU.
    #:create-kernels-in-program
    #:get-platform-ids
    #:get-device-ids
-   #:get-supported-image-formats))
+   #:get-supported-image-formats
+   #:kernel
+   #:sub-buffer
+   #:set-kernel-arg))

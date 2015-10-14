@@ -61,15 +61,63 @@
                       (for ctx = (context (list did) :context-platform pid)) ; :context-platform pid
                       (test-all-infos ctx (all-enums '%cl:context-info) :context #'get-context-info)
                       (for cq = (pie (command-queue ctx did)))
-                      (for cq2 = (pie (command-queue-with-properties ctx did)))
                       (when cq
                         (test-all-infos cq (all-enums '%cl:command-queue-info) :command-queue #'get-command-queue-info))
+                      #+opencl-2.0
+                      (for cq2 = (pie (command-queue-with-properties ctx did)))
+                      #+opencl-2.0
                       (when cq2
                         (test-all-infos cq2 (all-enums '%cl:command-queue-info) :command-queue #'get-command-queue-info)))
                 (for ctx-type = (pie (context-from-type type :context-platform pid)))
                 (when ctx-type
                   (test-all-infos ctx-type (all-enums '%cl:context-info) :context #'get-context-info))))))
 
+(test helloworld
+  ;; http://developer.amd.com/tools-and-sdks/opencl-zone/opencl-resources/introductory-tutorial-to-opencl/
+  (let ((source "
+
+#pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
+
+__constant char hw[] = \"Hello, World\";
+
+__kernel void hello(__global char * out) {
+   size_t tid = get_global_id(0);
+   out[tid] = hw[tid];
+}
+
+"))
+    (iter (for pid in (get-platform-ids))
+          (iter (for type in (all-bitfields '%cl:device-type))
+                ;; in this example, we do not care the device id
+                (for ctx = (pie (context-from-type type :context-platform pid)))
+                (unless ctx
+                  (skip "No context found for the device type ~a in platform ~a" type pid)
+                  (next-iteration))
+                (for devices = (get-context-info ctx :context-devices))
+                (is (typep devices 'list))
+                (for did = (first devices))
+                (unless did
+                  (skip "No device found for the context ~a" ctx)
+                  (next-iteration))
+                #-opencl-2.0
+                (for cq = (pie (command-queue ctx did)))
+                #+opencl-2.0
+                (for cq = (finishes (command-queue-with-properties ctx did)))
+                (unless cq
+                  (skip "Command queue for ctx ~a and device ~a (~a) was not created" ctx did type)
+                  (next-iteration))
+                (is (string=
+                     "Hello, World"
+                     (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
+                       (let* ((out-device (buffer ctx '(:mem-write-only
+                                                        :mem-use-host-ptr)
+                                                  size out-host))
+                              (program (build-program (load-source ctx source) :devices (list did)))
+                              (kernel (kernel program "hello")))
+                         (set-kernel-arg kernel 0 out-device '%cl:mem)
+                         ;; run the kernel
+                         (%cl/e:enqueue-nd-range-kernel cq kernel 1 nil (list size) nil 0 nil nil)
+                         (%cl/e:enqueue-read-buffer cq out-device t 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer))))))))))
 (test program
   )
 
