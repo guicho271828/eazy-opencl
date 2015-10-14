@@ -1,3 +1,7 @@
+;; Note: the code here is taken from cl-opencl-3b. I do not understand what
+;; they are doing, but it seems like something related to dumping the lisp image.
+;; I do not understand the later macros either. What are they for? --- guicho 2015/10/9
+
 (cl:in-package #:eazy-opencl.bindings)
 
 ;; deprecated in opencl1.2?
@@ -21,9 +25,17 @@
   (cl:mapc #'cl:funcall *cl-extension-resetter-list*)
   (cl:setf *cl-extension-resetter-list* cl:nil))
 
+(cl:defparameter *defined-opencl-functions* cl:nil)
 
-(cl:defmacro defclfun (name return-type cl:&body args)
-  `(cffi:defcfun ,name ,return-type ,@args))
+(cl:defmacro defclfun (cl:&whole whole lisp-and-c-name return-type cl:&body args)
+  (cl:let ((lname (cl:second lisp-and-c-name)))
+    `(cl:progn
+       (cl:push ',whole *defined-opencl-functions*)
+       (cl:export ',lname)
+       (cl:declaim (cl:inline ,lname))
+       (cffi:defcfun ,lisp-and-c-name ,return-type ,@args)
+       (cl:declaim (cl:notinline ,lname)))))
+
 #++
 (cl:defmacro defclfun (name return-type cl:&body args)
   (cl:let ((n (cl:gensym (cl:second name))))
@@ -37,7 +49,7 @@
          (,n ,@(cl:mapcar 'cl:first args))
          ))))
 
-
+;; it is here, untouched, but it doesnt seem like being used... --- guicho 2015/10/9
 (cl:defmacro defclextfun ((cname lname) return-type cl:&body args)
   (alexandria:with-unique-names (pointer)
     `(cl:let ((,pointer (null-pointer)))

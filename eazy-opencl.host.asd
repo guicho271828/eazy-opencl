@@ -27,8 +27,17 @@
                :trivia
                :trivial-garbage
                :lisp-namespace
-               :eazy-opencl.bindings)
-  :components ((:module "1.host-src"
+               :eazy-opencl.error)
+  :components ((:module "2.host-src"
                 :components
-                ((:file "package"))))
+                ((:file "package")
+                 (:file "util")
+                 (:file "resource")
+                 (:file "getter-api")
+                 (:file "getter-api-definitions")
+                 (:file "setter-api")
+                 (:file "list-apis")
+                 (:file "create-apis")
+                 (:file "launch-steps"))
+                :serial t))
   :description "Opencl Binding for Common Lisp: User API")
