@@ -19,8 +19,16 @@
 
 ;; run test with (run! test-name) 
 
-(defmacro pie (&body form)
-  `(print (ignore-errors ,@form)))
+(defmacro pie (form)
+  (with-gensyms (result)
+    `(handler-case
+         (let ((,result ,form))
+           (format t "~%~<OpenCL Success: ~;~s for ~a (args: ~{~s ~})~:@>"
+                   (list ,result ',form (list ,@(cdr form))))
+           ,result)
+       (%cl/e:opencl-error (c)
+         (format t "~%~<OpenCL Error:   ~;~s for ~a (args: ~{~s ~})~:@>"
+                 (list (%cl/e:opencl-error-code c) ',form (list ,@(cdr form))))))))
 
 (defmacro is-string (form &rest reason-args)
   `(is (typep ,form 'string) ,@reason-args))
@@ -102,30 +110,26 @@ __kernel void hello(__global char * out) {
                 #-opencl-2.0
                 (for cq = (pie (command-queue ctx did)))
                 #+opencl-2.0
-                (for cq = (finishes (command-queue-with-properties ctx did)))
+                (for cq = (pie (command-queue-with-properties ctx did)))
                 (unless cq
                   (skip "Command queue for ctx ~a and device ~a (~a) was not created" ctx did type)
                   (next-iteration))
                 (is (string=
                      "Hello, World"
-                     (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
-                       (let* ((out-device (buffer ctx '(:mem-write-only
-                                                        :mem-use-host-ptr)
-                                                  size out-host))
-                              (program (build-program (load-source ctx source) :devices (list did)))
-                              (kernel (kernel program "hello")))
-                         (set-kernel-arg kernel 0 out-device '%cl:mem)
-                         ;; run the kernel
-                         (%cl/e:enqueue-nd-range-kernel cq kernel 1 nil (list size) nil 0 nil nil)
-                         (%cl/e:enqueue-read-buffer cq out-device t 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer))))))))))
-(test program
-  )
+                     (print
+                      (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
+                        (let* ((out-device (buffer ctx '(:mem-write-only
+                                                         :mem-use-host-ptr)
+                                                   size out-host))
+                               (program (build-program (load-source ctx source) :devices (list did)))
+                               (kernel (kernel program "hello")))
+                          (set-kernel-arg kernel 0 out-device '%cl:mem)
+                          ;; run the kernel
+                          (%cl/h::with-foreign-array (global-work-size '%cl:size-t (list size))
+                            (pie (%cl/e:enqueue-nd-range-kernel cq kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer))))
+                          (pie
+                            (%cl/e:enqueue-read-buffer cq out-device %cl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer))))))))))))
 
-(test kernel
-  )
-
-(test queue
-  )
 
 
 
