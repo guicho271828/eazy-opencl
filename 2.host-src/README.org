@@ -1,0 +1,8 @@
+
+* Host layer
+
+This layer handles more about pointers, including properties and arrays.
+
+Original api names are maintained. Some are re-exported from level-1, some
+are newly interned and exported.
+
