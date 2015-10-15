@@ -191,7 +191,7 @@
   (:platform-icd-suffix-khr :string))
 
 (define-info-getter get-program-build-info (program device param) (%cl:program-build-info)
-  (:program-build-status  %cl:build-status)
+  (:program-build-status                     %cl:build-status)
   (:program-build-options                    :string)
   (:program-build-log                        :string)
   (:program-binary-type                      %cl:program-binary-type)
@@ -213,7 +213,7 @@
    :form
    ;; fixme: test this...
    (let* ((sizes (get-program-info program :program-binary-sizes))
-          (total-size (reduce '+ sizes)))
+          (total-size (reduce #'+ sizes)))
      (with-foreign-pointer (buffer total-size)
        (with-foreign-object (pointers '(:pointer :void) (length sizes))
          (loop for j = 0 then (+ size j)
