@@ -559,7 +559,7 @@
   (options :string)
   (pfn-notify :pointer) ;; FIXME: function pointer type
   (user-data (:pointer :void)))
-#+opencl-2.0
+#+opencl-1.2
 (defclfun ("clCompileProgram" compile-program) error-code
   (program program)
   (num-devices uint)
@@ -570,14 +570,14 @@
   (header-include-names (:pointer :string))
   (pfn-notify :pointer) ;; FIXME: function pointer type
   (user-data (:pointer :void)))
-#+opencl-2.0
+#+opencl-1.2
 (defclfun ("clLinkProgram" link-program) program
-  (program program)
+  (context context)
   (num-devices uint)
   (device-list (:pointer device-id))
   (options :string)
-  (num-input-headers uint)
-  (input-headers (:pointer program))
+  (num-input-programs uint)
+  (input-programs (:pointer program))
   (pfn-notify :pointer) ;; FIXME: function pointer type
   (user-data (:pointer :void))
   (errcode-ret (:pointer error-code)))
@@ -715,6 +715,11 @@
 
 ;; #-opencl-1.2
 (defclfun ("clUnloadCompiler" unload-compiler) error-code)
+
+#+opencl-1.2
+(defclfun ("clUnloadPlatformCompiler" unload-platform-compiler) error-code
+  (platform platform-id))
+
 
 #+opencl-2.1
 (defclfun ("clGetHostTimer" get-host-timer) error-code
