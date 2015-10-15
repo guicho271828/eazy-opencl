@@ -41,18 +41,19 @@
   "just an alias"
   (sort (copy-list (foreign-bitfield-symbol-list foreign-typename)) #'string<))
 
-(defun test-all-infos (thing params name fn)
-  (iter (for param in params)
-        (format t "~%OpenCL Test: querying ~a to ~a ~a" param name thing)
-        (clear-output *standard-output*)
-        ;;(sleep 0.1)
-        (finishes
-          (handler-case
-              (format t "~%OpenCL Info:  ~s for query ~a to ~a ~a"
-                      (funcall fn thing param) param name thing)
-            (%cl/e:opencl-error (c)
-              (format t "~%OpenCL Error: ~s for query ~a to ~a ~a"
-                      (%cl/e:opencl-error-code c) param name thing))))))
+(defun test-all-infos (things params name fn)
+  (let ((things (ensure-list things)))
+    (iter (for param in params)
+          (format t "~%OpenCL Test: querying ~a to ~a ~a" param name things)
+          (clear-output *standard-output*)
+          ;;(sleep 0.1)
+          (finishes
+            (handler-case
+                (format t "~%OpenCL Info:  ~s for query ~a to ~a ~a"
+                        (apply fn (append things (list param))) param name things)
+              (%cl/e:opencl-error (c)
+                (format t "~%OpenCL Error: ~s for query ~a to ~a ~a"
+                        (%cl/e:opencl-error-code c) param name things)))))))
 
 
 (test setup
@@ -66,17 +67,17 @@
                 (iter (for did in dids)
                       (test-all-infos did (all-enums '%cl:device-info) :device #'get-device-info)
                       (format t "~& getting a context from device ~A and platform ~A" did pid)
-                      (for ctx = (context (list did) :context-platform pid)) ; :context-platform pid
+                      (for ctx = (create-context (list did) :context-platform pid)) ; :context-platform pid
                       (test-all-infos ctx (all-enums '%cl:context-info) :context #'get-context-info)
-                      (for cq = (pie (command-queue ctx did)))
+                      (for cq = (pie (create-command-queue ctx did)))
                       (when cq
                         (test-all-infos cq (all-enums '%cl:command-queue-info) :command-queue #'get-command-queue-info))
                       #+opencl-2.0
-                      (for cq2 = (pie (command-queue-with-properties ctx did)))
+                      (for cq2 = (pie (create-command-queue-with-properties ctx did)))
                       #+opencl-2.0
                       (when cq2
                         (test-all-infos cq2 (all-enums '%cl:command-queue-info) :command-queue #'get-command-queue-info)))
-                (for ctx-type = (pie (context-from-type type :context-platform pid)))
+                (for ctx-type = (pie (create-context-from-type type :context-platform pid)))
                 (when ctx-type
                   (test-all-infos ctx-type (all-enums '%cl:context-info) :context #'get-context-info))))))
 
@@ -97,7 +98,7 @@ __kernel void hello(__global char * out) {
     (iter (for pid in (get-platform-ids))
           (iter (for type in (all-bitfields '%cl:device-type))
                 ;; in this example, we do not care the device id
-                (for ctx = (pie (context-from-type type :context-platform pid)))
+                (for ctx = (pie (create-context-from-type type :context-platform pid)))
                 (unless ctx
                   (skip "No context found for the device type ~a in platform ~a" type pid)
                   (next-iteration))
@@ -108,9 +109,9 @@ __kernel void hello(__global char * out) {
                   (skip "No device found for the context ~a" ctx)
                   (next-iteration))
                 #-opencl-2.0
-                (for cq = (pie (command-queue ctx did)))
+                (for cq = (pie (create-command-queue ctx did)))
                 #+opencl-2.0
-                (for cq = (pie (command-queue-with-properties ctx did)))
+                (for cq = (pie (create-command-queue-with-properties ctx did)))
                 (unless cq
                   (skip "Command queue for ctx ~a and device ~a (~a) was not created" ctx did type)
                   (next-iteration))
@@ -118,11 +119,13 @@ __kernel void hello(__global char * out) {
                      "Hello, World"
                      (print
                       (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
-                        (let* ((out-device (buffer ctx '(:mem-write-only
-                                                         :mem-use-host-ptr)
-                                                   size out-host))
+                        (let* ((out-device (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
                                (program (build-program (load-source ctx source) :devices (list did)))
-                               (kernel (kernel program "hello")))
+                               (kernel (create-kernel program "hello")))
+                          (test-all-infos out-device (all-enums '%cl:mem-info) :buffer #'get-mem-object-info)
+                          (test-all-infos program    (all-enums '%cl:program-info) :program #'get-program-info)
+                          (test-all-infos (list program did) (all-enums '%cl:program-build-info) :build #'get-program-build-info)
+                          (test-all-infos kernel     (all-enums '%cl:kernel-info) :kernel #'get-kernel-info)
                           (set-kernel-arg kernel 0 out-device '%cl:mem)
                           ;; run the kernel
                           (%cl/h::with-foreign-array (global-work-size '%cl:size-t (list size))
@@ -131,6 +134,5 @@ __kernel void hello(__global char * out) {
                             (%cl/e:enqueue-read-buffer cq out-device %cl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer))))))))))))
 
 
-
-
-
+(test bbb
+  )

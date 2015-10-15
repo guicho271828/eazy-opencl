@@ -1,6 +1,6 @@
 ;;;; resource management
 
-(in-package :eazy-opencl.host)
+(in-package :eazy-opencl.object)
 
 ;;; utility macros
 
@@ -15,7 +15,10 @@ binging: (variable value-form finalizer-form*)
                    ((list* (and (symbol) var) val finalizer)
                     `(,var
                       (let ((,var ,val))
-                        (finalize ,var (lambda () ,@finalizer))))))
+                        (finalize ,var
+                                  (lambda ()
+                                    (format t "~&Releasing ~a" ',val) 
+                                    ,@finalizer))))))
                  extended-bindings)
      ,@body))
 

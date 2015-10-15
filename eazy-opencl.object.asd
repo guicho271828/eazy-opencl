@@ -17,7 +17,7 @@
 (in-package :eazy-opencl-asd)
 
 
-(defsystem eazy-opencl.host
+(defsystem eazy-opencl.object
   :version "0.1"
   :author "Masataro Asai"
   :mailto "guicho2.71828@gmail.com"
@@ -28,16 +28,10 @@
                :trivial-garbage
                :lisp-namespace
                :eazy-opencl.error)
-  :components ((:module "2.host-src"
+  :components ((:module "3.object-src"
                 :components
                 ((:file "0package")
                  (:file "1util")
-                 ;;(:file "2resource")
-                 (:file "3getter-api")
-                 (:file "4getter-api-definitions")
-                 (:file "5setter-api")
-                 (:file "6list-apis")
-                 (:file "7create-apis")
-                 (:file "8launch-steps"))
+                 (:file "2resource"))
                 :serial t))
   :description "Opencl Binding for Common Lisp: User API")

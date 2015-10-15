@@ -1,0 +1,68 @@
+* eazy-opencl - Opencl Binding for Common Lisp
+
+*Can You see the dawn of lisp-based FPGA ?*
+
+Both [[https://github.com/malkia/cl-opencl][cl-opencl]] and [[https://github.com/3b/cl-opencl-3b][cl-opencl-3b]] seems the abondoned projects. I'm trying to
+supersede it with something better.
+
+** Installation
+
+You have to install OpenCL developmental library.
+Other than that, just load it in the quicklisp local-project directory.
+
+*Be sure* that the intended version is loaded by lisp. For example, CFFI
+may load the old =libOpenCL.so= which was installed by =apt= and supports
+OpenCL1.2 only, not the latest one which comes with AMD developper SDK or
+similar. To find out which =libOpenCL.so= it is loading, use =lsof= on your
+running lisp and see if the intended =libOpenCL.so= is present. It is
+characteristic when you installed OpenCL-2.0-conformant library but CFFI
+complains with =Undefined alien: "clCreateCommandQueueWithProperties"= and
+similar messages.
+
+** Supported OpenCL Versions
+
++ opencl-1.0, 1.1, 1.2, 2.0
+
+This library is developped with AMD APPSDK v3.0 (OpenCL 2.0), Radeon HD 5770 and PhenomII X6.
+
+OpenCL has a /specification/ independent from /implementations/, much like
+in ANSI Common Lisp.  It generally maintains the backward-compatibility: If
+you have a conformant OpenCL 2.0 implementation, then any programs written
+with earlier versions of OpenCL should work.
+
+** Testing
+
+=(asdf:test-system :eazy-opencl)=
+
+For platforms whose OpenCL versions are different from MY environment
+(OpenCL 2.0), there might be some issues regarding CFFI. Bug/Trouble
+Reports should go to [github issues](issues/) page.
+
+** Devices
+
+OpenCL supports wide variety of hardwares including CPU. As far as I know,
+it works on the following hardwares. The official, comprehensive device
+list is available [[https://www.khronos.org/conformance/adopters/conformant-products][here]].
+
++ CPU with SSE2.X instruction (AMD), SSE4.2 instruction (Intel)
++ many-core ARM mobile CPUs (qualcomm snapdragon etc.)
++ CPU with embedded GPU (latest Intel, or AMD A-series)
++ FPGA, ASIC, DSP
++ GPGPU (Radeon, GeForce)
+
+While NVIDIA used to be largely inactive in supporting OpenCL and like to
+maintain the vendor-lock-in with CUDA, as of 2015-05-07, there are [[https://www.khronos.org/conformance/adopters/conformant-products][large
+number of NVIDIA's products]] passing the opencl 1.2 conformance test.
+
+** Author
+
+Masataro Asai (guicho2.71828@gmail.com)
+
+Part of the C-like source generator is forked from those in [[https://github.com/takagi/cl-cuda][Takagi@CL-CUDA]].
+
+Also, CFFI-binding in binding-src/ is forked from those in cl-opencl-3b.
+
+* License
+
+Licensed under the LLGPL License.
+

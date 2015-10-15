@@ -89,7 +89,7 @@
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
 
-#-opencl-1.1
+;; #-opencl-1.1
 (defclfun ("clSetCommandQueueProperty" set-command-queue-property)
     error-code
   (command-queue command-queue)
@@ -613,6 +613,12 @@
   (arg-size size-t)
   (arg-value (:pointer :void)))
 
+#+opencl-2.0
+(defclfun ("clSetKernelArgSVMPointer" set-kernel-arg-svm-pointer) error-code
+  (kernel kernel)
+  (arg-index uint)
+  (arg-value (:pointer :void)))
+
 (defclfun ("clGetKernelInfo" get-kernel-info) error-code
   (kernel-name kernel)
   (param-name kernel-info)
@@ -621,7 +627,7 @@
   (param-value-size-ret :pointer))
 
 #+opencl-2.0
-(defclfun ("clGetKernelExecInfo" get-kernel-exec-info) error-code
+(defclfun ("clSetKernelExecInfo" get-kernel-exec-info) error-code
   (kernel-name kernel)
   (param-name kernel-exec-info)
   (param-value-size size-t)

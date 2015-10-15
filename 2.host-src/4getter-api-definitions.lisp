@@ -150,11 +150,6 @@
   (:kernel-context         %cl:context)
   (:kernel-program         %cl:program))
 
-#+opencl-2.0
-(define-info-getter get-kernel-exec-info (kernel param) (%cl:kernel-exec-info)
-  (:kernel-exec-info-svm-ptrs (:pointer :void) :array t)
-  (:kernel-exec-info-svm-fine-grain-system %cl:bool))
-
 (define-info-getter get-kernel-work-group-info (kernel device param) (%cl:kernel-work-group-info)
   (:kernel-global-work-size                   %cl:size-t :fixedsize 3)
   (:kernel-work-group-size                    %cl:size-t)
@@ -191,11 +186,11 @@
   (:platform-icd-suffix-khr :string))
 
 (define-info-getter get-program-build-info (program device param) (%cl:program-build-info)
-  (:program-build-status  %cl:build-status)
+  (:program-build-status                     %cl:build-status)
   (:program-build-options                    :string)
   (:program-build-log                        :string)
-  (:program-binary-type                      :string)
-  (:program-build-global-variable-total-size :string))
+  (:program-binary-type                      %cl:program-binary-type)
+  (:program-build-global-variable-total-size %cl:size-t))
 
 (define-info-getter get-program-info (program param) (%cl:program-info)
   (:program-reference-count %cl:uint)
@@ -212,15 +207,15 @@
    nil
    :form
    ;; fixme: test this...
-   (let* ((sizes (get-program-info program :binary-sizes))
-          (total-size (reduce '+ sizes)))
+   (let* ((sizes (get-program-info program :program-binary-sizes))
+          (total-size (reduce #'+ sizes)))
      (with-foreign-pointer (buffer total-size)
        (with-foreign-object (pointers '(:pointer :void) (length sizes))
          (loop for j = 0 then (+ size j)
                for size in sizes
                for i from 0
                do (setf (mem-aref pointers :pointer i) (inc-pointer buffer j)))
-         (%cl/e:get-program-info program :binaries
+         (%cl/e:get-program-info program :program-binaries
                                  (* (foreign-type-size :pointer) (length sizes))
                                  pointers
                                  (cffi:null-pointer))

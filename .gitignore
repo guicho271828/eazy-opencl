@@ -8,3 +8,6 @@
 .#*
 /cl-opencl-3b/
 /lang/
+/CL/
+/2.host-src/get.lisp
+/2.host-src/opencl.lisp

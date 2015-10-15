@@ -38,12 +38,12 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
  The size of the result is [number]*sizeof(result_type), where [number] is
  obtained by another call to FUN with :QUERY2. For
  example, :MAX-WORK-ITEM-SIZES in GET-DEVICE-INFO requires another call to
- GET-DEVICE-INFO with :MAX-WORK-ITEM-DIMENSIONS, because [number]
- changes dynamically.
+ GET-DEVICE-INFO with :MAX-WORK-ITEM-DIMENSIONS, which returns the size.
 
- (:QUERY NIL :ARRAY)
+ (:QUERY NIL :ARRAY t)
 
- The result is an array of unknown size.
+ The result is an array of unknown size, and the size can be queried with the api itself by
+ passing NULL argument.
 
  (:QUERY NIL :FORM FORM)
  
