@@ -194,8 +194,8 @@
   (:program-build-status  %cl:build-status)
   (:program-build-options                    :string)
   (:program-build-log                        :string)
-  (:program-binary-type                      :string)
-  (:program-build-global-variable-total-size :string))
+  (:program-binary-type                      %cl:program-binary-type)
+  (:program-build-global-variable-total-size %cl:size-t))
 
 (define-info-getter get-program-info (program param) (%cl:program-info)
   (:program-reference-count %cl:uint)
@@ -212,7 +212,7 @@
    nil
    :form
    ;; fixme: test this...
-   (let* ((sizes (get-program-info program :binary-sizes))
+   (let* ((sizes (get-program-info program :program-binary-sizes))
           (total-size (reduce '+ sizes)))
      (with-foreign-pointer (buffer total-size)
        (with-foreign-object (pointers '(:pointer :void) (length sizes))
@@ -220,7 +220,7 @@
                for size in sizes
                for i from 0
                do (setf (mem-aref pointers :pointer i) (inc-pointer buffer j)))
-         (%cl/e:get-program-info program :binaries
+         (%cl/e:get-program-info program :program-binaries
                                  (* (foreign-type-size :pointer) (length sizes))
                                  pointers
                                  (cffi:null-pointer))
