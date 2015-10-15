@@ -7,7 +7,9 @@ Copyright (c) 2015 Masataro Asai (guicho2.71828@gmail.com)
 (defpackage eazy-opencl.host
   (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage)
   (:nicknames :%cl/h)
-  (:import-from :%cl/e #:create-kernel)
+  (:import-from :%cl/e
+                ;; reexport
+                #:create-kernel)
   (:export
    ;; getter api
    #:get-platform-info
@@ -23,9 +25,6 @@ Copyright (c) 2015 Masataro Asai (guicho2.71828@gmail.com)
    #:get-kernel-work-group-info
    #:get-event-info
    #:get-event-profiling-info
-   ;; 
-   #:load-source
-   #:build-program
    ;; list api
    #:get-platform-ids
    #:get-device-ids
@@ -38,5 +37,16 @@ Copyright (c) 2015 Masataro Asai (guicho2.71828@gmail.com)
    #:create-command-queue
    #:create-command-queue-with-properties
    #:create-buffer
-   #:create-kernel
-   #:create-kernels-in-program))
+   #:create-image
+   #:create-pipe
+   #:create-sampler
+   #:create-sampler-with-properties
+   #:create-program-with-source
+   #:create-program-with-binary
+   #:create-program-with-builtin-kernels
+   #:build-program
+   #:compile-program
+   #:link-program
+   #:create-kernels-in-program
+   ;; reexport
+   #:create-kernel))
