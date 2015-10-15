@@ -41,18 +41,19 @@
   "just an alias"
   (sort (copy-list (foreign-bitfield-symbol-list foreign-typename)) #'string<))
 
-(defun test-all-infos (thing params name fn)
-  (iter (for param in params)
-        (format t "~%OpenCL Test: querying ~a to ~a ~a" param name thing)
-        (clear-output *standard-output*)
-        ;;(sleep 0.1)
-        (finishes
-          (handler-case
-              (format t "~%OpenCL Info:  ~s for query ~a to ~a ~a"
-                      (funcall fn thing param) param name thing)
-            (%cl/e:opencl-error (c)
-              (format t "~%OpenCL Error: ~s for query ~a to ~a ~a"
-                      (%cl/e:opencl-error-code c) param name thing))))))
+(defun test-all-infos (things params name fn)
+  (let ((things (ensure-list things)))
+    (iter (for param in params)
+          (format t "~%OpenCL Test: querying ~a to ~a ~a" param name things)
+          (clear-output *standard-output*)
+          ;;(sleep 0.1)
+          (finishes
+            (handler-case
+                (format t "~%OpenCL Info:  ~s for query ~a to ~a ~a"
+                        (apply fn (append things (list param))) param name things)
+              (%cl/e:opencl-error (c)
+                (format t "~%OpenCL Error: ~s for query ~a to ~a ~a"
+                        (%cl/e:opencl-error-code c) param name things)))))))
 
 
 (test setup
@@ -123,6 +124,10 @@ __kernel void hello(__global char * out) {
                                                    size out-host))
                                (program (build-program (load-source ctx source) :devices (list did)))
                                (kernel (kernel program "hello")))
+                          (test-all-infos out-device (all-enums '%cl:mem-info) :buffer #'get-mem-object-info)
+                          (test-all-infos program    (all-enums '%cl:program-info) :program #'get-program-info)
+                          (test-all-infos (list program did) (all-enums '%cl:program-build-info) :build #'get-program-build-info)
+                          (test-all-infos kernel     (all-enums '%cl:kernel-info) :kernel #'get-kernel-info)
                           (set-kernel-arg kernel 0 out-device '%cl:mem)
                           ;; run the kernel
                           (%cl/h::with-foreign-array (global-work-size '%cl:size-t (list size))
