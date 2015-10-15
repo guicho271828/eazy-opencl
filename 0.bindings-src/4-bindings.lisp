@@ -613,6 +613,12 @@
   (arg-size size-t)
   (arg-value (:pointer :void)))
 
+#+opencl-2.0
+(defclfun ("clSetKernelArgSVMPointer" set-kernel-arg-svm-pointer) error-code
+  (kernel kernel)
+  (arg-index uint)
+  (arg-value (:pointer :void)))
+
 (defclfun ("clGetKernelInfo" get-kernel-info) error-code
   (kernel-name kernel)
   (param-name kernel-info)
