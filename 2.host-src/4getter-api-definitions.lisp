@@ -150,11 +150,6 @@
   (:kernel-context         %cl:context)
   (:kernel-program         %cl:program))
 
-#+opencl-2.0
-(define-info-getter get-kernel-exec-info (kernel param) (%cl:kernel-exec-info)
-  (:kernel-exec-info-svm-ptrs (:pointer :void) :array t)
-  (:kernel-exec-info-svm-fine-grain-system %cl:bool))
-
 (define-info-getter get-kernel-work-group-info (kernel device param) (%cl:kernel-work-group-info)
   (:kernel-global-work-size                   %cl:size-t :fixedsize 3)
   (:kernel-work-group-size                    %cl:size-t)
