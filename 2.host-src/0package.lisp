@@ -37,7 +37,9 @@ consider changing the algorithm or even stop using GPGPU.
 (defpackage eazy-opencl.host
   (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage)
   (:nicknames :%cl/h)
+  (:import-from :%cl/e #:create-kernel)
   (:export
+   ;; getter api
    #:get-platform-info
    #:get-device-info
    #:get-context-info
@@ -51,17 +53,20 @@ consider changing the algorithm or even stop using GPGPU.
    #:get-kernel-work-group-info
    #:get-event-info
    #:get-event-profiling-info
-   #:context
-   #:context-from-type
-   #:command-queue
-   #:command-queue-with-properties
-   #:buffer
+   ;; 
    #:load-source
    #:build-program
-   #:create-kernels-in-program
+   ;; list api
    #:get-platform-ids
    #:get-device-ids
    #:get-supported-image-formats
-   #:kernel
-   #:sub-buffer
-   #:set-kernel-arg))
+   ;; setter api
+   #:set-kernel-arg
+   ;; create api
+   #:create-context
+   #:create-context-from-type
+   #:create-command-queue
+   #:create-command-queue-with-properties
+   #:create-buffer
+   #:create-kernel
+   #:create-kernels-in-program))

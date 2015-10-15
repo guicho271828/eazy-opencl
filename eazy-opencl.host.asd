@@ -32,7 +32,7 @@
                 :components
                 ((:file "0package")
                  (:file "1util")
-                 (:file "2resource")
+                 ;;(:file "2resource")
                  (:file "3getter-api")
                  (:file "4getter-api-definitions")
                  (:file "5setter-api")
