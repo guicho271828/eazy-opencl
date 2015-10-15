@@ -89,7 +89,7 @@
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
 
-#-opencl-1.1
+;; #-opencl-1.1
 (defclfun ("clSetCommandQueueProperty" set-command-queue-property)
     error-code
   (command-queue command-queue)
