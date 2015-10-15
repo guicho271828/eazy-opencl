@@ -120,7 +120,7 @@ __kernel void hello(__global char * out) {
                      (print
                       (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
                         (let* ((out-device (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
-                               (program (build-program (load-source ctx source) :devices (list did)))
+                               (program (build-program (create-program-with-source ctx source) :devices (list did)))
                                (kernel (create-kernel program "hello")))
                           (test-all-infos out-device (all-enums '%cl:mem-info) :buffer #'get-mem-object-info)
                           (test-all-infos program    (all-enums '%cl:program-info) :program #'get-program-info)
