@@ -9,6 +9,9 @@ supersede it with something better.
 
 You have to install OpenCL developmental library.
 Other than that, just load it in the quicklisp local-project directory.
+Run the tests by:
+
+=(asdf:test-system :eazy-opencl)=
 
 *Be sure* that the intended version is loaded by lisp. For example, CFFI
 may load the old =libOpenCL.so= which was installed by =apt= and supports
@@ -18,6 +21,22 @@ running lisp and see if the intended =libOpenCL.so= is present. It is
 characteristic when you installed OpenCL-2.0-conformant library but CFFI
 complains with =Undefined alien: "clCreateCommandQueueWithProperties"= and
 similar messages.
+
+** Devices
+
+OpenCL supports wide variety of hardwares including CPU. Below is a blief
+list of categories supported by OpenCL. The official, comprehensive device
+list is available [[https://www.khronos.org/conformance/adopters/conformant-products][here]].
+
++ CPU with SSE2.X instruction (AMD), SSE4.2 instruction (Intel)
++ many-core ARM mobile CPUs (qualcomm snapdragon etc.)
++ CPU with embedded GPU (latest Intel, or AMD A-series)
++ FPGA, ASIC, DSP
++ GPGPU (Radeon, GeForce)
+
+While NVIDIA used to be largely inactive in supporting OpenCL and like to
+maintain the vendor-lock-in with CUDA, as of 2015-05-07, there are [[https://www.khronos.org/conformance/adopters/conformant-products][large
+number of NVIDIA's products]] passing the opencl 1.2 conformance test.
 
 ** Supported OpenCL Versions
 
@@ -30,29 +49,13 @@ in ANSI Common Lisp.  It generally maintains the backward-compatibility: If
 you have a conformant OpenCL 2.0 implementation, then any programs written
 with earlier versions of OpenCL should work.
 
-** Testing
+However, for platforms whose OpenCL versions are different from MY
+environment (OpenCL 2.0), there might be some issues regarding
+CFFI. Bug/Trouble Reports should go to [github issues](issues/) page.
 
-=(asdf:test-system :eazy-opencl)=
-
-For platforms whose OpenCL versions are different from MY environment
-(OpenCL 2.0), there might be some issues regarding CFFI. Bug/Trouble
-Reports should go to [github issues](issues/) page.
-
-** Devices
-
-OpenCL supports wide variety of hardwares including CPU. As far as I know,
-it works on the following hardwares. The official, comprehensive device
-list is available [[https://www.khronos.org/conformance/adopters/conformant-products][here]].
-
-+ CPU with SSE2.X instruction (AMD), SSE4.2 instruction (Intel)
-+ many-core ARM mobile CPUs (qualcomm snapdragon etc.)
-+ CPU with embedded GPU (latest Intel, or AMD A-series)
-+ FPGA, ASIC, DSP
-+ GPGPU (Radeon, GeForce)
-
-While NVIDIA used to be largely inactive in supporting OpenCL and like to
-maintain the vendor-lock-in with CUDA, as of 2015-05-07, there are [[https://www.khronos.org/conformance/adopters/conformant-products][large
-number of NVIDIA's products]] passing the opencl 1.2 conformance test.
+In this library, I do not support ANY OpenGL / Direct3D- related apis since
+I mostly aims at scientific use. If you send me a pullreq I will merge it,
+but for it to be accepted, it should come with a minimal test code.
 
 ** Author
 

@@ -22,12 +22,7 @@
   :author "Masataro Asai"
   :mailto "guicho2.71828@gmail.com"
   :license "LLGPL"
-  :depends-on (:iterate
-               :alexandria
-               :trivia
-               :trivial-garbage
-               :lisp-namespace
-               :eazy-opencl.error)
+  :depends-on (:eazy-opencl.host)
   :components ((:module "3.object-src"
                 :components
                 ((:file "0package")
