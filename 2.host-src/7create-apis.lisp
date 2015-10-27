@@ -196,7 +196,7 @@ header-programs-alist: alist of (header-name . program) ,
           (with-foreign-array (%devices '%ocl:device-id devices)
             (compile/devices (length devices) %devices))
           (compile/devices 0 (null-pointer)))))
-  program)
+  programs)
 
 ;; TODO: below comment is in the original opencl.lisp by 3b.
 ;; 
