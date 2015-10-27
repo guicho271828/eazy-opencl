@@ -627,7 +627,7 @@
   (param-value-size-ret :pointer))
 
 #+opencl-2.0
-(defclfun ("clSetKernelExecInfo" get-kernel-exec-info) error-code
+(defclfun ("clSetKernelExecInfo" set-kernel-exec-info) error-code
   (kernel-name kernel)
   (param-name kernel-exec-info)
   (param-value-size size-t)
