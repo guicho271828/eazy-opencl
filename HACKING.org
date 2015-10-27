@@ -2,7 +2,7 @@
 
 Design Architechture:
 
-* Error handling (layer 1)
+* Error handling (layer 0)
 
 This layer wraps the bare CFFI api with error handling.
 
@@ -12,8 +12,25 @@ OpenCL APIs can be divided into three categories of functions:
 2. The return value (cl_int) tells the error situation
 3. Takes a pointer to cl_int in the last argument, then sets the error value to that address
 
-In error-handlers.lisp, `wrap-api-returning-error` handles the second case
-and `wrap-api-taking-error-ptr` handles the third case.
+The level0 binding layer handles the second case only.
+
+* Garbage collection (layer 0)
+
+We use the garbage collector of the host lisp
+in order to manage opencl objects with refcount interface, e.g. context, kernel and memobj.
+
+These objects are boxed in lisp structure-objects, named as boxed-context, boxed-kernel and so on.
+When these objects are GC'ed, then the finalization procedure implemented with trivial-garbage:finalize
+will invoke appropriate RELEASE interface of the refcount system in OpenCL.
+(e.g. release-kernel, release-context).
+
+Boxing/unboxing operations are transparent to the user; it runs during
+foreign type translation.
+
+* Error handling (layer 1)
+
+In error-handlers.lisp, `wrap-api-taking-error-ptr` handles the third case.
+Resulting interface has an argument list shorter than the original function by one (errcode-ret).
 
 * Convert the imperative C apis -> functional apis. (layer 2)
 
@@ -26,23 +43,11 @@ or to handle the apis which returns the result by setting it to the given pointe
 Original api names are maintained. Some are re-exported from level-1, some
 are newly interned and exported.
 
-* Garbage collection (layer 3)
+* Performance overhead of boxing
 
-We do not use RETAIN interface, and instead use the garbage collector of
-the host lisp. If the object is unreachable from the memory space of the
-host lisp, then it RELEASE the object once, decrementing the reference
-count. (There might be more references from the opencl
-implementation itself, in which case the object is not freed immediately.)
-This is realized through trivial-garbage:finalize.
+Computation done by opencl should be sufficiently larger than the overhead.
 
-* Class Wrapper?
-
-Context, program, kernel, device, commandqueue can be wrapped in a CLOS
-layer. The overhead must be smaller than the large computation done by
-opencl.
-
-This does not mean that the wrapper should be very fast.  If this overhead
-is a problem, then it also means that your application contains a large
-number of very costly GPU-MEMORY communications, required each time the
-GPGPU computation is initialized. In such cases, you should instead
-consider changing the algorithm or even stop using GPGPU.
+If this overhead is a problem, then it also means that your application
+contains a large number of very costly GPU-MEMORY communications, required
+each time the GPGPU computation is initialized. In such cases, you should
+instead consider changing the algorithm or even stop using GPGPU.

@@ -6,13 +6,8 @@
 (in-package :cl-user)
 (defpackage eazy-opencl.error
   (:use :cl :alexandria :trivia :cffi)
-  (:nicknames :%cl/e)
+  (:nicknames :%ocl/e)
   (:import-from :eazy-opencl.bindings
                 #:error-code
-                #:*defined-opencl-functions*)
-  (:export
-   #:opencl-error
-   #:code
-   #:form
-   #:opencl-error-code
-   #:opencl-error-form))
+                #:opencl-error
+                #:*defined-opencl-functions*))
