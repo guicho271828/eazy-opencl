@@ -10,4 +10,5 @@
   (:import-from :eazy-opencl.bindings
                 #:error-code
                 #:opencl-error
+                #:finalize-box
                 #:*defined-opencl-functions*))

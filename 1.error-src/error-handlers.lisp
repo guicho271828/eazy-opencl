@@ -12,7 +12,7 @@
            (trivia.skip:skip)))
       (_
        (wrap-api-normal function-info))))
-  
+
   (defun wrap-api-normal (function-info &optional (wrapper #'identity))
     (match function-info
       ((list* (list _ (and lname (symbol name))) _ args)
@@ -36,7 +36,7 @@ It signals an error when the error-code stored in the pointer is not a :SUCCESS.
        (lambda (form)
          `(with-foreign-object (,e 'error-code)
             (let* ((,result (,@form ,e)))
-              (assert (eq :success (mem-ref ,e 'error-code)))
+              (mem-ref ,e 'error-code)
               ,result)))))))
 
 (defmacro wrap-apis ()

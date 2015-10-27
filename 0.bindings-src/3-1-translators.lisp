@@ -30,6 +30,11 @@
              (with-slots (code) c
                 (format s "OpenCL error ~s" code)))))
 
+(defmethod print-object ((c opencl-error) s)
+  (print-unreadable-object (c s :type t)
+    (with-slots (code) c
+       (format s ":code ~s" code))))
+
 (defmethod translate-from-foreign (c-obj (type error-code-type))
   (let ((code (foreign-enum-keyword '--error-code c-obj)))
     (if (eq code :success)
@@ -40,6 +45,11 @@
 
 (defstruct box
   (value 0 :read-only t))
+
+(defgeneric finalize-box (boxed-object)
+  (:documentation "Finalize a boxed OpenCL object")
+  (:method (any)
+    (declare (ignore any))))
 
 (defmacro define-cl-object-type (type &key
                                         (actual-type (symbolicate '-- type))
@@ -56,15 +66,22 @@
        (defstruct (,box (:include ,inherit) (:constructor ,box (value))))
        (defmethod translate-to-foreign ((lisp-obj ,box) (type ,translator))
          (,unbox lisp-obj))
+       (defmethod finalize-box ((lisp-obj ,box))
+         (finalize lisp-obj
+                   (let ((c-obj (,unbox lisp-obj)))
+                     (lambda ()
+                       ;; FIXME: this notinline is here because
+                       ;; ,realeaser is later declared inline, and sbcl
+                       ;; complains it. For a better solution
+                       ;; delay the definition of translate-from-foreign.
+                       (declare (notinline ,releaser))
+                       (format *trace-output* "~&Releasing ~a ~a" ',type c-obj)
+                       (handler-case
+                           (,releaser c-obj)
+                         (opencl-error (c)
+                           (print c *error-output*)))))))
        (defmethod translate-from-foreign (c-obj (type ,translator))
-         (let ((box (,box c-obj)))
-           (finalize box (lambda ()
-                           ;; FIXME: this notinline is here because
-                           ;; ,realeaser is later declared inline, and sbcl
-                           ;; complains it. For a better solution
-                           ;; delay the definition of translate-from-foreign.
-                           (declare (notinline ,releaser))
-                           (,releaser c-obj))))))))
+         (,box c-obj)))))
 
 (define-cl-object-type command-queue)
 (define-cl-object-type context)

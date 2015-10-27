@@ -42,7 +42,7 @@
   (param-value-size-ret (:pointer size-t)))
 
 (defclfun ("clReleaseDevice" release-device) error-code
-  (device device-id))
+  (device --device-id))
 
 ;;; context
 (defclfun ("clCreateContext" create-context) context
@@ -61,10 +61,7 @@
   (errcode-ret (:pointer error-code)))
 
 (defclfun ("clReleaseContext" release-context) error-code
-  (context context))
-
-(defclfun ("clRetainContext" retain-context) error-code
-  (context context))
+  (context --context))
 
 (defclfun ("clGetContextInfo" get-context-info) error-code
   (context context)
@@ -91,10 +88,7 @@
   (errcode-ret (:pointer error-code)))
 
 (defclfun ("clReleaseCommandQueue" release-command-queue) error-code
-  (command-queue command-queue))
-
-(defclfun ("clRetainCommandQueue" retain-command-queue) error-code
-  (command-queue command-queue))
+  (command-queue --command-queue))
 
 (defclfun ("clGetCommandQueueInfo" get-command-queue-info) error-code
   (command-queue command-queue)
@@ -422,11 +416,8 @@
 
 ;;; mem
 
-
-(defclfun ("clRetainMemObject" retain-mem-object) error-code
-  (memobj mem))
 (defclfun ("clReleaseMemObject" release-mem-object) error-code
-  (memobj mem))
+  (memobj --mem))
 (defclfun ("clGetMemObjectInfo" get-mem-object-info) error-code
   (memobj mem)
   (param-name mem-info)
@@ -478,10 +469,8 @@
   (errcode-ret (:pointer error-code)))
 
 (defclfun ("clReleaseSampler" release-sampler) error-code
-  (sampler sampler))
+  (sampler --sampler))
 
-(defclfun ("clRetainSampler" retain-sampler) error-code
-  (sampler sampler))
 
 (defclfun ("clGetSamplerInfo" get-sampler-info) error-code
   (sampler sampler)
@@ -522,11 +511,9 @@
   (errcode-ret (:pointer error-code)))
 
 
-(defclfun ("clRetainProgram" retain-program) error-code
-  (program program))
 
 (defclfun ("clReleaseProgram" release-program) error-code
-  (program program))
+  (program --program))
 
 (defclfun ("clGetProgramInfo" get-program-info) error-code
   (program program)
@@ -585,10 +572,8 @@
   (num-kernels-ret (:pointer uint)))
 
 (defclfun ("clReleaseKernel" release-kernel) error-code
-  (kernel kernel))
+  (kernel --kernel))
 
-(defclfun ("clRetainKernel" retain-kernel) error-code
-  (kernel kernel))
 
 (defclfun ("clSetKernelArg" set-kernel-arg) error-code
   (kernel kernel)
@@ -680,10 +665,7 @@
 
 ;;; event
 (defclfun ("clReleaseEvent" release-event) error-code
-  (event event))
-
-(defclfun ("clRetainEvent" retain-event) error-code
-  (event event))
+  (event --event))
 
 (defclfun ("clWaitForEvents" wait-for-events) error-code
   (num-events uint)
