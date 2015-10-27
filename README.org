@@ -66,8 +66,8 @@ written with earlier versions of OpenCL should work.)
 Bug/Trouble Reports should go to [[https://github.com/guicho271828/eazy-opencl/issues][github issues]] page.
 
 In this library, I do not support ANY OpenGL / Direct3D- related apis since
-I mostly targets scientific use. If you send me a pullreq I will merge it,
-but for it to be accepted, it should come with a minimal test code.
+I mostly target scientific use.
+I welcome any pullrequests as long as it comes with a minimal test.
 
 ** Author
 
