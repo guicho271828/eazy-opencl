@@ -121,7 +121,7 @@ Properties should be a list of :out-of-order-exec-mode-enable and :profiling-ena
            (%ocl/e:create-program-with-source context 1 p (null-pointer)))))
       ((type file-stream)
        (assert (input-stream-p source))
-       (load-source context (load-into-string (file-length source))))
+       (create-program-with-source context (load-into-string (file-length source))))
       ((type stream)
        (assert (input-stream-p source))
        (let* ((len 0)
