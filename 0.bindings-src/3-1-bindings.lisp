@@ -117,83 +117,12 @@
 (defclfun ("clEnqueueBarrier" enqueue-barrier) error-code
   (command-queue command-queue))
 
-;; #-opencl-2.0
-(defclfun ("clEnqueueTask" enqueue-task) error-code
-  (command-queue command-queue)
-  (kernel kernel)
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
-
-(defclfun ("clEnqueueUnmapMemObject" enqueue-unmap-mem-object) error-code
-  (command-queue command-queue)
-  (memobj mem)
-  (mapped-ptr (:pointer :void))
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
-
-(defclfun ("clEnqueueNDRangeKernel" enqueue-nd-range-kernel) error-code
-  (command-queue command-queue)
-  (kernel kernel)
-  (work-dim uint)
-  (global-work-offset (:pointer size-t))
-  (global-work-size (:pointer size-t))
-  (local-work-size (:pointer size-t))
-  (num-events-in-wait-list uint)
-  (event-wait-list (:pointer event))
-  (event (:pointer event)))
 
 ;; #-opencl-1.2
 (defclfun ("clEnqueueWaitForEvents" enqueue-wait-for-events) error-code
   (command-queue command-queue)
   (num-events uint)
   (event-list (:pointer event)))
-
-(defclfun ("clEnqueueNativeKernel" enqueue-native-kernel) error-code
-  (command-queue command-queue)
-  (user-func :pointer)
-  (args (:pointer :void))
-  (cb-args size-t)
-  (num-mem-objects uint)
-  (mem-list (:pointer mem))
-  (args-mem-loc (:pointer (:pointer :void)))
-  (num-events-in-wait-list uint)
-  (event-wait-list :pointer)            ;FIXME : spec suggests (:pointer event) ...
-  (event (:pointer event)))
-
-#+opencl-1.2
-(defclfun ("clEnqueueFillBuffer" enqueue-fill-buffer) error-code
-  (command-queue command-queue)
-  (buffer mem)
-  (pattern (:pointer :void))
-  (pattern-size size-t)
-  (offset size-t)
-  (size size-t)
-  (num-events-in-wait-list uint)
-  (event-wait-list :pointer)
-  (event (:pointer event)))
-
-#+opencl-1.2
-(defclfun ("clEnqueueFillImage" enqueue-fill-image) error-code
-  (command-queue command-queue)
-  (image mem)
-  (fill-color (:pointer :void))
-  (origin (:pointer size-t))
-  (region (:pointer size-t))
-  (num-events-in-wait-list uint)
-  (event-wait-list :pointer)
-  (event (:pointer event)))
-
-#+opencl-1.2
-(defclfun ("clEnqueueMigrateMemObjects" enqueue-migrate-mem-objects) error-code
-  (command-queue command-queue)
-  (num-mem-objects uint)
-  (mem-objects (:pointer mem))
-  (flags mem-migration-flags)
-  (num-events-in-wait-list uint)
-  (event-wait-list :pointer)
-  (event (:pointer event)))
 
 #+opencl-1.2
 (defclfun ("clEnqueueMarkerWithWaitList" enqueue-marker-with-wait-list) error-code
@@ -319,7 +248,17 @@
   (num-events-in-wait-list uint)
   (event-wait-list (:pointer event))
   (event (:pointer event)))
-
+#+opencl-1.2
+(defclfun ("clEnqueueFillBuffer" enqueue-fill-buffer) error-code
+  (command-queue command-queue)
+  (buffer mem)
+  (pattern (:pointer :void))
+  (pattern-size size-t)
+  (offset size-t)
+  (size size-t)
+  (num-events-in-wait-list uint)
+  (event-wait-list :pointer)
+  (event (:pointer event)))
 ;;; image
 
 (defclfun ("clGetImageInfo" get-image-info) error-code
@@ -446,6 +385,16 @@
   (num-events-in-wait-list uint)
   (event-wait-list (:pointer event))
   (event (:pointer event)))
+#+opencl-1.2
+(defclfun ("clEnqueueFillImage" enqueue-fill-image) error-code
+  (command-queue command-queue)
+  (image mem)
+  (fill-color (:pointer :void))
+  (origin (:pointer size-t))
+  (region (:pointer size-t))
+  (num-events-in-wait-list uint)
+  (event-wait-list :pointer)
+  (event (:pointer event)))
 
 ;;; pipe
 
@@ -486,6 +435,24 @@
   (memobj mem)
   (callback :pointer)
   (user-data (:pointer :void)))
+
+(defclfun ("clEnqueueUnmapMemObject" enqueue-unmap-mem-object) error-code
+  (command-queue command-queue)
+  (memobj mem)
+  (mapped-ptr (:pointer :void))
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+#+opencl-1.2
+(defclfun ("clEnqueueMigrateMemObjects" enqueue-migrate-mem-objects) error-code
+  (command-queue command-queue)
+  (num-mem-objects uint)
+  (mem-objects (:pointer mem))
+  (flags mem-migration-flags)
+  (num-events-in-wait-list uint)
+  (event-wait-list :pointer)
+  (event (:pointer event)))
+
 
 ;;; Shared Virtual Memory : TODO
 
@@ -672,6 +639,39 @@
   (param-value-size size-t)
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
+
+
+;; #-opencl-2.0
+(defclfun ("clEnqueueTask" enqueue-task) error-code
+  (command-queue command-queue)
+  (kernel kernel)
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+
+(defclfun ("clEnqueueNDRangeKernel" enqueue-nd-range-kernel) error-code
+  (command-queue command-queue)
+  (kernel kernel)
+  (work-dim uint)
+  (global-work-offset (:pointer size-t))
+  (global-work-size (:pointer size-t))
+  (local-work-size (:pointer size-t))
+  (num-events-in-wait-list uint)
+  (event-wait-list (:pointer event))
+  (event (:pointer event)))
+
+(defclfun ("clEnqueueNativeKernel" enqueue-native-kernel) error-code
+  (command-queue command-queue)
+  (user-func :pointer)
+  (args (:pointer :void))
+  (cb-args size-t)
+  (num-mem-objects uint)
+  (mem-list (:pointer mem))
+  (args-mem-loc (:pointer (:pointer :void)))
+  (num-events-in-wait-list uint)
+  (event-wait-list :pointer)            ;FIXME : spec suggests (:pointer event) ...
+  (event (:pointer event)))
 
 ;;; event
 (defclfun ("clReleaseEvent" release-event) error-code
