@@ -30,7 +30,7 @@
     "Takes a info of a function which takes a pointer to EAZY-OPENCL.BINDING:ERROR-CODE
 in its last argument, then return the wrapped code.
 It signals an error when the error-code stored in the pointer is not a :SUCCESS."
-    (with-gensyms (result e e-keyword)
+    (with-gensyms (result e)
       (wrap-api-normal
        (butlast function-info)
        (lambda (form)
