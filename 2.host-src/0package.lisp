@@ -6,8 +6,8 @@ Copyright (c) 2015 Masataro Asai (guicho2.71828@gmail.com)
 (in-package :cl-user)
 (defpackage eazy-opencl.host
   (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage)
-  (:nicknames :%cl/h)
-  (:import-from :%cl/e
+  (:nicknames :%ocl/h)
+  (:import-from :%ocl/e
                 ;; reexport
                 #:create-kernel)
   (:export

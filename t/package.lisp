@@ -26,9 +26,9 @@
            (format t "~%~<OpenCL Success: ~;~s for ~a (args: ~{~s ~})~:@>"
                    (list ,result ',form (list ,@(cdr form))))
            ,result)
-       (%cl/e:opencl-error (c)
+       (%ocl/e:opencl-error (c)
          (format t "~%~<OpenCL Error:   ~;~s for ~a (args: ~{~s ~})~:@>"
-                 (list (%cl/e:opencl-error-code c) ',form (list ,@(cdr form))))))))
+                 (list (%ocl/e:opencl-error-code c) ',form (list ,@(cdr form))))))))
 
 (defmacro is-string (form &rest reason-args)
   `(is (typep ,form 'string) ,@reason-args))
@@ -51,35 +51,35 @@
             (handler-case
                 (format t "~%OpenCL Info:  ~s for query ~a to ~a ~a"
                         (apply fn (append things (list param))) param name things)
-              (%cl/e:opencl-error (c)
+              (%ocl/e:opencl-error (c)
                 (format t "~%OpenCL Error: ~s for query ~a to ~a ~a"
-                        (%cl/e:opencl-error-code c) param name things)))))))
+                        (%ocl/e:opencl-error-code c) param name things)))))))
 
 
 (test setup
   (is-true (get-platform-ids))
   (iter (for pid in (get-platform-ids))
-        (test-all-infos pid (all-enums '%cl:platform-info) :platform #'get-platform-info)
+        (test-all-infos pid (all-enums '%ocl:platform-info) :platform #'get-platform-info)
         (finishes
-          (iter (for type in (all-bitfields '%cl:device-type))
+          (iter (for type in (all-bitfields '%ocl:device-type))
                 (format t "~&list of device ids with platform-id ~a and type ~a:" pid (list type))
                 (for dids = (pie (get-device-ids pid (list type))))
                 (iter (for did in dids)
-                      (test-all-infos did (all-enums '%cl:device-info) :device #'get-device-info)
+                      (test-all-infos did (all-enums '%ocl:device-info) :device #'get-device-info)
                       (format t "~& getting a context from device ~A and platform ~A" did pid)
                       (for ctx = (create-context (list did) :context-platform pid)) ; :context-platform pid
-                      (test-all-infos ctx (all-enums '%cl:context-info) :context #'get-context-info)
+                      (test-all-infos ctx (all-enums '%ocl:context-info) :context #'get-context-info)
                       (for cq = (pie (create-command-queue ctx did)))
                       (when cq
-                        (test-all-infos cq (all-enums '%cl:command-queue-info) :command-queue #'get-command-queue-info))
+                        (test-all-infos cq (all-enums '%ocl:command-queue-info) :command-queue #'get-command-queue-info))
                       #+opencl-2.0
                       (for cq2 = (pie (create-command-queue-with-properties ctx did)))
                       #+opencl-2.0
                       (when cq2
-                        (test-all-infos cq2 (all-enums '%cl:command-queue-info) :command-queue #'get-command-queue-info)))
+                        (test-all-infos cq2 (all-enums '%ocl:command-queue-info) :command-queue #'get-command-queue-info)))
                 (for ctx-type = (pie (create-context-from-type type :context-platform pid)))
                 (when ctx-type
-                  (test-all-infos ctx-type (all-enums '%cl:context-info) :context #'get-context-info))))))
+                  (test-all-infos ctx-type (all-enums '%ocl:context-info) :context #'get-context-info))))))
 
 (test helloworld
   ;; http://developer.amd.com/tools-and-sdks/opencl-zone/opencl-resources/introductory-tutorial-to-opencl/
@@ -96,7 +96,7 @@ __kernel void hello(__global char * out) {
 
 "))
     (iter (for pid in (get-platform-ids))
-          (iter (for type in (all-bitfields '%cl:device-type))
+          (iter (for type in (all-bitfields '%ocl:device-type))
                 ;; in this example, we do not care the device id
                 (for ctx = (pie (create-context-from-type type :context-platform pid)))
                 (unless ctx
@@ -122,16 +122,16 @@ __kernel void hello(__global char * out) {
                         (let* ((out-device (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
                                (program (build-program (create-program-with-source ctx source) :devices (list did)))
                                (kernel (create-kernel program "hello")))
-                          (test-all-infos out-device (all-enums '%cl:mem-info) :buffer #'get-mem-object-info)
-                          (test-all-infos program    (all-enums '%cl:program-info) :program #'get-program-info)
-                          (test-all-infos (list program did) (all-enums '%cl:program-build-info) :build #'get-program-build-info)
-                          (test-all-infos kernel     (all-enums '%cl:kernel-info) :kernel #'get-kernel-info)
-                          (set-kernel-arg kernel 0 out-device '%cl:mem)
+                          (test-all-infos out-device (all-enums '%ocl:mem-info) :buffer #'get-mem-object-info)
+                          (test-all-infos program    (all-enums '%ocl:program-info) :program #'get-program-info)
+                          (test-all-infos (list program did) (all-enums '%ocl:program-build-info) :build #'get-program-build-info)
+                          (test-all-infos kernel     (all-enums '%ocl:kernel-info) :kernel #'get-kernel-info)
+                          (set-kernel-arg kernel 0 out-device '%ocl:mem)
                           ;; run the kernel
-                          (%cl/h::with-foreign-array (global-work-size '%cl:size-t (list size))
-                            (pie (%cl/e:enqueue-nd-range-kernel cq kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer))))
+                          (%ocl/h::with-foreign-array (global-work-size '%ocl:size-t (list size))
+                            (pie (%ocl/e:enqueue-nd-range-kernel cq kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer))))
                           (pie
-                            (%cl/e:enqueue-read-buffer cq out-device %cl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer))))))))))))
+                            (%ocl/e:enqueue-read-buffer cq out-device %ocl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer))))))))))))
 
 
 (test bbb

@@ -51,7 +51,7 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
 
 "
   (let ((param (lastcar args))
-        (fun (find-symbol (symbol-name name) (find-package "%CL/E"))))
+        (fun (find-symbol (symbol-name name) (find-package "%OCL/E"))))
     ;; check if each parameter is valid
     (iter (for form in body)
           (ematch form
@@ -146,11 +146,11 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
       (ematch form
         ((list* pname type (plist :plist flag))
 
-         `(with-foreign-object (,fsize '%cl:uint)
+         `(with-foreign-object (,fsize '%ocl:uint)
             (,fun ,@(butlast args) ,pname
                   0 (cffi::null-pointer)
                   ,fsize)
-            (let ((,count-temp (floor (mem-aref ,fsize '%cl:uint)
+            (let ((,count-temp (floor (mem-aref ,fsize '%ocl:uint)
                                       ,(foreign-type-size type))))
               (with-foreign-object (,foreign-value ',base-type ,count-temp)
                 (,fun ,@(butlast args) ,pname
@@ -169,9 +169,9 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
 
 (defun %string-case (args fun pname)
   (with-gensyms (count-temp fsize s)
-    `(with-foreign-object (,fsize '%cl:uint)
+    `(with-foreign-object (,fsize '%ocl:uint)
        (,fun ,@(butlast args) ,pname 0 (cffi::null-pointer) ,fsize)
-       (let ((,count-temp (mem-aref ,fsize '%cl:uint)))
+       (let ((,count-temp (mem-aref ,fsize '%ocl:uint)))
          (with-foreign-object (,s :uchar (1+ ,count-temp))
            (,fun ,@(butlast args) ,pname (1+ ,count-temp) ,s (cffi::null-pointer))
            (foreign-string-to-lisp ,s))))))
