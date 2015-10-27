@@ -42,7 +42,7 @@
   (param-value-size-ret (:pointer size-t)))
 
 (defclfun ("clReleaseDevice" release-device) error-code
-  (device device-id))
+  (device --device-id))
 
 ;;; context
 (defclfun ("clCreateContext" create-context) context
@@ -61,7 +61,7 @@
   (errcode-ret (:pointer error-code)))
 
 (defclfun ("clReleaseContext" release-context) error-code
-  (context context))
+  (context --context))
 
 (defclfun ("clGetContextInfo" get-context-info) error-code
   (context context)
@@ -88,7 +88,7 @@
   (errcode-ret (:pointer error-code)))
 
 (defclfun ("clReleaseCommandQueue" release-command-queue) error-code
-  (command-queue command-queue))
+  (command-queue --command-queue))
 
 (defclfun ("clGetCommandQueueInfo" get-command-queue-info) error-code
   (command-queue command-queue)
@@ -417,7 +417,7 @@
 ;;; mem
 
 (defclfun ("clReleaseMemObject" release-mem-object) error-code
-  (memobj mem))
+  (memobj --mem))
 (defclfun ("clGetMemObjectInfo" get-mem-object-info) error-code
   (memobj mem)
   (param-name mem-info)
@@ -469,7 +469,7 @@
   (errcode-ret (:pointer error-code)))
 
 (defclfun ("clReleaseSampler" release-sampler) error-code
-  (sampler sampler))
+  (sampler --sampler))
 
 
 (defclfun ("clGetSamplerInfo" get-sampler-info) error-code
@@ -513,7 +513,7 @@
 
 
 (defclfun ("clReleaseProgram" release-program) error-code
-  (program program))
+  (program --program))
 
 (defclfun ("clGetProgramInfo" get-program-info) error-code
   (program program)
@@ -572,7 +572,7 @@
   (num-kernels-ret (:pointer uint)))
 
 (defclfun ("clReleaseKernel" release-kernel) error-code
-  (kernel kernel))
+  (kernel --kernel))
 
 
 (defclfun ("clSetKernelArg" set-kernel-arg) error-code
@@ -665,7 +665,7 @@
 
 ;;; event
 (defclfun ("clReleaseEvent" release-event) error-code
-  (event event))
+  (event --event))
 
 (defclfun ("clWaitForEvents" wait-for-events) error-code
   (num-events uint)
