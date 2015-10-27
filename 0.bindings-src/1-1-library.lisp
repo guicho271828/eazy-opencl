@@ -1,4 +1,5 @@
-(cl:in-package #:eazy-opencl.bindings)
+
+(in-package :eazy-opencl.grovel-utils)
 
 (define-foreign-library :opencl
   (:darwin (:framework "OpenCL")) ;; ?

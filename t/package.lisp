@@ -26,9 +26,9 @@
            (format t "~%~<OpenCL Success: ~;~s for ~a (args: ~{~s ~})~:@>"
                    (list ,result ',form (list ,@(cdr form))))
            ,result)
-       (%ocl/e:opencl-error (c)
+       (%ocl:opencl-error (c)
          (format t "~%~<OpenCL Error:   ~;~s for ~a (args: ~{~s ~})~:@>"
-                 (list (%ocl/e:opencl-error-code c) ',form (list ,@(cdr form))))))))
+                 (list (%ocl:opencl-error-code c) ',form (list ,@(cdr form))))))))
 
 (defmacro is-string (form &rest reason-args)
   `(is (typep ,form 'string) ,@reason-args))
@@ -51,9 +51,9 @@
             (handler-case
                 (format t "~%OpenCL Info:  ~s for query ~a to ~a ~a"
                         (apply fn (append things (list param))) param name things)
-              (%ocl/e:opencl-error (c)
+              (%ocl:opencl-error (c)
                 (format t "~%OpenCL Error: ~s for query ~a to ~a ~a"
-                        (%ocl/e:opencl-error-code c) param name things)))))))
+                        (%ocl:opencl-error-code c) param name things)))))))
 
 
 (test setup
@@ -129,9 +129,9 @@ __kernel void hello(__global char * out) {
                           (set-kernel-arg kernel 0 out-device '%ocl:mem)
                           ;; run the kernel
                           (%ocl/h::with-foreign-array (global-work-size '%ocl:size-t (list size))
-                            (pie (%ocl/e:enqueue-nd-range-kernel cq kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer))))
+                            (pie (%ocl:enqueue-nd-range-kernel cq kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer))))
                           (pie
-                            (%ocl/e:enqueue-read-buffer cq out-device %ocl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer))))))))))))
+                            (%ocl:enqueue-read-buffer cq out-device %ocl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer))))))))))))
 
 
 (test bbb

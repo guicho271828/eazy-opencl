@@ -138,8 +138,9 @@
   (:image-depth        %ocl:size-t)
   (:image-num-samples %ocl:uint)
   (:image-num-mip-levels %ocl:uint)
+  ;; #-opencl-2.0
   #+opencl-1.2
-  (:image-buffer %ocl:mem)
+  (:image-buffer %ocl:buffer) ; deprecated in 2.0
   (:image-array-size %ocl:size-t))
 
 (define-info-getter get-kernel-info (kernel param) (%ocl:kernel-info)
@@ -167,7 +168,7 @@
   (:mem-map-count            %ocl:uint)
   (:mem-reference-count      %ocl:uint)
   (:mem-context              %ocl:context)
-  ;; 1.1
+  #+opencl-1.1
   (:mem-associated-memobject %ocl:mem)
   (:mem-offset               %ocl:size-t)
   (:mem-uses-svm-pointer  %ocl:bool))

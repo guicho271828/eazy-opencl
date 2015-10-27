@@ -62,7 +62,9 @@ Properties should be a list of :out-of-order-exec-mode-enable and :profiling-ena
 
 (defun create-pipe #.`(context flags packet-size max-packets &rest properties
                                &key ,@(enum-keywords-as-symbols '%ocl:pipe-properties))
-  ;; in opencl2.0, properties should be nil
+  #+opencl-2.0
+  (declare (ignorable properties))
+  ;; in opencl2.0, properties should be NULL
   #+opencl-2.0
   (%ocl/e:create-pipe context flags packet-size max-packets (null-pointer))
   #+opencl-2.1
@@ -194,7 +196,7 @@ header-programs-alist: alist of (header-name . program) ,
           (with-foreign-array (%devices '%ocl:device-id devices)
             (compile/devices (length devices) %devices))
           (compile/devices 0 (null-pointer)))))
-  program)
+  programs)
 
 ;; TODO: below comment is in the original opencl.lisp by 3b.
 ;; 
