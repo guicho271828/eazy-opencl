@@ -1,7 +1,5 @@
 * eazy-opencl - Opencl Binding for Common Lisp
 
-*Can You see the dawn of lisp-based FPGA ?*
-
 Both [[https://github.com/malkia/cl-opencl][cl-opencl]] and [[https://github.com/3b/cl-opencl-3b][cl-opencl-3b]] look abondoned. I'm trying to supersede it.
 
 Development status:
