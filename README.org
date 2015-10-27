@@ -73,9 +73,9 @@ but for it to be accepted, it should come with a minimal test code.
 
 Masataro Asai (guicho2.71828@gmail.com)
 
-C source generator will be forked from [[https://github.com/takagi/cl-cuda][Takagi@CL-CUDA]].
+C source generator will be forked from [[https://github.com/takagi/cl-cuda][Takagi@CL-CUDA]] if ever implemented.
 
-CFFI-binding is forked from cl-opencl-3b (but largely extended to support OpenCL 2.0.)
+CFFI-binding is forked from cl-opencl-3b, but largely extended to support OpenCL 2.0.
 
 ** Motivation
 
