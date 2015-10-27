@@ -13,14 +13,14 @@
 (ctype #.(lispify "ptrdiff_t") "ptrdiff_t")
 
 (ctype #.(lispify "platform_id") "cl_platform_id")
-(ctype #.(lispify "device_id") "cl_device_id")
-(ctype #.(lispify "context") "cl_context")
-(ctype #.(lispify "command_queue") "cl_command_queue")
-(ctype #.(lispify "mem") "cl_mem")
-(ctype #.(lispify "program") "cl_program")
-(ctype #.(lispify "kernel") "cl_kernel")
-(ctype #.(lispify "event") "cl_event")
-(ctype #.(lispify "sampler") "cl_sampler")
+(ctype #.(lispify "__device_id") "cl_device_id")
+(ctype #.(lispify "__context") "cl_context")
+(ctype #.(lispify "__command_queue") "cl_command_queue")
+(ctype #.(lispify "__mem") "cl_mem")
+(ctype #.(lispify "__program") "cl_program")
+(ctype #.(lispify "__kernel") "cl_kernel")
+(ctype #.(lispify "__event") "cl_event")
+(ctype #.(lispify "__sampler") "cl_sampler")
 
 ;; /* WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels. */ 
 (ctype #.(lispify "__bool") "cl_bool")

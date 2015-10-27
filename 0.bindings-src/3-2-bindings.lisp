@@ -41,6 +41,9 @@
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
 
+(defclfun ("clReleaseDevice" release-device) error-code
+  (device device-id))
+
 ;;; context
 (defclfun ("clCreateContext" create-context) context
   (properties (:pointer context-properties))
@@ -139,7 +142,9 @@
   (event (:pointer event)))
 
 ;;; buffer
-(defclfun ("clCreateBuffer" create-buffer) mem
+
+
+(defclfun ("clCreateBuffer" create-buffer) buffer
   (context context)
   (flags mem-flags)
   (size size-t)
@@ -147,8 +152,8 @@
   (errcode-ret (:pointer error-code)))
 
 #+opencl-1.1
-(defclfun ("clCreateSubBuffer" create-sub-buffer) mem
-  (buffer mem)
+(defclfun ("clCreateSubBuffer" create-sub-buffer) sub-buffer
+  (buffer buffer)
   (flags mem-flags)
   (buffer-create-type buffer-create-type)
   (buffer-create-info (:pointer :void))
@@ -156,7 +161,7 @@
 
 (defclfun ("clEnqueueReadBuffer" enqueue-read-buffer) error-code
   (command-queue command-queue)
-  (buffer mem)
+  (buffer buffer)
   (blocking-read-p bool)
   (offset size-t)
   (size size-t)
@@ -167,7 +172,7 @@
 
 (defclfun ("clEnqueueWriteBuffer" enqueue-write-buffer) error-code
   (command-queue command-queue)
-  (buffer mem)
+  (buffer buffer)
   (blocking-write-p bool)
   (offset size-t)
   (size size-t)
@@ -178,8 +183,8 @@
 
 (defclfun ("clEnqueueCopyBuffer" enqueue-copy-buffer) error-code
   (command-queue command-queue)
-  (src-buffer mem)
-  (dst-buffer mem)
+  (src-buffer buffer)
+  (dst-buffer buffer)
   (src-offset size-t)
   (dst-offset size-t)
   (size size-t)
@@ -189,7 +194,7 @@
 
 (defclfun ("clEnqueueMapBuffer" enqueue-map-buffer) (:pointer :void)
   (command-queue command-queue)
-  (buffer mem)
+  (buffer buffer)
   (blocking-map-p bool)
   (map-flags map-flags)
   (offset size-t)
@@ -202,7 +207,7 @@
 #+opencl-1.1
 (defclfun ("clEnqueueReadBufferRect" enqueue-read-buffer-rect) int
   (command-queue command-queue)
-  (buffer mem)
+  (buffer buffer)
   (blocking-read-p bool)
   (buffer-origin (:pointer size-t)) ;;[3]
   (host-origin (:pointer size-t)) ;;[3]
@@ -219,7 +224,7 @@
 #+opencl-1.1
 (defclfun ("clEnqueueWriteBufferRect" enqueue-write-buffer-rect) int
   (command-queue command-queue)
-  (buffer mem)
+  (buffer buffer)
   (blocking-write-p bool)
   (buffer-origin (:pointer size-t)) ;;[3]
   (host-origin (:pointer size-t)) ;;[3]
@@ -236,8 +241,8 @@
 #+opencl-1.1
 (defclfun ("clEnqueueCopyBufferRect" enqueue-copy-buffer-rect) int
   (command-queue command-queue)
-  (src-buffer mem)
-  (dst-buffer mem)
+  (src-buffer buffer)
+  (dst-buffer buffer)
   (src-origin (:pointer size-t)) ;;[3]
   (dst-origin (:pointer size-t)) ;;[3]
   (region (:pointer size-t)) ;;[3]
@@ -251,7 +256,7 @@
 #+opencl-1.2
 (defclfun ("clEnqueueFillBuffer" enqueue-fill-buffer) error-code
   (command-queue command-queue)
-  (buffer mem)
+  (buffer buffer)
   (pattern (:pointer :void))
   (pattern-size size-t)
   (offset size-t)
@@ -262,14 +267,14 @@
 ;;; image
 
 (defclfun ("clGetImageInfo" get-image-info) error-code
-  (image mem)
+  (image image)
   (param-name image-info)
   (param-value-size size-t)
   (param-value (:pointer :void))
   (param-value-size-ret (:pointer size-t)))
 
 #+opencl-1.2
-(defclfun ("clCreateImage" create-image) mem
+(defclfun ("clCreateImage" create-image) image
   (context context)
   (flags mem-flags)
   (image-format (:pointer (:struct image-format)))
@@ -278,7 +283,7 @@
   (errcode-ret (:pointer error-code)))
 
 ;; #-opencl-1.2
-(defclfun ("clCreateImage2D" create-image-2d) mem
+(defclfun ("clCreateImage2D" create-image-2d) image
   (context context)
   (flags mem-flags)
   (image-format (:pointer (:struct image-format)))
@@ -289,7 +294,7 @@
   (errcode-ret (:pointer error-code)))
 
 ;; #-opencl-1.2
-(defclfun ("clCreateImage3D" create-image-3d) mem
+(defclfun ("clCreateImage3D" create-image-3d) image
   (context context)
   (flags mem-flags)
   (image-format :pointer)
@@ -312,7 +317,7 @@
 
 (defclfun ("clEnqueueWriteImage" enqueue-write-image) error-code
   (command-queue command-queue)
-  (image mem)
+  (image image)
   (blocking-write bool)
   (origin (:pointer size-t)) ;; todo: special type for these size_t[3] args?
   (region (:pointer size-t))
@@ -326,8 +331,8 @@
 (defclfun ("clEnqueueCopyImageToBuffer" enqueue-copy-image-to-buffer)
     error-code
   (command-queue command-queue)
-  (src-image mem)
-  (dst-buffer mem)
+  (src-image image)
+  (dst-buffer buffer)
   (src-origin (:pointer size-t))
   (region (:pointer size-t))
   (dst-offset size-t)
@@ -337,7 +342,7 @@
 
 (defclfun ("clEnqueueMapImage" enqueue-map-image) (:pointer :void)
   (command-queue command-queue)
-  (image mem)
+  (image image)
   (blocking-map bool)
   (map-flags map-flags)
   (origin (:pointer size-t)) ;; [3]
@@ -351,7 +356,7 @@
 
 (defclfun ("clEnqueueReadImage" enqueue-read-image) error-code
   (command-queue command-queue)
-  (image mem)
+  (image image)
   (blocking-read bool)
   (origin (:pointer size-t)) ;;[3]
   (region (:pointer size-t)) ;;[3]
@@ -366,8 +371,8 @@
 (defclfun ("clEnqueueCopyBufferToImage" enqueue-copy-buffer-to-image)
     error-code
   (command-queue command-queue)
-  (src-buffer mem)
-  (dst-image mem)
+  (src-buffer buffer)
+  (dst-image image)
   (src-offset size-t)
   (dst-origin (:pointer size-t)) ;;[3]
   (region (:pointer size-t)) ;;[3]
@@ -377,8 +382,8 @@
 
 (defclfun ("clEnqueueCopyImage" enqueue-copy-image) error-code
   (command-queue command-queue)
-  (src-image mem)
-  (dst-image mem)
+  (src-image image)
+  (dst-image image)
   (src-origin (:pointer size-t)) ;;[3]
   (dst-origin (:pointer size-t)) ;;[3]
   (region (:pointer size-t)) ;;[3]
@@ -388,7 +393,7 @@
 #+opencl-1.2
 (defclfun ("clEnqueueFillImage" enqueue-fill-image) error-code
   (command-queue command-queue)
-  (image mem)
+  (image image)
   (fill-color (:pointer :void))
   (origin (:pointer size-t))
   (region (:pointer size-t))
@@ -399,7 +404,7 @@
 ;;; pipe
 
 #+opencl-2.0
-(defclfun ("clCreatePipe" create-pipe) mem
+(defclfun ("clCreatePipe" create-pipe) pipe
   (context context)
   (flags mem-flags)
   (pipe-packet-size (:pointer uint))
@@ -409,7 +414,7 @@
 
 #+opencl-2.0
 (defclfun ("clGetPipeInfo" get-pipe-info) error-code
-  (pipe mem)
+  (pipe pipe)
   (param-name pipe-info)
   (param-value-size size-t)
   (param-value (:pointer :void))

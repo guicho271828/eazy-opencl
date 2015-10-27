@@ -23,5 +23,5 @@
      #-opencl-2.0 "buffer"
      #+opencl-2.0 #.(lispify-k "mem_object")
      #+opencl-2.0 "mem_object"
-     :type mem))
+     :type --mem))
 
