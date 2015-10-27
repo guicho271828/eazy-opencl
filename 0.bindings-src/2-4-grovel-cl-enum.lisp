@@ -13,7 +13,7 @@
 
 ;;; enums
 
-(constantenum (error-code :base-type int) ; from CL_INT
+(constantenum (--error-code :base-type int) ; from CL_INT
               (#.(lispify-k-pair "CL_SUCCESS"))
               (#.(lispify-k-pair "CL_DEVICE_NOT_FOUND"))
               (#.(lispify-k-pair "CL_DEVICE_NOT_AVAILABLE"))

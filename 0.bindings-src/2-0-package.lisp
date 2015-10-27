@@ -188,7 +188,7 @@
      (lispify "kernel_exec_info"))
   #.(list
      :export
-     :error-code
+     :--error-code
      (lispify-wo-prefix "CL_SUCCESS")
      (lispify-wo-prefix "CL_DEVICE_NOT_FOUND")
      (lispify-wo-prefix "CL_DEVICE_NOT_AVAILABLE")

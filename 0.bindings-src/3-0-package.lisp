@@ -2,5 +2,7 @@
   (:use :cl :cffi :%ocl/g)
   (:shadow :float :char)
   (:nicknames :%ocl)
-  (:export))
+  (:export
+   #:opencl-error
+   #:opencl-error-code))
 
