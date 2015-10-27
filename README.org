@@ -2,8 +2,21 @@
 
 *Can You see the dawn of lisp-based FPGA ?*
 
-Both [[https://github.com/malkia/cl-opencl][cl-opencl]] and [[https://github.com/3b/cl-opencl-3b][cl-opencl-3b]] look abondoned. I'm trying to
-supersede it with something better.
+Both [[https://github.com/malkia/cl-opencl][cl-opencl]] and [[https://github.com/3b/cl-opencl-3b][cl-opencl-3b]] look abondoned. I'm trying to supersede it.
+
+Development status:
+
++ [X] basic CFFI binding, grovelling
++ [X] proper error handling
++ [X] integration to lisp GC
++ [X] Minimally Viable API
++ [X] extensive testing
++ [ ] lisp-to-C preprocessor
++ [ ] loading external OpenCL library easily (like in quicklisp)
++ [ ] really good way to handle complicated memory operation
+  (e.g., generating operations automatically)
+
+Perhaps, I should stop here, and leave these features to external libraries?
 
 ** Installation
 
