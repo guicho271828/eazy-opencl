@@ -137,7 +137,7 @@
      (lispify "kernel")
      (lispify "event")
      (lispify "sampler")
-     (lispify "bool")
+     (lispify "__bool")
      (lispify "bitfield")
      (lispify "device_type")
      (lispify "platform_info")

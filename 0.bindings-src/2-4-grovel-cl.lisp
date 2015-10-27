@@ -23,7 +23,7 @@
 (ctype #.(lispify "sampler") "cl_sampler")
 
 ;; /* WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels. */ 
-(ctype #.(lispify "bool") "cl_bool")
+(ctype #.(lispify "__bool") "cl_bool")
 
 (ctype #.(lispify "bitfield") "cl_bitfield")
 

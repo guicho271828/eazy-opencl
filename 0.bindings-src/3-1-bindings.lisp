@@ -13,16 +13,6 @@
        (defcfun ,lisp-and-c-name ,return-type ,@args)
        (declaim (notinline ,lname)))))
 
-(define-foreign-type bool-type ()
-  ()
-  (:actual-type bool))
-
-(defmethod translate-to-foreign (lispobj (type bool-type))
-  (if lispobj true false))
-
-(defmethod translate-to-foreign (c-obj (type bool-type))
-  (= c-obj true))
-
 ;;; platform
 (defclfun ("clGetPlatformIDs" get-platform-ids) error-code
   (num-entries uint)

@@ -1,6 +1,19 @@
 ;;; translator
 (in-package :eazy-opencl.bindings)
 
+;;; bool
+
+(define-foreign-type bool-type ()
+  ()
+  (:actual-type --bool)
+  (:simple-parser bool))
+
+(defmethod translate-to-foreign (lispobj (type bool-type))
+  (if lispobj true false))
+
+(defmethod translate-from-foreign (c-obj (type bool-type))
+  (= c-obj true))
+
 ;;; error-code
 
 (define-foreign-type error-code-type ()
