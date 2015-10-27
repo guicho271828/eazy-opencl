@@ -1,7 +1,5 @@
 * eazy-opencl - Opencl Binding for Common Lisp
 
-Both [[https://github.com/malkia/cl-opencl][cl-opencl]] and [[https://github.com/3b/cl-opencl-3b][cl-opencl-3b]] look abondoned. I'm trying to supersede it.
-
 Development status:
 
 + [X] basic CFFI binding, grovelling
@@ -24,13 +22,14 @@ Run the tests by:
 
 =(asdf:test-system :eazy-opencl)=
 
-*Be sure* that the intended version is loaded by lisp.
+Be sure that the *intended* OpenCL shared library is loaded by lisp.
+To find out which =libOpenCL.so= is loaded, use =lsof= on your
+running lisp and see if the correct =libOpenCL.so= is present.
+
 # For example, CFFI
 # may load the old =libOpenCL.so= which was installed by =apt= and supports
 # OpenCL1.2 only, not the latest one which comes with AMD developper SDK or
 # similar.
-To find out which =libOpenCL.so= is loaded, use =lsof= on your
-running lisp and see if the intended =libOpenCL.so= is present.
 # It is
 # characteristic when you installed OpenCL-2.0-conformant library but CFFI
 # complains with =Undefined alien: "clCreateCommandQueueWithProperties"= and
@@ -41,12 +40,14 @@ running lisp and see if the intended =libOpenCL.so= is present.
 OpenCL supports wide variety of hardware including CPU. The official, comprehensive device
 list is available [[https://www.khronos.org/conformance/adopters/conformant-products][here]].
 
-+ CPU with SSE2.X instruction (AMD), SSE4.2 instruction (Intel)
++ CPU with SSE2.X instruction (AMD APPSDK), SSE4.2 instruction (Intel)
 + Intel Xeon Phi
 + ARM mobile CPUs (qualcomm snapdragon etc.)
 + CPU with embedded GPU (latest Intel, or AMD A-series)
 + FPGA, ASIC, DSP
 + GPGPU (Radeon, GeForce)
+
+Note that AMD APPSDK can be installed on any CPUs supporting SSE2 (even on Intel).
 
 # While NVIDIA used to be largely inactive in supporting OpenCL and like to
 # maintain the vendor-lock-in with CUDA, as of 2015-05-07, there are [[https://www.khronos.org/conformance/adopters/conformant-products][large
@@ -65,16 +66,25 @@ written with earlier versions of OpenCL should work.)
 Bug/Trouble Reports should go to [[https://github.com/guicho271828/eazy-opencl/issues][github issues]] page.
 
 In this library, I do not support ANY OpenGL / Direct3D- related apis since
-I mostly aims at scientific use. If you send me a pullreq I will merge it,
+I mostly targets scientific use. If you send me a pullreq I will merge it,
 but for it to be accepted, it should come with a minimal test code.
 
 ** Author
 
 Masataro Asai (guicho2.71828@gmail.com)
 
-Part of the C-like source generator is forked from those in [[https://github.com/takagi/cl-cuda][Takagi@CL-CUDA]].
+C source generator will be forked from [[https://github.com/takagi/cl-cuda][Takagi@CL-CUDA]] if ever implemented.
 
-Also, CFFI-binding in binding-src/ is forked from those in cl-opencl-3b.
+CFFI-binding is forked from cl-opencl-3b, but largely extended to support OpenCL 2.0.
+
+** Motivation
+
+Both [[https://github.com/malkia/cl-opencl][cl-opencl]] and [[https://github.com/3b/cl-opencl-3b][cl-opencl-3b]] look abandoned, so I'm trying to supersede
+it. In fact, no one seems using it, nor it is on Quicklisp.
+
+Implementing Deep NN in lisp is one ambitious goal. However it is not
+really necessary, since external DL-NN OpenCL libraries are available.
+See https://github.com/hughperkins/DeepCL.
 
 * License
 
