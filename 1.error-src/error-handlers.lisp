@@ -8,18 +8,18 @@
   (defun wrap-api (function-info)
     "Return a defun form which wraps the original function, inlining the given cffi function."
     (match function-info
-      ((list* _ _ _ args)
+      ((list* _ _ args)
        (if (equal '(:pointer error-code) (second (lastcar args)))
            (wrap-api-taking-error-ptr function-info)
            (trivia.skip:skip)))
-      ((list* _ _ 'error-code _)
+      ((list* _ 'error-code _)
        (wrap-api-returning-error function-info))
       (_
        (wrap-api-normal function-info))))
   
   (defun wrap-api-normal (function-info &optional (wrapper #'identity))
     (match function-info
-      ((list* _ (list _ (and lname (symbol name))) _ args)
+      ((list* (list _ (and lname (symbol name))) _ args)
        (let ((new-args (mapcar (compose #'car #'ensure-list) args))
              (new-name (intern name)))
          `(progn

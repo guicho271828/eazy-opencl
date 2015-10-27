@@ -7,7 +7,7 @@
 (defmacro defclfun (&whole whole lisp-and-c-name return-type &body args)
   (let ((lname (second lisp-and-c-name)))
     `(progn
-       (push ',whole *defined-opencl-functions*)
+       (push ',(cdr whole) *defined-opencl-functions*)
        (export ',lname)
        (declaim (inline ,lname))
        (defcfun ,lisp-and-c-name ,return-type ,@args)
