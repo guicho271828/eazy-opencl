@@ -2,6 +2,9 @@
   (:use :cl :cffi :%ocl/g :trivial-garbage :alexandria)
   (:shadow :float :char)
   (:nicknames :%ocl)
+  #.(let ((acc '(:export)))
+      (do-external-symbols (s :%ocl/g (nreverse acc))
+        (push s acc)))
   (:export
    #:buffer
    #:sub-buffer
