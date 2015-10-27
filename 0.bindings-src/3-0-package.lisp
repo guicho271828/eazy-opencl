@@ -33,5 +33,6 @@
    :boxed-buffer
    :boxed-image
    :boxed-pipe
-   :boxed-sub-buffer))
+   :boxed-sub-buffer
+   :finalize-box))
 
