@@ -1,13 +1,19 @@
 ;;; groveller file
 
-(in-package #:eazy-opencl.bindings)
+(in-package #:eazy-opencl.grovel)
 
 (include "CL/cl.h")
 (include "CL/cl_ext.h")
 
+(constant (#.(lispify "FALSE") "CL_FALSE"))
+(constant (#.(lispify "TRUE") "CL_TRUE"))
+(constant (#.(lispify "BLOCKING") "CL_BLOCKING"))
+(constant (#.(lispify "NON_BLOCKING") "CL_NON_BLOCKING"))
+
+
 ;;; enums
 
-(constantenum (error-code :base-type int)
+(constantenum (error-code :base-type int) ; from CL_INT
               (#.(lispify-k-pair "CL_SUCCESS"))
               (#.(lispify-k-pair "CL_DEVICE_NOT_FOUND"))
               (#.(lispify-k-pair "CL_DEVICE_NOT_AVAILABLE"))
@@ -71,11 +77,6 @@
               (#.(lispify-k-pair "CL_INVALID_DEVICE_QUEUE"))
               #+opencl-2.0
               (#.(lispify-k-pair "CL_PLATFORM_NOT_FOUND_KHR")))
-
-(constant (#.(lispify "FALSE") "CL_FALSE"))
-(constant (#.(lispify "TRUE") "CL_TRUE"))
-(constant (#.(lispify "BLOCKING") "CL_BLOCKING"))
-(constant (#.(lispify "NON_BLOCKING") "CL_NON_BLOCKING"))
 
 (constantenum (#.(lispify "platform_info") :base-type #.(lispify "__platform_info"))
               (#.(lispify-k-pair "CL_PLATFORM_PROFILE"))

@@ -1,6 +1,27 @@
 ;;; Ordered in create-release-retain-get/set-info order
 
-(cl:in-package #:eazy-opencl.bindings)
+(in-package :eazy-opencl.bindings)
+
+(defparameter *defined-opencl-functions* nil)
+
+(defmacro defclfun (&whole whole lisp-and-c-name return-type &body args)
+  (let ((lname (second lisp-and-c-name)))
+    `(progn
+       (push ',whole *defined-opencl-functions*)
+       (export ',lname)
+       (declaim (inline ,lname))
+       (defcfun ,lisp-and-c-name ,return-type ,@args)
+       (declaim (notinline ,lname)))))
+
+(define-foreign-type bool-type ()
+  ()
+  (:actual-type bool))
+
+(defmethod translate-to-foreign (lispobj (type bool-type))
+  (if lispobj true false))
+
+(defmethod translate-to-foreign (c-obj (type bool-type))
+  (= c-obj true))
 
 ;;; platform
 (defclfun ("clGetPlatformIDs" get-platform-ids) error-code

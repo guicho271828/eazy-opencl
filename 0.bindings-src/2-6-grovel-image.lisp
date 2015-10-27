@@ -1,7 +1,7 @@
 ;; groveller file, TBP
 
 ;; 5.3 Image objects
-(in-package #:eazy-opencl.bindings)
+(in-package #:eazy-opencl.grovel)
 
 (include "CL/cl.h")
 

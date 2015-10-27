@@ -1,6 +1,6 @@
 ;;; groveller file
 
-(in-package #:eazy-opencl.bindings)
+(in-package #:eazy-opencl.grovel)
 
 (include "CL/cl.h")
 (include "CL/cl_ext.h")
@@ -24,9 +24,12 @@
 
 ;; /* WARNING!  Unlike cl_ types in cl_platform.h, cl_bool is not guaranteed to be the same size as the bool in kernels. */ 
 (ctype #.(lispify "bool") "cl_bool")
+
 (ctype #.(lispify "bitfield") "cl_bitfield")
-;;; enum/bitfield types (alias to --XXX-type or --XXX-info, then use it as
-;;; the base-type of enum/bitfield)
+
+;;; enum/bitfield types. These are used as the base-type of
+;;; enum/bitfield. See 2-4-grovel-cl-enum.lisp for examples
+
 (ctype #.(lispify "__device_type") "cl_device_type")
 (ctype #.(lispify "__platform_info") "cl_platform_info")
 (ctype #.(lispify "__device_info") "cl_device_info")

@@ -1,4 +1,5 @@
-(in-package #:eazy-opencl.bindings)
+;; groveller file
+(in-package :eazy-opencl.grovel-utils)
 
 (include "CL/cl.h")
 
