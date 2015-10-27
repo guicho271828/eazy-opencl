@@ -18,17 +18,19 @@ containing property and property-value alternatingly.
 
 |#
 
-(defmacro with-foreign-array ((pointer-var type sequence) &body body)
+(defmacro with-foreign-array ((pointer-var type sequence &optional size) &body body)
   "Convert a sequence to a foreign array, then bound it to pointer-var.
 
 SEQUENCE, TYPE are evaluated.
 "
-  `(locally
-       (declare (inline call-with-foreign-array))
-     (call-with-foreign-array
-      ,type ,sequence
-      (lambda (,pointer-var)
-        ,@body))))
+  (let ((size (or size (gensym "SIZE"))))
+    `(locally
+         (declare (inline call-with-foreign-array))
+       (call-with-foreign-array
+        ,type ,sequence
+        (lambda (,pointer-var ,size)
+          (declare (ignorable ,size))
+          ,@body)))))
 
 (declaim (inline call-with-foreign-array))
 (defun call-with-foreign-array (type sequence callback)
@@ -40,7 +42,7 @@ SEQUENCE, TYPE are evaluated.
                ;; sbcl optimize it away when the type of sequence is known.
                ;; note: this function is inlined.
                (elt sequence i)))
-      (funcall callback pointer))))
+      (funcall callback pointer len))))
 (declaim (notinline call-with-foreign-array))
 
 
