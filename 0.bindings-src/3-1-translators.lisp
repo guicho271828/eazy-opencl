@@ -30,6 +30,11 @@
              (with-slots (code) c
                 (format s "OpenCL error ~s" code)))))
 
+(defmethod print-object ((c opencl-error) s)
+  (print-unreadable-object (c s :type t)
+    (with-slots (code) c
+       (format s ":code ~s" code))))
+
 (defmethod translate-from-foreign (c-obj (type error-code-type))
   (let ((code (foreign-enum-keyword '--error-code c-obj)))
     (if (eq code :success)
