@@ -22,13 +22,14 @@ Run the tests by:
 
 =(asdf:test-system :eazy-opencl)=
 
-*Be sure* that the intended version is loaded by lisp.
+Be sure that the *intended* OpenCL shared library is loaded by lisp.
+To find out which =libOpenCL.so= is loaded, use =lsof= on your
+running lisp and see if the correct =libOpenCL.so= is present.
+
 # For example, CFFI
 # may load the old =libOpenCL.so= which was installed by =apt= and supports
 # OpenCL1.2 only, not the latest one which comes with AMD developper SDK or
 # similar.
-To find out which =libOpenCL.so= is loaded, use =lsof= on your
-running lisp and see if the intended =libOpenCL.so= is present.
 # It is
 # characteristic when you installed OpenCL-2.0-conformant library but CFFI
 # complains with =Undefined alien: "clCreateCommandQueueWithProperties"= and
@@ -65,7 +66,7 @@ written with earlier versions of OpenCL should work.)
 Bug/Trouble Reports should go to [[https://github.com/guicho271828/eazy-opencl/issues][github issues]] page.
 
 In this library, I do not support ANY OpenGL / Direct3D- related apis since
-I mostly aims at scientific use. If you send me a pullreq I will merge it,
+I mostly targets scientific use. If you send me a pullreq I will merge it,
 but for it to be accepted, it should come with a minimal test code.
 
 ** Author
