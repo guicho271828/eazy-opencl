@@ -37,7 +37,7 @@ It signals an error when the error-code stored in the pointer is not a :SUCCESS.
          `(with-foreign-object (,e 'error-code)
             (let* ((,result (,@form ,e)))
               (mem-ref ,e 'error-code)
-              ,result)))))))
+              (finalize-box ,result))))))))
 
 (defmacro wrap-apis ()
   `(progn ,@(mapcar #'wrap-api *defined-opencl-functions*)))

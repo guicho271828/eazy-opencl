@@ -49,7 +49,8 @@
 (defgeneric finalize-box (boxed-object)
   (:documentation "Finalize a boxed OpenCL object")
   (:method (any)
-    (declare (ignore any))))
+    "Default method, does nothing."
+    any))
 
 (defmacro define-cl-object-type (type &key
                                         (actual-type (symbolicate '-- type))

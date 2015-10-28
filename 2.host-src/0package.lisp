@@ -5,13 +5,13 @@ Copyright (c) 2015 Masataro Asai (guicho2.71828@gmail.com)
 
 (in-package :cl-user)
 (defpackage eazy-opencl.host
-  (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage)
+  (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage
+        :%ocl)
   (:nicknames :%ocl/h)
-  (:import-from :%ocl
-                #:finalize-box)
-  (:import-from :%ocl/e
-                ;; reexport
-                #:create-kernel)
+  (:shadow :char :float :finish)
+  (:shadowing-import-from :%ocl/e
+                          ;; reexport
+                          #:create-kernel)
   (:export
    ;; getter api
    #:get-platform-info
