@@ -116,15 +116,17 @@ Properties should be a list of :out-of-order-exec-mode-enable and :profiling-ena
     (setf (fill-pointer seq) (read-sequence seq stream))
     seq))
 
-(declaim (ftype (function (t (or string stream)) *) load-source))
+(declaim (ftype (function (boxed-context (or string stream pathname))
+                          boxed-program)
+                create-program-with-source))
 (defun create-program-with-source (context source)
-  "Wrapper around create-program-with-source. Source accepts a string or a stream."
+  "Wrapper around create-program-with-source."
   (finalize-box
    (flet ((load-into-string (length)
            (let ((seq (make-array length :element-type 'character :fill-pointer t)))
              (setf (fill-pointer seq) (read-sequence seq source))
              (values seq (/= (fill-pointer seq) length)))))
-    (ematch source
+     (ematch source
       ((type pathname)
        (with-open-file (s source)
          (create-program-with-source context s)))
@@ -138,18 +140,18 @@ Properties should be a list of :out-of-order-exec-mode-enable and :profiling-ena
        (create-program-with-source context (load-into-string (file-length source))))
       ((type stream)
        (assert (input-stream-p source))
-       (let* ((len 0)
-              (cstrings (iter (for (values str eof-p) = (load-into-string 4096))
+       (let ((len 0))
+         (declare (fixnum len))
+         (let ((cstrings (iter (for (values str eof-p) = (load-into-string 4096))
                               (collect (foreign-string-alloc str) result-type simple-vector)
                               (incf len)
                               (until eof-p))))
-         (declare (fixnum len))
-         (unwind-protect
-             (with-foreign-object (p :pointer len)
-               (loop for i below len
-                     do (setf (mem-aref p :pointer i) (elt cstrings i)))
-               (%ocl/e:create-program-with-source context len p (null-pointer)))
-           (map nil #'foreign-string-free cstrings))))))))
+           (unwind-protect
+               (with-foreign-object (p :pointer len)
+                 (loop for i below len
+                       do (setf (mem-aref p :pointer i) (elt cstrings i)))
+                 (%ocl/e:create-program-with-source context len p (null-pointer)))
+             (map nil #'foreign-string-free cstrings)))))))))
 
 ;; todo: create-program-with-binary
 ;; todo: create-program-with-builtin-kernels
