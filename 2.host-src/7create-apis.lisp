@@ -125,6 +125,9 @@ Properties should be a list of :out-of-order-exec-mode-enable and :profiling-ena
              (setf (fill-pointer seq) (read-sequence seq source))
              (values seq (/= (fill-pointer seq) length)))))
     (ematch source
+      ((type pathname)
+       (with-open-file (s source)
+         (create-program-with-source context s)))
       ((type string)
        (with-foreign-string (cstring source)
          (with-foreign-object (p :pointer 1)
