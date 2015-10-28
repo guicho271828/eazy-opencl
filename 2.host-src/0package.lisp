@@ -5,10 +5,24 @@ Copyright (c) 2015 Masataro Asai (guicho2.71828@gmail.com)
 
 (in-package :cl-user)
 (defpackage eazy-opencl.host
-  (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage
-        :%ocl)
+  (:use :cl :cffi :iterate :alexandria :trivia :trivial-garbage)
+  ;; using %ocl is dangerous! Causes incorrect overloading
   (:nicknames :%ocl/h)
-  (:shadow :char :float :finish)
+  (:import-from :%ocl
+                :boxed-command-queue
+                :boxed-context
+                :boxed-device-id
+                :boxed-event
+                :boxed-kernel
+                :boxed-mem
+                :boxed-program
+                :boxed-sampler
+                :boxed-buffer
+                :boxed-image
+                :boxed-pipe
+                :boxed-sub-buffer
+                :finalize-box)
+  ;;(:shadow :char :float :finish)
   (:shadowing-import-from :%ocl/e
                           ;; reexport
                           #:create-kernel)
