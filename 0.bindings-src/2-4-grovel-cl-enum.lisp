@@ -205,8 +205,11 @@
               (#.(lispify-k-pair "CL_DEVICE_SVM_CAPABILITIES"))
               #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_MAX_PIPE_ARGS"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PIPE_MAX_PACKET_SIZE"))
               (#.(lispify-k-pair "CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT"))
               (#.(lispify-k-pair "CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT"))

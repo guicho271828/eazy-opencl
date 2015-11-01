@@ -62,6 +62,7 @@
   #+opencl-2.0
   (:device-max-on-device-queues                 %ocl:uint)
   (:device-max-parameter-size                   %ocl:size-t)
+  #+opencl-2.0
   (:device-max-pipe-args                        %ocl:uint)
   (:device-max-read-image-args                  %ocl:uint)
   #+opencl-2.0
@@ -87,7 +88,9 @@
   (:device-partition-max-sub-devices            %ocl:uint)
   (:device-partition-properties                 %ocl:device-partition-property :array t)
   (:device-partition-type                       %ocl:device-partition-property :array t)
+  #+opencl-2.0
   (:device-pipe-max-active-reservations         %ocl:uint)
+  #+opencl-2.0
   (:device-pipe-max-packet-size                 %ocl:uint)
   (:device-platform                             %ocl:platform-id)
   (:device-preferred-global-atomic-alignment    %ocl:uint)
