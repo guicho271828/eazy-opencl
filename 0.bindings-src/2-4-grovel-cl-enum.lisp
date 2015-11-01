@@ -187,6 +187,7 @@
               (#.(lispify-k-pair "CL_DEVICE_PRINTF_BUFFER_SIZE"))
               (#.(lispify-k-pair "CL_DEVICE_IMAGE_PITCH_ALIGNMENT"))
               (#.(lispify-k-pair "CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS"))
               #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE"))

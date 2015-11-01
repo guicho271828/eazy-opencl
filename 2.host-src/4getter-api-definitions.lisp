@@ -62,6 +62,7 @@
   (:device-max-parameter-size                   %ocl:size-t)
   (:device-max-pipe-args                        %ocl:uint)
   (:device-max-read-image-args                  %ocl:uint)
+  #+opencl-2.0
   (:device-max-read-write-image-args            %ocl:uint)
   (:device-max-samplers                         %ocl:uint)
   (:device-max-work-group-size                  %ocl:size-t)
