@@ -378,6 +378,7 @@
               (#.(lispify-k-pair "CL_MEM_CONTEXT"))
               (#.(lispify-k-pair "CL_MEM_ASSOCIATED_MEMOBJECT"))
               (#.(lispify-k-pair "CL_MEM_OFFSET"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_MEM_USES_SVM_POINTER")))
 
 (constantenum (#.(lispify "image_info") :base-type #.(lispify "__image_info"))

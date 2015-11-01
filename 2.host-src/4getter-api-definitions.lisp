@@ -174,6 +174,7 @@
   #+opencl-1.1
   (:mem-associated-memobject %ocl:mem)
   (:mem-offset               %ocl:size-t)
+  #+opencl-2.0
   (:mem-uses-svm-pointer  %ocl:bool))
 
 #+opencl-2.0
