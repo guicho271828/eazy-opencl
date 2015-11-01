@@ -37,17 +37,20 @@
 (ctype #.(lispify "__device_mem_cache_type") "cl_device_mem_cache_type")
 (ctype #.(lispify "__device_local_mem_type") "cl_device_local_mem_type")
 (ctype #.(lispify "__device_exec_capabilities") "cl_device_exec_capabilities")
+#+opencl-2.0
 (ctype #.(lispify "__device_svm_capabilities") "cl_device_svm_capabilities")
 (ctype #.(lispify "__command_queue_properties") "cl_command_queue_properties")
 (ctype #.(lispify "__device_partition_property") "cl_device_partition_property")
 (ctype #.(lispify "__device_affinity_domain") "cl_device_affinity_domain")
 (ctype #.(lispify "__context_properties") "cl_context_properties")
 (ctype #.(lispify "__context_info") "cl_context_info")
+#+opencl-2.0
 (ctype #.(lispify "__queue_properties") "cl_queue_properties")
 (ctype #.(lispify "__command_queue_info") "cl_command_queue_info")
 (ctype #.(lispify "__channel_order") "cl_channel_order")
 (ctype #.(lispify "__channel_type") "cl_channel_type")
 (ctype #.(lispify "__mem_flags") "cl_mem_flags")
+#+opencl-2.0
 (ctype #.(lispify "__svm_mem_flags") "cl_svm_mem_flags")
 (ctype #.(lispify "__mem_object_type") "cl_mem_object_type")
 (ctype #.(lispify "__mem_info") "cl_mem_info")
@@ -58,7 +61,9 @@
 (ctype #.(lispify "__filter_mode") "cl_filter_mode")
 (ctype #.(lispify "__sampler_info") "cl_sampler_info")
 (ctype #.(lispify "__map_flags") "cl_map_flags")
+#+opencl-2.0
 (ctype #.(lispify "__pipe_properties") "cl_pipe_properties")
+#+opencl-2.0
 (ctype #.(lispify "__pipe_info") "cl_pipe_info")
 (ctype #.(lispify "__program_info") "cl_program_info")
 (ctype #.(lispify "__program_build_info") "cl_program_build_info")
@@ -75,6 +80,8 @@
 (ctype #.(lispify "__event_info") "cl_event_info")
 (ctype #.(lispify "__command_type") "cl_command_type")
 (ctype #.(lispify "__profiling_info") "cl_profiling_info")
+#+opencl-2.0
 (ctype #.(lispify "__sampler_properties") "cl_sampler_properties")
+#+opencl-2.0
 (ctype #.(lispify "__kernel_exec_info") "cl_kernel_exec_info")
 

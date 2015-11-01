@@ -9,6 +9,7 @@
   (:queue-context         %ocl:context)
   (:queue-device          %ocl:device-id)
   (:queue-reference-count %ocl:uint)
+  #+opencl-2.0
   (:queue-properties      %ocl:command-queue-properties)
   (:queue-size            %ocl:uint))
 
@@ -101,10 +102,12 @@
   (:device-queue-on-device-max-size             %ocl:uint)
   (:device-queue-on-device-preferred-size       %ocl:uint)
   (:device-queue-on-device-properties           %ocl:command-queue-properties)
+  #+opencl-2.0
   (:device-queue-on-host-properties             %ocl:command-queue-properties)
   (:device-queue-properties                     %ocl:command-queue-properties)
   (:device-reference-count                      %ocl:uint)
   (:device-single-fp-config                     %ocl:device-fp-config)
+  #+opencl-2.0
   (:device-svm-capabilities                     %ocl:device-svm-capabilities)
   (:device-type                                 %ocl:device-type)
   (:device-vendor                               :string)

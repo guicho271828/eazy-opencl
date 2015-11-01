@@ -60,6 +60,7 @@ Properties should be a list of :out-of-order-exec-mode-enable and :profiling-ena
 
 ;;;; Pipes
 
+#+opencl-2.0
 (defun create-pipe #.`(context flags packet-size max-packets &rest properties
                                &key ,@(enum-keywords-as-symbols '%ocl:pipe-properties))
   #+opencl-2.0

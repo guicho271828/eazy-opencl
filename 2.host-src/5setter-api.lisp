@@ -10,6 +10,7 @@
 ;;   (:kernel-exec-info-svm-ptrs (:pointer :void) :array t)
 ;;   (:kernel-exec-info-svm-fine-grain-system %ocl:bool))
 
+#+opencl-2.0
 (defun set-kernel-exec-info (kernel param-name value)
   (ecase param-name
     (:kernel-exec-info-svm-ptrs
