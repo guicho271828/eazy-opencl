@@ -29,4 +29,4 @@
                 :components
                 ((:file "package")
                  (:file "error-handlers"))))
-  :description "Opencl Binding for Common Lisp: Wrapping the low level API")
+  :description "Opencl Binding for Common Lisp: Wrapper of the low level API")
