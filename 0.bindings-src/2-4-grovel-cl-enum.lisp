@@ -212,8 +212,11 @@
               (#.(lispify-k-pair "CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS"))
               #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PIPE_MAX_PACKET_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PREFERRED_LOCAL_ATOMIC_ALIGNMENT")))
 
 (bitfield (#.(lispify "device_fp_config") :base-type #.(lispify "__device_fp_config"))

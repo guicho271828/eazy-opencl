@@ -93,9 +93,12 @@
   #+opencl-2.0
   (:device-pipe-max-packet-size                 %ocl:uint)
   (:device-platform                             %ocl:platform-id)
+  #+opencl-2.0
   (:device-preferred-global-atomic-alignment    %ocl:uint)
   (:device-preferred-interop-user-sync          %ocl:uint)
+  #+opencl-2.0
   (:device-preferred-local-atomic-alignment     %ocl:uint)
+  #+opencl-2.0
   (:device-preferred-platform-atomic-alignment  %ocl:uint)
   (:device-preferred-vector-width-char          %ocl:uint)
   (:device-preferred-vector-width-double        %ocl:uint)
