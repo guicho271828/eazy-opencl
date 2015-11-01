@@ -17,14 +17,14 @@
 (in-package :eazy-opencl-asd)
 
 
-(defsystem eazy-opencl
+(defsystem eazy-opencl.fancy
   :version "0.1"
   :author "Masataro Asai"
   :mailto "guicho2.71828@gmail.com"
   :license "LLGPL"
-  :depends-on (:eazy-opencl.bindings
-               :eazy-opencl.error
-               :eazy-opencl.host
-               :eazy-opencl.fancy)
-  :description "Opencl Binding for Common Lisp"
-  :in-order-to ((test-op (test-op :eazy-opencl.test))))
+  :depends-on (:eazy-opencl.host)
+  :components ((:module "3.fancy-src"
+                :components
+                ((:file "0-package")
+                 (:file "1-query"))))
+  :description "Opencl Binding for Common Lisp: C translator")
