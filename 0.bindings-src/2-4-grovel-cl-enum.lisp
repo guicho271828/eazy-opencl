@@ -201,6 +201,7 @@
               (#.(lispify-k-pair "CL_DEVICE_MAX_ON_DEVICE_QUEUES"))
               #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_MAX_ON_DEVICE_EVENTS"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_SVM_CAPABILITIES"))
               #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE"))
