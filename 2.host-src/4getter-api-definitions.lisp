@@ -57,7 +57,9 @@
   #+opencl-2.0
   (:device-max-global-variable-size             %ocl:size-t)
   (:device-max-mem-alloc-size                   %ocl:ulong)
+  #+opencl-2.0
   (:device-max-on-device-events                 %ocl:uint)
+  #+opencl-2.0
   (:device-max-on-device-queues                 %ocl:uint)
   (:device-max-parameter-size                   %ocl:size-t)
   (:device-max-pipe-args                        %ocl:uint)
