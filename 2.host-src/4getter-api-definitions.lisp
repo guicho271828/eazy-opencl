@@ -99,8 +99,11 @@
   (:device-printf-buffer-size                   %ocl:size-t)
   (:device-profile                              :string)
   (:device-profiling-timer-resolution           %ocl:size-t)
+  #+opencl-2.0
   (:device-queue-on-device-max-size             %ocl:uint)
+  #+opencl-2.0
   (:device-queue-on-device-preferred-size       %ocl:uint)
+  #+opencl-2.0
   (:device-queue-on-device-properties           %ocl:command-queue-properties)
   #+opencl-2.0
   (:device-queue-on-host-properties             %ocl:command-queue-properties)

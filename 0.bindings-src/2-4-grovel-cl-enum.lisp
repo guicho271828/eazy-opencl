@@ -189,8 +189,11 @@
               (#.(lispify-k-pair "CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT"))
               (#.(lispify-k-pair "CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS"))
               (#.(lispify-k-pair "CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE"))
               (#.(lispify-k-pair "CL_DEVICE_MAX_ON_DEVICE_QUEUES"))
               (#.(lispify-k-pair "CL_DEVICE_MAX_ON_DEVICE_EVENTS"))
