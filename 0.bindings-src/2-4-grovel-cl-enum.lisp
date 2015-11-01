@@ -276,6 +276,7 @@
               (#.(lispify-k-pair "CL_QUEUE_DEVICE"))
               (#.(lispify-k-pair "CL_QUEUE_REFERENCE_COUNT"))
               (#.(lispify-k-pair "CL_QUEUE_PROPERTIES"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_QUEUE_SIZE")))
 
 (bitfield (#.(lispify "mem_flags") :base-type #.(lispify "__mem_flags"))

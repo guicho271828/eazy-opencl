@@ -9,8 +9,8 @@
   (:queue-context         %ocl:context)
   (:queue-device          %ocl:device-id)
   (:queue-reference-count %ocl:uint)
-  #+opencl-2.0
   (:queue-properties      %ocl:command-queue-properties)
+  #+opencl-2.0
   (:queue-size            %ocl:uint))
 
 (define-info-getter get-context-info (context param) (%ocl:context-info)
