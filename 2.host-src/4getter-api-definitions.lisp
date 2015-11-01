@@ -34,6 +34,7 @@
   (:device-global-mem-cache-type                %ocl:device-mem-cache-type)
   (:device-global-mem-cacheline-size            %ocl:uint)
   (:device-global-mem-size                      %ocl:ulong)
+  #+opencl-2.0
   (:device-global-variable-preferred-total-size %ocl:size-t)
   (:device-host-unified-memory                  %ocl:bool)
   (:device-image-base-address-alignment         %ocl:uint)
@@ -53,6 +54,7 @@
   (:device-max-compute-units                    %ocl:uint)
   (:device-max-constant-args                    %ocl:uint)
   (:device-max-constant-buffer-size             %ocl:ulong)
+  #+opencl-2.0
   (:device-max-global-variable-size             %ocl:size-t)
   (:device-max-mem-alloc-size                   %ocl:ulong)
   (:device-max-on-device-events                 %ocl:uint)
@@ -198,6 +200,7 @@
   (:program-build-options                    :string)
   (:program-build-log                        :string)
   (:program-binary-type                      %ocl:program-binary-type)
+  #+opencl-2.0
   (:program-build-global-variable-total-size %ocl:size-t))
 
 (define-info-getter get-program-info (program param) (%ocl:program-info)

@@ -188,6 +188,7 @@
               (#.(lispify-k-pair "CL_DEVICE_IMAGE_PITCH_ALIGNMENT"))
               (#.(lispify-k-pair "CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT"))
               (#.(lispify-k-pair "CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE"))
               #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES"))
@@ -198,6 +199,7 @@
               (#.(lispify-k-pair "CL_DEVICE_MAX_ON_DEVICE_QUEUES"))
               (#.(lispify-k-pair "CL_DEVICE_MAX_ON_DEVICE_EVENTS"))
               (#.(lispify-k-pair "CL_DEVICE_SVM_CAPABILITIES"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE"))
               (#.(lispify-k-pair "CL_DEVICE_MAX_PIPE_ARGS"))
               (#.(lispify-k-pair "CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS"))
@@ -458,6 +460,7 @@
               (#.(lispify-k-pair "CL_PROGRAM_BUILD_OPTIONS"))
               (#.(lispify-k-pair "CL_PROGRAM_BUILD_LOG"))
               (#.(lispify-k-pair "CL_PROGRAM_BINARY_TYPE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_PROGRAM_BUILD_GLOBAL_VARIABLE_TOTAL_SIZE")))
 
 (constantenum (#.(lispify "program_binary_type") :base-type #.(lispify "__program_binary_type"))
