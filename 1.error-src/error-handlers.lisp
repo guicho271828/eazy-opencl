@@ -19,7 +19,6 @@
        (let ((new-args (mapcar (compose #'car #'ensure-list) args))
              (new-name (intern name)))
          `(progn
-            (export ',new-name)
             (declaim (inline ,new-name))
             (defun ,new-name ,new-args
               (declare (inline ,lname))

@@ -25,14 +25,11 @@
   :depends-on (:iterate
                :alexandria
                :trivia
-               :trivial-garbage
-               :lisp-namespace
                :eazy-opencl.error)
   :components ((:module "2.host-src"
                 :components
                 ((:file "0package")
                  (:file "1util")
-                 ;;(:file "2resource")
                  (:file "3getter-api")
                  (:file "4getter-api-definitions")
                  (:file "5setter-api")

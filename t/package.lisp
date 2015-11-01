@@ -8,6 +8,7 @@
   (:use :cl
         :cffi
         :eazy-opencl.host
+        :eazy-opencl.fancy
         :fiveam
         :iterate :alexandria :trivia))
 (in-package :eazy-opencl.test)
@@ -23,11 +24,11 @@
   (with-gensyms (result)
     `(handler-case
          (let ((,result ,form))
-           (format t "~%~<OpenCL Success: ~;~s for ~a (args: ~{~s ~})~:@>"
+           (format t "~%~<OpenCL Success: ~@;~s for ~s (args: ~{~s ~})~:@>"
                    (list ,result ',form (list ,@(cdr form))))
            ,result)
        (%ocl:opencl-error (c)
-         (format t "~%~<OpenCL Error:   ~;~s for ~a (args: ~{~s ~})~:@>"
+         (format t "~%~<OpenCL Error:   ~@;~s for ~s (args: ~{~s ~})~:@>"
                  (list (%ocl:opencl-error-code c) ',form (list ,@(cdr form))))))))
 
 (defmacro is-string (form &rest reason-args)
@@ -44,16 +45,14 @@
 (defun test-all-infos (things params name fn)
   (let ((things (ensure-list things)))
     (iter (for param in params)
-          (format t "~%OpenCL Test: querying ~a to ~a ~a" param name things)
-          (clear-output *standard-output*)
-          ;;(sleep 0.1)
+          (format t "~%~<OpenCL Test:    ~@;querying ~s to ~s ~s~:@>" (list param name things))
           (finishes
             (handler-case
-                (format t "~%OpenCL Info:  ~s for query ~a to ~a ~a"
-                        (apply fn (append things (list param))) param name things)
+                (format t "~%~<OpenCL Info:    ~@;~s for query ~s to ~s ~s~:@>"
+                        (list (apply fn (append things (list param))) param name things))
               (%ocl:opencl-error (c)
-                (format t "~%OpenCL Error: ~s for query ~a to ~a ~a"
-                        (%ocl:opencl-error-code c) param name things)))))))
+                (format t "~%~<OpenCL Error:   ~@;~s for query ~s to ~s ~s~:@>"
+                        (list (%ocl:opencl-error-code c) param name things))))))))
 
 
 (test setup
@@ -62,11 +61,11 @@
         (test-all-infos pid (all-enums '%ocl:platform-info) :platform #'get-platform-info)
         (finishes
           (iter (for type in (all-bitfields '%ocl:device-type))
-                (format t "~&list of device ids with platform-id ~a and type ~a:" pid (list type))
+                (format t "~&list of device ids with platform-id ~s and type ~s:" pid (list type))
                 (for dids = (pie (get-device-ids pid (list type))))
                 (iter (for did in dids)
                       (test-all-infos did (all-enums '%ocl:device-info) :device #'get-device-info)
-                      (format t "~& getting a context from device ~A and platform ~A" did pid)
+                      (format t "~& getting a context from device ~s and platform ~s" did pid)
                       (for ctx = (create-context (list did) :context-platform pid)) ; :context-platform pid
                       (test-all-infos ctx (all-enums '%ocl:context-info) :context #'get-context-info)
                       (for cq = (pie (create-command-queue ctx did)))
@@ -101,20 +100,20 @@ __kernel void hello(__global char * out) {
               ;; in this example, we do not care the device id
               (for ctx = (pie (create-context-from-type type :context-platform pid)))
               (unless ctx
-                (skip "No context found for the device type ~a in platform ~a" type pid)
+                (skip "No context found for the device type ~s in platform ~s" type pid)
                 (next-iteration))
               (for devices = (get-context-info ctx :context-devices))
               (is (typep devices 'list))
               (for did = (first devices))
               (unless did
-                (skip "No device found for the context ~a" ctx)
+                (skip "No device found for the context ~s" ctx)
                 (next-iteration))
               #-opencl-2.0
               (for cq = (pie (create-command-queue ctx did)))
               #+opencl-2.0
               (for cq = (pie (create-command-queue-with-properties ctx did)))
               (unless cq
-                (skip "Command queue for ctx ~a and device ~a (~a) was not created" ctx did type)
+                (skip "Command queue for ctx ~s and device ~s (~s) was not created" ctx did type)
                 (next-iteration))
               (is (string=
                    "Hello, World"
@@ -142,20 +141,20 @@ __kernel void hello(__global char * out) {
               ;; in this example, we do not care the device id
               (for ctx = (pie (create-context-from-type type :context-platform pid)))
               (unless ctx
-                (skip "No context found for the device type ~a in platform ~a" type pid)
+                (skip "No context found for the device type ~s in platform ~s" type pid)
                 (next-iteration))
               (for devices = (get-context-info ctx :context-devices))
               (is (typep devices 'list))
               (for did = (first devices))
               (unless did
-                (skip "No device found for the context ~a" ctx)
+                (skip "No device found for the context ~s" ctx)
                 (next-iteration))
               #-opencl-2.0
               (for cq = (pie (create-command-queue ctx did)))
               #+opencl-2.0
               (for cq = (pie (create-command-queue-with-properties ctx did)))
               (unless cq
-                (skip "Command queue for ctx ~a and device ~a (~a) was not created" ctx did type)
+                (skip "Command queue for ctx ~s and device ~s (~s) was not created" ctx did type)
                 (next-iteration))
               (is (string=
                    "Hello, World"
@@ -175,42 +174,35 @@ __kernel void hello(__global char * out) {
                         (pie
                          (%ocl:enqueue-read-buffer cq out-device %ocl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer)))))))))))
 
+(test with-easy-opencl-setup
+  (with-easy-opencl-setup (platform
+                           (device (lambda (device)
+                                     (eq (get-device-info device :device-type)
+                                         :device-type-gpu)))
+                           ctx
+                           queue)
+    (is (atom device))
+    (is (atom device))
+    (is (atom ctx))
+    (is (atom queue))))
+
 #+nil
-(test helloworld-fancy
-  ;; http://developer.amd.com/tools-and-sdks/opencl-zone/opencl-resources/introductory-tutorial-to-opencl/
-  (iter (for pid in (get-platform-ids))
-        (iter (for type in (all-bitfields '%ocl:device-type))
-              (for ctx = (pie (create-context-from-type type :context-platform pid)))
-              (unless ctx
-                (skip "No context found for the device type ~a in platform ~a" type pid)
-                (next-iteration))
-              (for devices = (get-context-info ctx :context-devices))
-              (is (typep devices 'list))
-              (for did = (first devices))
-              (unless did
-                (skip "No device found for the context ~a" ctx)
-                (next-iteration))
-              #-opencl-2.0
-              (for cq = (pie (create-command-queue ctx did)))
-              #+opencl-2.0
-              (for cq = (pie (create-command-queue-with-properties ctx did)))
-              (unless cq
-                (skip "Command queue for ctx ~a and device ~a (~a) was not created" ctx did type)
-                (next-iteration))
-              (is (string=
-                   "Hello, World"
-                   (print
-                    (with-naive-shared-array (out-host out-device 13)
-                      (create-program-with-source ctx *helloworld*)
-                      (build-program program :devices (list did))
-                      (load-program ctx source)
-                      (
-                       (let* ((kernel (create-kernel
-                                       "hello")))
-                         (kernel-call program "hello" out-device
-                                      ;; work dim
-                                      ;; global work offset
-                                      ;; global work size
-                                      ;; local work size
-                                      )
-                         (read-buffer out-device out-host))))))))))
+(test fancy-memory-interface
+  (with-easy-opencl-setup (platform
+                           (device (lambda (device)
+                                     (eq (get-device-info device :device-type)
+                                         :device-type-gpu)))
+                           ctx
+                           queue)
+    (is (string=
+         "Hello, World"
+         (print
+          (with-naive-shared-array (out-host out-device 13)
+            (load-program ctx source)
+            (kernel-call (load-program ctx source) "hello" out-device
+                         ;; work dim
+                         ;; global work offset
+                         ;; global work size
+                         ;; local work size
+                         )
+            (read-buffer out-device out-host)))))))
