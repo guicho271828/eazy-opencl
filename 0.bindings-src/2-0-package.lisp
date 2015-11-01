@@ -146,17 +146,20 @@
      (lispify "device_mem_cache_type")
      (lispify "device_local_mem_type")
      (lispify "device_exec_capabilities")
+     #+opencl-2.0
      (lispify "device_svm_capabilities")
      (lispify "command_queue_properties")
      (lispify "device_partition_property")
      (lispify "device_affinity_domain")
      (lispify "context_properties")
      (lispify "context_info")
+     #+opencl-2.0
      (lispify "queue_properties")
      (lispify "command_queue_info")
      (lispify "channel_order")
      (lispify "channel_type")
      (lispify "mem_flags")
+     #+opencl-2.0
      (lispify "svm_mem_flags")
      (lispify "mem_object_type")
      (lispify "mem_info")
@@ -167,7 +170,9 @@
      (lispify "filter_mode")
      (lispify "sampler_info")
      (lispify "map_flags")
+     #+opencl-2.0
      (lispify "pipe_properties")
+     #+opencl-2.0
      (lispify "pipe_info")
      (lispify "program_info")
      (lispify "program_build_info")
@@ -184,7 +189,9 @@
      (lispify "event_info")
      (lispify "command_type")
      (lispify "profiling_info")
+     #+opencl-2.0
      (lispify "sampler_properties")
+     #+opencl-2.0
      (lispify "kernel_exec_info"))
   #.(list
      :export

@@ -75,7 +75,7 @@
               (#.(lispify-k-pair "CL_INVALID_DEVICE_PARTITION_COUNT"))
               (#.(lispify-k-pair "CL_INVALID_PIPE_SIZE"))
               (#.(lispify-k-pair "CL_INVALID_DEVICE_QUEUE"))
-              #+opencl-2.0
+              ;; extension
               (#.(lispify-k-pair "CL_PLATFORM_NOT_FOUND_KHR")))
 
 (constantenum (#.(lispify "platform_info") :base-type #.(lispify "__platform_info"))
@@ -84,9 +84,8 @@
               (#.(lispify-k-pair "CL_PLATFORM_NAME"))
               (#.(lispify-k-pair "CL_PLATFORM_VENDOR"))
               (#.(lispify-k-pair "CL_PLATFORM_EXTENSIONS"))
-              #+opencl-2.0
-              (#.(lispify-k-pair "CL_PLATFORM_ICD_SUFFIX_KHR"))
-              )
+              ;; extension
+              (#.(lispify-k-pair "CL_PLATFORM_ICD_SUFFIX_KHR")))
 
 (bitfield (#.(lispify "device_type") :base-type #.(lispify "__device_type"))
           (#.(lispify-k-pair "CL_DEVICE_TYPE_DEFAULT"))
@@ -235,6 +234,7 @@
           #+opencl-2.0
           (#.(lispify-k-pair "CL_QUEUE_ON_DEVICE_DEFAULT")))
 
+#+opencl-2.0
 (constantenum (#.(lispify "queue_properties") :base-type #.(lispify "__queue_properties"))
               (#.(lispify-k-pair "CL_QUEUE_PROPERTIES"))
               (#.(lispify-k-pair "CL_QUEUE_SIZE")))
@@ -264,6 +264,7 @@
           (#.(lispify-k-pair "CL_DEVICE_AFFINITY_DOMAIN_L1_CACHE"))
           (#.(lispify-k-pair "CL_DEVICE_AFFINITY_DOMAIN_NEXT_PARTITIONABLE")))
 
+#+opencl-2.0
 (bitfield (#.(lispify "device_svm_capabilities") :base-type #.(lispify "__device_svm_capabilities"))
           (#.(lispify-k-pair "CL_DEVICE_SVM_COARSE_GRAIN_BUFFER"))
           (#.(lispify-k-pair "CL_DEVICE_SVM_FINE_GRAIN_BUFFER"))
@@ -293,6 +294,7 @@
           (#.(lispify-k-pair "CL_MEM_KERNEL_READ_AND_WRITE")))
 
 ;; FIXME : duplicated --- cl_mem_flags
+#+opencl-2.0
 (bitfield (#.(lispify "svm_mem_flags") :base-type #.(lispify "__svm_mem_flags"))
           (#.(lispify-k-pair "CL_MEM_READ_WRITE"))
           (#.(lispify-k-pair "CL_MEM_WRITE_ONLY"))
@@ -391,10 +393,12 @@
               (#.(lispify-k-pair "CL_IMAGE_NUM_MIP_LEVELS"))
               (#.(lispify-k-pair "CL_IMAGE_NUM_SAMPLES")))
 
+#+opencl-2.0
 (constantenum (#.(lispify "pipe_info") :base-type #.(lispify "__pipe_info"))
               (#.(lispify-k-pair "CL_PIPE_PACKET_SIZE"))
               (#.(lispify-k-pair "CL_PIPE_MAX_PACKETS")))
 
+#+opencl-2.0
 (constantenum (#.(lispify "pipe_properties") :base-type #.(lispify "__pipe_properties")))
 
 
@@ -421,6 +425,7 @@
               ;; (#.(lispify-k-pair "CL_SAMPLER_LOD_MAX"))
               )
 
+#+opencl-2.0
 (constantenum (#.(lispify "sampler_properties") :base-type #.(lispify "__sampler_properties"))
               (#.(lispify-k-pair "CL_SAMPLER_NORMALIZED_COORDS"))
               (#.(lispify-k-pair "CL_SAMPLER_ADDRESSING_MODE"))

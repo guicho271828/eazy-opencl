@@ -33,6 +33,8 @@ Copyright (c) 2015 Masataro Asai (guicho2.71828@gmail.com)
    #:get-supported-image-formats
    ;; setter api
    #:set-kernel-arg
+   #+opencl-2.0
+   #:set-kernel-exec-info
    ;; create api
    #:create-context
    #:create-context-from-type
@@ -40,6 +42,7 @@ Copyright (c) 2015 Masataro Asai (guicho2.71828@gmail.com)
    #:create-command-queue-with-properties
    #:create-buffer
    #:create-image
+   #+opencl-2.0
    #:create-pipe
    #:create-sampler
    #:create-sampler-with-properties
