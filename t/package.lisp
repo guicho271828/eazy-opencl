@@ -55,7 +55,12 @@
                         (list (%ocl:opencl-error-code c) param name things)))
               (error (c)
                 (fail "~<Unexpected error:~@;~a -- while calling ~a with ~s~:@>"
-                      (list c fn (append things (list param))))))))))
+                      (list c fn (append things (list param)))))))
+          (handler-case
+              (trivial-garbage:gc)
+            (error (c)
+              (fail "~<Unexpected error during GC:~@;~a -- after calling ~a with ~s~:@>"
+                    (list c fn (append things (list param)))))))))
 
 
 (test setup
