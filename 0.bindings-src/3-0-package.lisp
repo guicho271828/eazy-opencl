@@ -20,7 +20,8 @@
    :sampler
    :bool
    #:opencl-error
-   #:opencl-error-code)
+   #:opencl-error-code
+   #:*defined-opencl-functions*)
   (:export
    :boxed-command-queue
    :boxed-context

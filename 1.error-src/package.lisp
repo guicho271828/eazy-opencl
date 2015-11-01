@@ -9,6 +9,9 @@
   (:nicknames :%ocl/e)
   (:import-from :eazy-opencl.bindings
                 #:error-code
-                #:opencl-error
                 #:finalize-box
-                #:*defined-opencl-functions*))
+                #:*defined-opencl-functions*)
+  #.`(:export
+      ,@(mapcar (lambda (info)
+                  (make-symbol (symbol-name (cadar info))))
+                eazy-opencl.bindings:*defined-opencl-functions*)))
