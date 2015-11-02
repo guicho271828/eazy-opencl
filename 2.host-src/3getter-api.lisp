@@ -135,11 +135,11 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
 (defun %array-case (args fun form)
   (let ((base-type (%base-type form)))
     (destructuring-bind (pname type &key plist &allow-other-keys) form
-      `(with-foreign-object (size '%ocl:uint)
+      `(with-foreign-object (size '%ocl:size-t)
          (,fun ,@(butlast args) ,pname
                0 (cffi:null-pointer)
                size)
-         (let ((count (floor (mem-aref size '%ocl:uint)
+         (let ((count (floor (mem-aref size '%ocl:size-t)
                              ,(foreign-type-size type))))
            (with-foreign-object (value ',base-type count)
              (,fun ,@(butlast args) ,pname
