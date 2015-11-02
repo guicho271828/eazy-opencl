@@ -1,9 +1,17 @@
-language: common-lisp
-sudo: false
+language: cpp
+sudo: true
 
 addons:
   apt:
+    sources:
+      - llvm-toolchain-precise-3.6
+      - ubuntu-toolchain-r-test
     packages:
+      - g++-4.8
+      - clang-3.6  
+      - libclang-3.6-dev
+      - llvm-3.6-dev
+      - libedit-dev
       - libc6-i386
       - clisp
       - openjdk-7-jre
@@ -12,6 +20,7 @@ env:
   global:
     - PATH=~/.roswell/bin:$PATH
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
+    - LLVM_CONFIG=/usr/lib/llvm-3.6/bin/llvm-config
   matrix:
     - LISP=sbcl-bin
     - LISP=ccl-bin
@@ -23,6 +32,7 @@ env:
 
 matrix:
   allow_failures:
+    - env: LISP=ccl
     - env: LISP=clisp
     - env: LISP=abcl
     - env: LISP=ecl
@@ -30,12 +40,22 @@ matrix:
     - env: LISP=alisp
 
 install:
+  - sudo bash -c 'echo "deb http://mirrors.kernel.org/ubuntu vivid main universe" >> /etc/apt/sources.list'
+  - sudo apt-get update
+  - sudo apt-get install -y libltdl3-dev libhwloc-dev ocl-icd-opencl-dev
+  - ./build-pocl.sh
   - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
-
+  # this is a temporary change until https://github.com/cffi/cffi/commit/7861673b90f1e99932872722ccc46a8145736c75 is registered to quicklisp
+  - git clone https://github.com/cffi/cffi.git ~/lisp/cffi
+  - ros install cffi
+  - ros install cffi-grovel
+  - ros install eazy-opencl
+ 
 cache:
   directories:
     - $HOME/.roswell
     - $HOME/.config/common-lisp
+    - $HOME/pocl
 
 script:
   - ./testscr.ros

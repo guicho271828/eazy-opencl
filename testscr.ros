@@ -4,23 +4,50 @@
 exec ros -Q -- $0 "$@"
 |#
 
-(ql:quickload :fiveam)
-(defun test (sys)
-  (handler-case
-      (progn
-        (ql:quickload sys)
-        (asdf:test-system sys)
-        (fiveam:run sys))
-    (serious-condition (c)
-      (describe c)
-      (uiop:quit 2))))
+(ql:quickload '(:fiveam :trivial-features :cffi :cffi-grovel))
+
+(in-package :ASDF/BUNDLE)
+
+#+ccl
+(defun bundle-pathname-type (bundle-type)
+    (etypecase bundle-type
+      ((eql :no-output-file) nil) ;; should we error out instead?
+      ((or null string) bundle-type)
+      ((eql :fasl) #-(or ecl mkcl) (compile-file-type) #+(or ecl mkcl) "fasb")
+      #+ecl
+      ((member :dll :lib :shared-library :static-library :program :object :program)
+       (compile-file-type :type bundle-type))
+      ((member :image) #-allegro "image" #+allegro "dxl")
+      ((member :dll :shared-library) (cond ((os-macosx-p) "dylib") ((os-unix-p) "so") ((os-windows-p) "dll")))
+      ((member :lib :static-library) (cond ((os-unix-p) "a")
+                                           ((os-windows-p) (if (featurep '(:or :mingw32 :mingw64)) "a" "lib"))))
+      ((eql :program) (cond ((os-unix-p) nil) ((os-windows-p) "exe")))))
+
+#+ccl
+(trace UIOP/FILESYSTEM:INTER-DIRECTORY-SEPARATOR
+       UIOP/STREAM:NULL-DEVICE-PATHNAME
+       UIOP/STREAM:DEFAULT-TEMPORARY-DIRECTORY
+       UIOP/RUN-PROGRAM::ESCAPE-SHELL-TOKEN
+       UIOP/RUN-PROGRAM::%NORMALIZE-SYSTEM-COMMAND
+       UIOP/RUN-PROGRAM::%REDIRECTED-SYSTEM-COMMAND
+       UIOP/CONFIGURATION:SYSTEM-CONFIGURATION-DIRECTORIES
+       UIOP/CONFIGURATION:USER-CONFIGURATION-DIRECTORIES
+       ASDF/SOURCE-REGISTRY:DEFAULT-SYSTEM-SOURCE-REGISTRY
+       ASDF/SOURCE-REGISTRY:DEFAULT-USER-SOURCE-REGISTRY
+       ASDF/BUNDLE:BUNDLE-PATHNAME-TYPE)
+
+(in-package :cl-user)
+
+(ql:quickload :eazy-opencl.test)
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (uiop:quit (if (every #'fiveam::TEST-PASSED-P
-                      (test :eazy-opencl))
+  (uiop:quit (if (every (complement #'fiveam::test-failure-p)
+                        (handler-case
+                            (let ((result-list (fiveam:run :eazy-opencl)))
+                              (fiveam:explain! result-list)
+                              result-list)
+                          (serious-condition (c)
+                            (describe c)
+                            (uiop:quit 2))))
                  0 1)))
-
-
-
-
