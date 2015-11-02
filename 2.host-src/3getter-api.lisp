@@ -143,29 +143,27 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
 (defun %array-case (args fun form)
   (let ((base-type (%base-type form)))
     (with-gensyms (foreign-value count-temp fsize)
-      (ematch form
-        ((list* pname type (plist :plist flag))
-
-         `(with-foreign-object (,fsize '%ocl:uint)
-            (,fun ,@(butlast args) ,pname
-                  0 (cffi:null-pointer)
-                  ,fsize)
-            (let ((,count-temp (floor (mem-aref ,fsize '%ocl:uint)
-                                      ,(foreign-type-size type))))
-              (with-foreign-object (,foreign-value ',base-type ,count-temp)
-                (,fun ,@(butlast args) ,pname
-                      (* ,(foreign-type-size type)
-                         ,count-temp)
-                      ,foreign-value
-                      (cffi:null-pointer))
-                (loop for i below ,count-temp
-                      for v = (mem-aref ,foreign-value ',base-type i)
-                      ,@ (when (eq flag :plist)
-                           `(for prop = t then (not prop)
-                                 when (and prop (not (zerop v)))
-                                 collect (foreign-enum-keyword ',type v)
-                                 else))
-                      collect v)))))))))
+      (destructuring-bind (pname type &key plist &allow-other-keys) form
+        `(with-foreign-object (,fsize '%ocl:uint)
+           (,fun ,@(butlast args) ,pname
+                 0 (cffi:null-pointer)
+                 ,fsize)
+           (let ((,count-temp (floor (mem-aref ,fsize '%ocl:uint)
+                                     ,(foreign-type-size type))))
+             (with-foreign-object (,foreign-value ',base-type ,count-temp)
+               (,fun ,@(butlast args) ,pname
+                     (* ,(foreign-type-size type)
+                        ,count-temp)
+                     ,foreign-value
+                     (cffi:null-pointer))
+               (loop for i below ,count-temp
+                     for v = (mem-aref ,foreign-value ',base-type i)
+                     ,@ (when plist
+                          `(for prop = t then (not prop)
+                                when (and prop (not (zerop v)))
+                                collect (foreign-enum-keyword ',type v)
+                                else))
+                     collect v))))))))
 
 (defun %string-case (args fun pname)
   (with-gensyms (count-temp fsize str)
