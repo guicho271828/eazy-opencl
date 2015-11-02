@@ -148,7 +148,7 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
 
          `(with-foreign-object (,fsize '%ocl:uint)
             (,fun ,@(butlast args) ,pname
-                  0 (cffi::null-pointer)
+                  0 (cffi:null-pointer)
                   ,fsize)
             (let ((,count-temp (floor (mem-aref ,fsize '%ocl:uint)
                                       ,(foreign-type-size type))))
@@ -168,21 +168,24 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
                       collect v)))))))))
 
 (defun %string-case (args fun pname)
-  (with-gensyms (count-temp fsize s)
-    `(with-foreign-object (,fsize '%ocl:uint)
-       (,fun ,@(butlast args) ,pname 0 (cffi::null-pointer) ,fsize)
-       (let ((,count-temp (mem-aref ,fsize '%ocl:uint)))
-         (with-foreign-object (,s :uchar (1+ ,count-temp))
-           (,fun ,@(butlast args) ,pname (1+ ,count-temp) ,s (cffi::null-pointer))
+  (with-gensyms (count-temp fsize str)
+    `(with-foreign-object (,fsize '%ocl:size-t)
+       (,fun ,@(butlast args) ,pname 0 (cffi:null-pointer) ,fsize)
+       (let ((,count-temp (1+ (mem-aref ,fsize '%ocl:size-t))))
+         ;; char is not imported due to conflict with cl:char
+         (with-foreign-object (,str '%ocl/g:char ,count-temp)
+           (,fun ,@(butlast args) ,pname ,count-temp ,str (cffi:null-pointer))
            ;; for CCL
-           (foreign-string-to-lisp ,s :encoding :ascii))))))
+           (foreign-string-to-lisp ,str :encoding :ascii))))))
 
 (defun %simple-case (args fun form)
   (with-gensyms (foreign-value)
     (ematch form
       ((list pname type)
        `(with-foreign-object (,foreign-value ',type)
-          (,fun ,@(butlast args) ,pname ,(foreign-type-size type) ,foreign-value (cffi:null-pointer))
+          (,fun ,@(butlast args) ,pname
+                ,(foreign-type-size type) ,foreign-value
+                (cffi:null-pointer))
           (mem-aref ,foreign-value ',type))))))
 
 
