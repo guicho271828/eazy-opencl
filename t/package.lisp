@@ -29,7 +29,8 @@
            ,result)
        (%ocl:opencl-error (c)
          (format t "~%~<OpenCL Error:   ~@;~s for ~s (args: ~{~s ~})~:@>"
-                 (list (%ocl:opencl-error-code c) ',form (list ,@(cdr form))))))))
+                 (list (%ocl:opencl-error-code c) ',form (list ,@(cdr form))))
+         nil))))
 
 (defmacro is-string (form &rest reason-args)
   `(is (typep ,form 'string) ,@reason-args))
@@ -106,81 +107,93 @@ __kernel void hello(__global char * out) {
   (iter (for pid in (get-platform-ids))
         (iter (for type in (all-bitfields '%ocl:device-type))
               ;; in this example, we do not care the device id
-              (for ctx = (pie (create-context-from-type type :context-platform pid)))
-              (unless ctx
-                (skip "No context found for the device type ~s in platform ~s" type pid)
-                (next-iteration))
-              (for devices = (get-context-info ctx :context-devices))
-              (is (typep devices 'list))
+              (for ctx =
+                   (or (pie (create-context-from-type type :context-platform pid))
+                       (progn
+                         (skip "No context found for the device type ~s in platform ~s" type pid)
+                         (next-iteration))))
+              (for devices =
+                   (or (pie (get-context-info ctx :context-devices))
+                       (progn
+                         (skip "No device found for the context ~s" ctx)
+                         (next-iteration))))
               (for did = (first devices))
-              (unless did
-                (skip "No device found for the context ~s" ctx)
-                (next-iteration))
-              #-opencl-2.0
-              (for cq = (pie (create-command-queue ctx did)))
-              #+opencl-2.0
-              (for cq = (pie (create-command-queue-with-properties ctx did)))
-              (unless cq
-                (skip "Command queue for ctx ~s and device ~s (~s) was not created" ctx did type)
-                (next-iteration))
-              (is (string=
-                   "Hello, World"
-                   (print
-                    (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
-                      (let* ((out-device (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
-                             (program (build-program (create-program-with-source ctx *helloworld*) :devices (list did)))
-                             (kernel (create-kernel program "hello")))
-                        (test-all-infos out-device (all-enums '%ocl:mem-info) :buffer #'get-mem-object-info)
-                        (test-all-infos program    (all-enums '%ocl:program-info) :program #'get-program-info)
-                        (test-all-infos (list program did) (all-enums '%ocl:program-build-info) :build #'get-program-build-info)
-                        (test-all-infos kernel     (all-enums '%ocl:kernel-info) :kernel #'get-kernel-info)
-                        (set-kernel-arg kernel 0 out-device '%ocl:mem)
-                        ;; run the kernel
-                        (%ocl/h::with-foreign-array (global-work-size '%ocl:size-t (list size))
-                          (pie (%ocl:enqueue-nd-range-kernel cq kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer))))
-                        (pie
-                         (%ocl:enqueue-read-buffer cq out-device %ocl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer)))))))))))
-
+              (for cq =
+                   (or (pie #-opencl-2.0
+                            (create-command-queue ctx did)
+                            #+opencl-2.0
+                            (create-command-queue-with-properties ctx did))
+                       (progn
+                         (skip "Command queue for ctx ~s and device ~s (~s) was not created" ctx did type)
+                         (next-iteration))))
+              (for result =
+                   (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
+                     (let* ((out-device
+                             (or (pie (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
+                                 (next-iteration)))
+                            (program
+                             (or (pie (create-program-with-source ctx *helloworld*))
+                                 (next-iteration))))
+                       (or (pie (build-program program :devices (list did)))
+                           (next-iteration))
+                       (let ((kernel (or (pie (create-kernel program "hello"))
+                                         (next-iteration))))
+                         (test-all-infos out-device (all-enums '%ocl:mem-info) :buffer #'get-mem-object-info)
+                         (test-all-infos program    (all-enums '%ocl:program-info) :program #'get-program-info)
+                         (test-all-infos (list program did) (all-enums '%ocl:program-build-info) :build #'get-program-build-info)
+                         (test-all-infos kernel     (all-enums '%ocl:kernel-info) :kernel #'get-kernel-info)
+                         (finishes
+                           (set-kernel-arg kernel 0 out-device '%ocl:mem))
+                         ;; run the kernel
+                         (%ocl/h::with-foreign-array (global-work-size '%ocl:size-t (list size))
+                           (pie (%ocl:enqueue-nd-range-kernel cq kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer))))
+                         (pie
+                          (%ocl:enqueue-read-buffer cq out-device %ocl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer)))))))
+              (is (string= "Hello, World" (print result))))))
 
 (test helloworld-from-file
-  ;; http://developer.amd.com/tools-and-sdks/opencl-zone/opencl-resources/introductory-tutorial-to-opencl/
   (iter (for pid in (get-platform-ids))
         (iter (for type in (all-bitfields '%ocl:device-type))
               ;; in this example, we do not care the device id
-              (for ctx = (pie (create-context-from-type type :context-platform pid)))
-              (unless ctx
-                (skip "No context found for the device type ~s in platform ~s" type pid)
-                (next-iteration))
-              (for devices = (get-context-info ctx :context-devices))
-              (is (typep devices 'list))
+              (for ctx =
+                   (or (pie (create-context-from-type type :context-platform pid))
+                       (progn
+                         (skip "No context found for the device type ~s in platform ~s" type pid)
+                         (next-iteration))))
+              (for devices =
+                   (or (pie (get-context-info ctx :context-devices))
+                       (progn
+                         (skip "No device found for the context ~s" ctx)
+                         (next-iteration))))
               (for did = (first devices))
-              (unless did
-                (skip "No device found for the context ~s" ctx)
-                (next-iteration))
-              #-opencl-2.0
-              (for cq = (pie (create-command-queue ctx did)))
-              #+opencl-2.0
-              (for cq = (pie (create-command-queue-with-properties ctx did)))
-              (unless cq
-                (skip "Command queue for ctx ~s and device ~s (~s) was not created" ctx did type)
-                (next-iteration))
-              (is (string=
-                   "Hello, World"
-                   (print
-                    (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
-                      (let* ((out-device (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
-                             (program (build-program (create-program-with-source
-                                                      ctx
-                                                      (asdf:system-relative-pathname :eazy-opencl
-                                                                                     "t/helloworld.cl"))
-                                                     :devices (list did)))
-                             (kernel (create-kernel program "hello")))
-                        (set-kernel-arg kernel 0 out-device '%ocl:mem)
-                        ;; run the kernel
-                        (%ocl/h::with-foreign-array (global-work-size '%ocl:size-t (list size))
-                          (pie (%ocl:enqueue-nd-range-kernel cq kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer))))
-                        (pie
-                         (%ocl:enqueue-read-buffer cq out-device %ocl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer)))))))))))
+              (for cq =
+                   (or (pie #-opencl-2.0
+                            (create-command-queue ctx did)
+                            #+opencl-2.0
+                            (create-command-queue-with-properties ctx did))
+                       (progn
+                         (skip "Command queue for ctx ~s and device ~s (~s) was not created" ctx did type)
+                         (next-iteration))))
+              (for result =
+                   (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
+                     (let* ((out-device
+                             (or (pie (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
+                                 (next-iteration)))
+                            (program
+                             (or (pie (create-program-with-source ctx (asdf:system-relative-pathname :eazy-opencl "t/helloworld.cl")))
+                                 (next-iteration))))
+                       (or (pie (build-program program :devices (list did)))
+                           (next-iteration))
+                       (let ((kernel (or (pie (create-kernel program "hello"))
+                                         (next-iteration))))
+                         (finishes
+                           (set-kernel-arg kernel 0 out-device '%ocl:mem))
+                         ;; run the kernel
+                         (%ocl/h::with-foreign-array (global-work-size '%ocl:size-t (list size))
+                           (pie (%ocl:enqueue-nd-range-kernel cq kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer))))
+                         (pie
+                          (%ocl:enqueue-read-buffer cq out-device %ocl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer)))))))
+              (is (string= "Hello, World" (print result))))))
 
 (test with-easy-opencl-setup
   (with-easy-opencl-setup (platform
