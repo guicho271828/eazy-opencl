@@ -174,7 +174,8 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
        (let ((,count-temp (mem-aref ,fsize '%ocl:uint)))
          (with-foreign-object (,s :uchar (1+ ,count-temp))
            (,fun ,@(butlast args) ,pname (1+ ,count-temp) ,s (cffi::null-pointer))
-           (foreign-string-to-lisp ,s))))))
+           ;; for CCL
+           (foreign-string-to-lisp ,s :encoding :ascii))))))
 
 (defun %simple-case (args fun form)
   (with-gensyms (foreign-value)
