@@ -114,25 +114,23 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
 
 (defun %dynamic-size-case (name args fun form)
   (let ((base-type (%base-type form)))
-    (ematch form
-      ((list* pname type (plist :querysize count-param
-                                :plist flag))
-       `(let ((count
-               ;; further call to NAME for obtaining the size
-               (,name ,@(butlast args) ,count-param)))
-          (with-foreign-object (value ',base-type count)
-            (,fun ,@(butlast args) ,pname
-                  (* ,(foreign-type-size type) count)
-                  value
-                  (cffi:null-pointer))
-            (loop for i below count
-                  for v = (mem-aref value ',type i)
-                  ,@(when (eq flag :plist)
-                      `(for prop = t then (not prop)
-                            when (and prop (not (zerop v)))
-                            collect (foreign-enum-keyword ',type v)
-                            else))
-                  collect v)))))))
+    (destructuring-bind (pname type &key querysize plist) form
+      `(let ((count
+              ;; further call to NAME for obtaining the size
+              (,name ,@(butlast args) ,querysize)))
+         (with-foreign-object (value ',base-type count)
+           (,fun ,@(butlast args) ,pname
+                 (* ,(foreign-type-size type) count)
+                 value
+                 (cffi:null-pointer))
+           (loop for i below count
+                 for v = (mem-aref value ',type i)
+                 ,@(when plist
+                     `(for prop = t then (not prop)
+                           when (and prop (not (zerop v)))
+                           collect (foreign-enum-keyword ',type v)
+                           else))
+                 collect v))))))
 
 (defun %array-case (args fun form)
   (let ((base-type (%base-type form)))
