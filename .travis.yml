@@ -44,6 +44,7 @@ install:
   - sudo apt-get update
   - sudo apt-get install -y libltdl3-dev libhwloc-dev ocl-icd-opencl-dev
   - ./build-pocl.sh
+  - sudo make -C pocl install
   - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
   # this is a temporary change until https://github.com/cffi/cffi/commit/7861673b90f1e99932872722ccc46a8145736c75 is registered to quicklisp
   - git clone https://github.com/cffi/cffi.git ~/lisp/cffi
