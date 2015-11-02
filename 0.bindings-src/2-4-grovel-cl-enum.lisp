@@ -75,6 +75,7 @@
               (#.(lispify-k-pair "CL_INVALID_DEVICE_PARTITION_COUNT")) 
               #+opencl-2.0
               (#.(lispify-k-pair "CL_INVALID_PIPE_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_INVALID_DEVICE_QUEUE"))
               ;; extension
               (#.(lispify-k-pair "CL_PLATFORM_NOT_FOUND_KHR")))
