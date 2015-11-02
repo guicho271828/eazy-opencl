@@ -9,8 +9,8 @@
   (:queue-context         %ocl:context)
   (:queue-device          %ocl:device-id)
   (:queue-reference-count %ocl:uint)
-  #+opencl-2.0
   (:queue-properties      %ocl:command-queue-properties)
+  #+opencl-2.0
   (:queue-size            %ocl:uint))
 
 (define-info-getter get-context-info (context param) (%ocl:context-info)
@@ -34,6 +34,7 @@
   (:device-global-mem-cache-type                %ocl:device-mem-cache-type)
   (:device-global-mem-cacheline-size            %ocl:uint)
   (:device-global-mem-size                      %ocl:ulong)
+  #+opencl-2.0
   (:device-global-variable-preferred-total-size %ocl:size-t)
   (:device-host-unified-memory                  %ocl:bool)
   (:device-image-base-address-alignment         %ocl:uint)
@@ -53,13 +54,18 @@
   (:device-max-compute-units                    %ocl:uint)
   (:device-max-constant-args                    %ocl:uint)
   (:device-max-constant-buffer-size             %ocl:ulong)
+  #+opencl-2.0
   (:device-max-global-variable-size             %ocl:size-t)
   (:device-max-mem-alloc-size                   %ocl:ulong)
+  #+opencl-2.0
   (:device-max-on-device-events                 %ocl:uint)
+  #+opencl-2.0
   (:device-max-on-device-queues                 %ocl:uint)
   (:device-max-parameter-size                   %ocl:size-t)
+  #+opencl-2.0
   (:device-max-pipe-args                        %ocl:uint)
   (:device-max-read-image-args                  %ocl:uint)
+  #+opencl-2.0
   (:device-max-read-write-image-args            %ocl:uint)
   (:device-max-samplers                         %ocl:uint)
   (:device-max-work-group-size                  %ocl:size-t)
@@ -82,12 +88,17 @@
   (:device-partition-max-sub-devices            %ocl:uint)
   (:device-partition-properties                 %ocl:device-partition-property :array t)
   (:device-partition-type                       %ocl:device-partition-property :array t)
+  #+opencl-2.0
   (:device-pipe-max-active-reservations         %ocl:uint)
+  #+opencl-2.0
   (:device-pipe-max-packet-size                 %ocl:uint)
   (:device-platform                             %ocl:platform-id)
+  #+opencl-2.0
   (:device-preferred-global-atomic-alignment    %ocl:uint)
   (:device-preferred-interop-user-sync          %ocl:uint)
+  #+opencl-2.0
   (:device-preferred-local-atomic-alignment     %ocl:uint)
+  #+opencl-2.0
   (:device-preferred-platform-atomic-alignment  %ocl:uint)
   (:device-preferred-vector-width-char          %ocl:uint)
   (:device-preferred-vector-width-double        %ocl:uint)
@@ -99,8 +110,11 @@
   (:device-printf-buffer-size                   %ocl:size-t)
   (:device-profile                              :string)
   (:device-profiling-timer-resolution           %ocl:size-t)
+  #+opencl-2.0
   (:device-queue-on-device-max-size             %ocl:uint)
+  #+opencl-2.0
   (:device-queue-on-device-preferred-size       %ocl:uint)
+  #+opencl-2.0
   (:device-queue-on-device-properties           %ocl:command-queue-properties)
   #+opencl-2.0
   (:device-queue-on-host-properties             %ocl:command-queue-properties)
@@ -174,6 +188,7 @@
   #+opencl-1.1
   (:mem-associated-memobject %ocl:mem)
   (:mem-offset               %ocl:size-t)
+  #+opencl-2.0
   (:mem-uses-svm-pointer  %ocl:bool))
 
 #+opencl-2.0
@@ -194,6 +209,7 @@
   (:program-build-options                    :string)
   (:program-build-log                        :string)
   (:program-binary-type                      %ocl:program-binary-type)
+  #+opencl-2.0
   (:program-build-global-variable-total-size %ocl:size-t))
 
 (define-info-getter get-program-info (program param) (%ocl:program-info)

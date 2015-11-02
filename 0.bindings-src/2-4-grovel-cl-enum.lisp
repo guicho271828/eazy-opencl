@@ -72,8 +72,10 @@
               (#.(lispify-k-pair "CL_INVALID_IMAGE_DESCRIPTOR"))
               (#.(lispify-k-pair "CL_INVALID_COMPILER_OPTIONS"))
               (#.(lispify-k-pair "CL_INVALID_LINKER_OPTIONS"))
-              (#.(lispify-k-pair "CL_INVALID_DEVICE_PARTITION_COUNT"))
+              (#.(lispify-k-pair "CL_INVALID_DEVICE_PARTITION_COUNT")) 
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_INVALID_PIPE_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_INVALID_DEVICE_QUEUE"))
               ;; extension
               (#.(lispify-k-pair "CL_PLATFORM_NOT_FOUND_KHR")))
@@ -187,20 +189,35 @@
               (#.(lispify-k-pair "CL_DEVICE_PRINTF_BUFFER_SIZE"))
               (#.(lispify-k-pair "CL_DEVICE_IMAGE_PITCH_ALIGNMENT"))
               (#.(lispify-k-pair "CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_MAX_READ_WRITE_IMAGE_ARGS"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_MAX_ON_DEVICE_QUEUES"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_MAX_ON_DEVICE_EVENTS"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_SVM_CAPABILITIES"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_MAX_PIPE_ARGS"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PIPE_MAX_PACKET_SIZE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_DEVICE_PREFERRED_LOCAL_ATOMIC_ALIGNMENT")))
 
 (bitfield (#.(lispify "device_fp_config") :base-type #.(lispify "__device_fp_config"))
@@ -276,6 +293,7 @@
               (#.(lispify-k-pair "CL_QUEUE_DEVICE"))
               (#.(lispify-k-pair "CL_QUEUE_REFERENCE_COUNT"))
               (#.(lispify-k-pair "CL_QUEUE_PROPERTIES"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_QUEUE_SIZE")))
 
 (bitfield (#.(lispify "mem_flags") :base-type #.(lispify "__mem_flags"))
@@ -365,6 +383,7 @@
               (#.(lispify-k-pair "CL_MEM_OBJECT_IMAGE1D"))
               (#.(lispify-k-pair "CL_MEM_OBJECT_IMAGE1D_ARRAY"))
               (#.(lispify-k-pair "CL_MEM_OBJECT_IMAGE1D_BUFFER"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_MEM_OBJECT_PIPE")))
 
 (constantenum (#.(lispify "mem_info") :base-type #.(lispify "__mem_info"))
@@ -377,6 +396,7 @@
               (#.(lispify-k-pair "CL_MEM_CONTEXT"))
               (#.(lispify-k-pair "CL_MEM_ASSOCIATED_MEMOBJECT"))
               (#.(lispify-k-pair "CL_MEM_OFFSET"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_MEM_USES_SVM_POINTER")))
 
 (constantenum (#.(lispify "image_info") :base-type #.(lispify "__image_info"))
@@ -453,6 +473,7 @@
               (#.(lispify-k-pair "CL_PROGRAM_BUILD_OPTIONS"))
               (#.(lispify-k-pair "CL_PROGRAM_BUILD_LOG"))
               (#.(lispify-k-pair "CL_PROGRAM_BINARY_TYPE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_PROGRAM_BUILD_GLOBAL_VARIABLE_TOTAL_SIZE")))
 
 (constantenum (#.(lispify "program_binary_type") :base-type #.(lispify "__program_binary_type"))
@@ -499,6 +520,7 @@
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_CONST"))
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_RESTRICT"))
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_VOLATILE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_PIPE")))
 
 (constantenum (#.(lispify "kernel_work_group_info") :base-type #.(lispify "__kernel_work_group_info"))

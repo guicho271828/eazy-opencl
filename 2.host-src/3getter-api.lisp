@@ -96,93 +96,86 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
 
 (defun %fixed-size-case (args fun form)
   (let ((base-type (%base-type form)))
-    (with-gensyms (foreign-value count-temp)
-      (ematch form
-        ((list* pname type (plist :fixedsize count-param
-                              :plist flag))
-
-         `(let ((,count-temp ,count-param))
-            (with-foreign-object (,foreign-value ',base-type ,count-temp)
-              (,fun ,@(butlast args) ,pname
-                    (* ,(foreign-type-size type) ,count-temp)
-                    ,foreign-value
-                    (cffi:null-pointer))
-              (loop for i below ,count-temp
-                    for v = (mem-aref ,foreign-value ',type i)
-                    ,@(when (eq flag :plist)
-                        `(for prop = t then (not prop)
-                              when (and prop (not (zerop v)))
-                              collect (foreign-enum-keyword ',type v)
-                              else))
-                    collect v))))))))
+    (destructuring-bind (pname type &key fixedsize plist) form
+      `(let ((count ,fixedsize))
+         (with-foreign-object (value ',base-type count)
+           (,fun ,@(butlast args) ,pname
+                 (* ,(foreign-type-size type) count)
+                 value
+                 (cffi:null-pointer))
+           (loop for i below count
+                 for v = (mem-aref value ',type i)
+                 ,@(when plist
+                     `(for prop = t then (not prop)
+                           when (and prop (not (zerop v)))
+                           collect (foreign-enum-keyword ',type v)
+                           else))
+                 collect v))))))
 
 (defun %dynamic-size-case (name args fun form)
   (let ((base-type (%base-type form)))
-    (with-gensyms (foreign-value count-temp)
-      (ematch form
-        ((list* pname type (plist :querysize count-param
-                              :plist flag))
+    (destructuring-bind (pname type &key querysize plist) form
+      `(let ((count
+              ;; further call to NAME for obtaining the size
+              (,name ,@(butlast args) ,querysize)))
+         (with-foreign-object (value ',base-type count)
+           (,fun ,@(butlast args) ,pname
+                 (* ,(foreign-type-size type) count)
+                 value
+                 (cffi:null-pointer))
+           (loop for i below count
+                 for v = (mem-aref value ',type i)
+                 ,@(when plist
+                     `(for prop = t then (not prop)
+                           when (and prop (not (zerop v)))
+                           collect (foreign-enum-keyword ',type v)
+                           else))
+                 collect v))))))
 
-         `(let ((,count-temp
-                 ;; further call to NAME for obtaining the size
-                 (,name ,@(butlast args) ,count-param)))
-            (with-foreign-object (,foreign-value ',base-type ,count-temp)
-              (,fun ,@(butlast args) ,pname
-                    (* ,(foreign-type-size type) ,count-temp)
-                    ,foreign-value
-                    (cffi:null-pointer))
-              (loop for i below ,count-temp
-                    for v = (mem-aref ,foreign-value ',type i)
-                    ,@(when (eq flag :plist)
+(defun %array-case (args fun form)
+  (let ((base-type (%base-type form)))
+    (destructuring-bind (pname type &key plist &allow-other-keys) form
+      `(with-foreign-object (size '%ocl:size-t)
+         (,fun ,@(butlast args) ,pname
+               0 (cffi:null-pointer)
+               size)
+         (let ((count (floor (mem-aref size '%ocl:size-t)
+                             ,(foreign-type-size type))))
+           (with-foreign-object (value ',base-type count)
+             (,fun ,@(butlast args) ,pname
+                   (* ,(foreign-type-size type)
+                      count)
+                   value
+                   (cffi:null-pointer))
+             (loop for i below count
+                   for v = (mem-aref value ',base-type i)
+                   ,@ (when plist
                         `(for prop = t then (not prop)
                               when (and prop (not (zerop v)))
                               collect (foreign-enum-keyword ',type v)
                               else))
-                    collect v))))))))
-
-(defun %array-case (args fun form)
-  (let ((base-type (%base-type form)))
-    (with-gensyms (foreign-value count-temp fsize)
-      (ematch form
-        ((list* pname type (plist :plist flag))
-
-         `(with-foreign-object (,fsize '%ocl:uint)
-            (,fun ,@(butlast args) ,pname
-                  0 (cffi::null-pointer)
-                  ,fsize)
-            (let ((,count-temp (floor (mem-aref ,fsize '%ocl:uint)
-                                      ,(foreign-type-size type))))
-              (with-foreign-object (,foreign-value ',base-type ,count-temp)
-                (,fun ,@(butlast args) ,pname
-                      (* ,(foreign-type-size type)
-                         ,count-temp)
-                      ,foreign-value
-                      (cffi:null-pointer))
-                (loop for i below ,count-temp
-                      for v = (mem-aref ,foreign-value ',base-type i)
-                      ,@ (when (eq flag :plist)
-                           `(for prop = t then (not prop)
-                                 when (and prop (not (zerop v)))
-                                 collect (foreign-enum-keyword ',type v)
-                                 else))
-                      collect v)))))))))
+                   collect v)))))))
 
 (defun %string-case (args fun pname)
-  (with-gensyms (count-temp fsize s)
-    `(with-foreign-object (,fsize '%ocl:uint)
-       (,fun ,@(butlast args) ,pname 0 (cffi::null-pointer) ,fsize)
-       (let ((,count-temp (mem-aref ,fsize '%ocl:uint)))
-         (with-foreign-object (,s :uchar (1+ ,count-temp))
-           (,fun ,@(butlast args) ,pname (1+ ,count-temp) ,s (cffi::null-pointer))
-           (foreign-string-to-lisp ,s))))))
+  `(with-foreign-object (size '%ocl:size-t)
+     (,fun ,@(butlast args) ,pname 0 (cffi:null-pointer) size)
+     (let ((count (mem-aref size '%ocl:size-t)))
+       ;; char is not imported due to conflict with cl:char
+       (with-foreign-object (str '%ocl/g:char count)
+         (,fun ,@(butlast args) ,pname count str (cffi:null-pointer))
+         ;; for CCL
+         (if (null-pointer-p str)
+             ""
+             (foreign-string-to-lisp str :encoding :ascii))))))
 
 (defun %simple-case (args fun form)
-  (with-gensyms (foreign-value)
-    (ematch form
-      ((list pname type)
-       `(with-foreign-object (,foreign-value ',type)
-          (,fun ,@(butlast args) ,pname ,(foreign-type-size type) ,foreign-value (cffi:null-pointer))
-          (mem-aref ,foreign-value ',type))))))
+  (ematch form
+    ((list pname type)
+     `(with-foreign-object (value ',type)
+        (,fun ,@(butlast args) ,pname
+              ,(foreign-type-size type) value
+              (cffi:null-pointer))
+        (mem-aref value ',type)))))
 
 
 
