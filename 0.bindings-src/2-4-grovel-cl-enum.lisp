@@ -72,7 +72,8 @@
               (#.(lispify-k-pair "CL_INVALID_IMAGE_DESCRIPTOR"))
               (#.(lispify-k-pair "CL_INVALID_COMPILER_OPTIONS"))
               (#.(lispify-k-pair "CL_INVALID_LINKER_OPTIONS"))
-              (#.(lispify-k-pair "CL_INVALID_DEVICE_PARTITION_COUNT"))
+              (#.(lispify-k-pair "CL_INVALID_DEVICE_PARTITION_COUNT")) 
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_INVALID_PIPE_SIZE"))
               (#.(lispify-k-pair "CL_INVALID_DEVICE_QUEUE"))
               ;; extension
@@ -378,6 +379,7 @@
               (#.(lispify-k-pair "CL_MEM_OBJECT_IMAGE1D"))
               (#.(lispify-k-pair "CL_MEM_OBJECT_IMAGE1D_ARRAY"))
               (#.(lispify-k-pair "CL_MEM_OBJECT_IMAGE1D_BUFFER"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_MEM_OBJECT_PIPE")))
 
 (constantenum (#.(lispify "mem_info") :base-type #.(lispify "__mem_info"))
@@ -514,6 +516,7 @@
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_CONST"))
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_RESTRICT"))
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_VOLATILE"))
+              #+opencl-2.0
               (#.(lispify-k-pair "CL_KERNEL_ARG_TYPE_PIPE")))
 
 (constantenum (#.(lispify "kernel_work_group_info") :base-type #.(lispify "__kernel_work_group_info"))
