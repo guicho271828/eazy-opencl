@@ -159,12 +159,14 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
 (defun %string-case (args fun pname)
   `(with-foreign-object (size '%ocl:size-t)
      (,fun ,@(butlast args) ,pname 0 (cffi:null-pointer) size)
-     (let ((count (1+ (mem-aref size '%ocl:size-t))))
+     (let ((count (mem-aref size '%ocl:size-t)))
        ;; char is not imported due to conflict with cl:char
        (with-foreign-object (str '%ocl/g:char count)
          (,fun ,@(butlast args) ,pname count str (cffi:null-pointer))
          ;; for CCL
-         (foreign-string-to-lisp str :encoding :ascii)))))
+         (if (null-pointer-p str)
+             ""
+             (foreign-string-to-lisp str :encoding :ascii))))))
 
 (defun %simple-case (args fun form)
   (ematch form
