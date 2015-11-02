@@ -45,14 +45,17 @@
 (defun test-all-infos (things params name fn)
   (let ((things (ensure-list things)))
     (iter (for param in params)
-          (format t "~%~<OpenCL Test:    ~@;querying ~s to ~s ~s~:@>" (list param name things))
+          (format t "~%~<OpenCL Test:     ~@;querying ~s to ~s ~s~:@>" (list param name things)) 
           (finishes
             (handler-case
-                (format t "~%~<OpenCL Info:    ~@;~s for query ~s to ~s ~s~:@>"
+                (format t "~%~<OpenCL Info:     ~@;~s for query ~s to ~s ~s~:@>"
                         (list (apply fn (append things (list param))) param name things))
               (%ocl:opencl-error (c)
-                (format t "~%~<OpenCL Error:   ~@;~s for query ~s to ~s ~s~:@>"
-                        (list (%ocl:opencl-error-code c) param name things))))))))
+                (format t "~%~<OpenCL Error:    ~@;~s for query ~s to ~s ~s~:@>"
+                        (list (%ocl:opencl-error-code c) param name things)))
+              (error (c)
+                (fail "~<Unexpected error:~@;~a -- while calling ~a with ~s~:@>"
+                      (list c fn (append things (list param))))))))))
 
 
 (test setup
