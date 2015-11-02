@@ -6,11 +6,10 @@ Development status:
 + proper error handling
 + integration to lisp GC
 + Minimally Viable API
-+ extensive testing
++ extensive testing ([[https://travis-ci.org/guicho271828/eazy-opencl.svg]], [[https://circleci.com/gh/guicho271828/eazy-opencl.svg]])
 
 TODOs:
 + lisp-to-C preprocessor
-+ ICD loader (loading multiple OpenCL drivers)
 + Loading external OpenCL library easily (like in quicklisp)
 + Really good way to handle complicated memory operation
   (e.g., generating operations automatically)
@@ -19,32 +18,38 @@ Perhaps, I should stop here, and leave these features to external libraries?
 
 ** Installation
 
-You have to install OpenCL developmental library.
-Other than that, just load it in the quicklisp local-project directory.
+You have to install OpenCL ICD Loader and some OpenCL platform icd.
+On Debian/Ubuntu,
+
+ICD loader: =sudo apt-get install ocl-icd-opencl-dev=
+
+A Platform ICD provides an OpenCL implementation. Some are available from apt-get:
+
++ AMD (proprietary) : =sudo apt-get install amd-opencl-icd=
++ Nvidia (proprietary) : =sudo apt-get install nvidia-opencl-icd=
++ Intel (proprietary) : =sudo apt-get install beignet-opencl-icd=
++ Mesa (free) : =sudo apt-get install mesa-opencl-icd=
++ POCL (portable opencl) : =sudo apt-get install pocl-opencl-icd= ---
+  Tested on latest source (>=0.12) from Git. Older versions have several
+  unimplemented features/arguments and does not pass all the test, but
+  mostly working as long as you don't use them.
+
+However, note that these packages (both ICD loader and OpenCL
+implementation) are not up-to-date.  My recommendation is to download the
+latest driver&icd from vendors' websites.
+
+Once they are up, just load this library in the quicklisp local-project directory.
 Run the tests by:
 
 =(asdf:test-system :eazy-opencl)=
-
-Be sure that the *intended* OpenCL shared library is loaded by lisp.
-To find out which =libOpenCL.so= is loaded, use =lsof= on your
-running lisp and see if the correct =libOpenCL.so= is present.
-
-# For example, CFFI
-# may load the old =libOpenCL.so= which was installed by =apt= and supports
-# OpenCL1.2 only, not the latest one which comes with AMD developper SDK or
-# similar.
-# It is
-# characteristic when you installed OpenCL-2.0-conformant library but CFFI
-# complains with =Undefined alien: "clCreateCommandQueueWithProperties"= and
-# similar messages.
 
 ** Devices
 
 OpenCL supports wide variety of hardware including CPU. The official, comprehensive device
 list is available [[https://www.khronos.org/conformance/adopters/conformant-products][here]].
 
-+ CPU with SSE2.X instruction (AMD APPSDK), SSE4.2 instruction (Intel)
-+ Intel Xeon Phi
++ CPU with SSE2.X instruction (AMD APPSDK), SSE4.2 instruction (Intel driver)
++ Intel Xeon Phi (Intel driver)
 + ARM mobile CPUs (qualcomm snapdragon etc.)
 + CPU with embedded GPU (latest Intel, or AMD A-series)
 + FPGA, ASIC, DSP
@@ -58,9 +63,11 @@ Note that AMD APPSDK can be installed on any CPUs supporting SSE2 (even on Intel
 
 ** Supported OpenCL Versions
 
-+ opencl-1.0, 1.1, 1.2, 2.0
+This library supports opencl-1.0, 1.1, 1.2 and 2.0. They are automatically
+switched by grovelling the OpenCL header in the path.
 
-This library is developped with AMD APPSDK v3.0 (OpenCL 2.0), Radeon HD 5770 and PhenomII X6.
+This library is developped on machine with AMD APPSDK v3.0 (OpenCL 2.0), Radeon HD 5770 and PhenomII X6.
+Tests on CI runs with POCL 0.12 (OpenCL 1.2).
 
 OpenCL has a /specification/ independent from /implementations/, much like
 in ANSI Common Lisp. It maintains the backward-compatibility (any programs
@@ -91,5 +98,6 @@ See https://github.com/hughperkins/DeepCL.
 
 * License
 
-Licensed under the LLGPL License.
+I'll plan to license it under the LLGPL, but since this is a fork from
+cl-opencl-3b which lacks the license, I'm asking 3b to specify one.
 
