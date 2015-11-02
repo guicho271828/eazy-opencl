@@ -8,7 +8,6 @@
   (let ((lname (second lisp-and-c-name)))
     `(progn
        (push ',(cdr whole) *defined-opencl-functions*)
-       (export ',lname)
        (declaim (inline ,lname))
        (defcfun ,lisp-and-c-name ,return-type ,@args)
        (declaim (notinline ,lname)))))
@@ -426,8 +425,7 @@
   (param-value-size-ret (:pointer size-t)))
 
 #+opencl-1.1
-(defclfun ("clSetMemObjectDestructorCallback"
-               set-mem-object-destructor-callback) int
+(defclfun ("clSetMemObjectDestructorCallback" set-mem-object-destructor-callback) int
   (memobj mem)
   (callback :pointer)
   (user-data (:pointer :void)))
