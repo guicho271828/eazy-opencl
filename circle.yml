@@ -1,0 +1,30 @@
+machine:
+  environment:
+    PATH: ~/.roswell/bin:$PATH
+    LLVM_CONFIG: /usr/lib/llvm-3.6/bin/llvm-config
+
+dependencies:
+  pre:
+    - sudo bash -c 'echo "deb http://mirrors.kernel.org/ubuntu vivid main universe" >> /etc/apt/sources.list'
+    - sudo apt-get update
+    - apt-cache search pocl 
+    - apt-cache search icd
+    - apt-cache search opencl
+    - sudo apt-get install -y libltdl3-dev libhwloc-dev ocl-icd-opencl-dev g++-4.8 clang-3.6 libclang-3.6-dev llvm-3.6-dev libedit-dev
+    - ./build-pocl.sh
+    - sudo make -C pocl install
+    - curl -L https://raw.githubusercontent.com/snmsts/roswell/master/scripts/install-for-ci.sh | sh
+    - ros install ccl-bin
+    - git clone https://github.com/cffi/cffi.git ~/lisp/cffi
+  post:
+    - ros install cffi
+    - ros install cffi-grovel
+    - ros install eazy-opencl
+  cache_directories:
+    - ~/.roswell/
+    - pocl
+
+test:
+  override:
+    - ros -L sbcl-bin testscr.ros
+    - ros -L ccl-bin testscr.ros
