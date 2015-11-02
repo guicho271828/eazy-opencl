@@ -162,11 +162,11 @@ Properties should be a list of :out-of-order-exec-mode-enable and :profiling-ena
                            0 (null-pointer)
                            options
                            (null-pointer) (null-pointer))
-      (with-foreign-array (devices-foreign '%ocl:device-id devices)
+      (with-foreign-array (devices-foreign '%ocl:device-id devices size)
         (%ocl/e:build-program program
-                             (length devices) devices-foreign
-                             options
-                             (null-pointer) (null-pointer))))
+                              size devices-foreign
+                              options
+                              (null-pointer) (null-pointer))))
   program)
 
 #+opencl-1.2
