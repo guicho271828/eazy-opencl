@@ -38,6 +38,10 @@ However, note that these packages (both ICD loader and OpenCL
 implementation) are not up-to-date.  My recommendation is to download the
 latest driver&icd from vendors' websites.
 
+*As of 2015/11/04, it also requires the latest cffi installed from the git repositry*.
+
+=cd $quicklisp_local_project ; git clone https://github.com/cffi/cffi.git=
+
 Once they are up, just load this library in the quicklisp local-project directory.
 Run the tests by:
 
