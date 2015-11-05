@@ -6,7 +6,7 @@ Development status:
 + proper error handling
 + integration to lisp GC
 + Minimally Viable API
-+ extensive testing ([[https://travis-ci.org/guicho271828/eazy-opencl.svg]], [[https://circleci.com/gh/guicho271828/eazy-opencl.svg]])
++ extensive testing ([[https://travis-ci.org/guicho271828/eazy-opencl][https://travis-ci.org/guicho271828/eazy-opencl.svg]], [[https://circleci.com/gh/guicho271828/eazy-opencl][https://circleci.com/gh/guicho271828/eazy-opencl.svg]])
 
 TODOs:
 + lisp-to-C preprocessor
