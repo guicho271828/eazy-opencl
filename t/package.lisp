@@ -56,7 +56,7 @@
                         (list (%ocl:opencl-error-code c) param name things)))
               (babel:character-decoding-error (c)
                 (fail "~%~<character-decoding-error: ~@;~s, Octets: ~s, for query ~s to ~s ~s~:@>"
-                        (list c (character-decoding-error-octets c) param name things)))
+                        (list c (babel:character-decoding-error-octets c) param name things)))
               (error (c)
                 (fail "~<Unexpected error:~@; ~a : ~a -- while calling ~a with ~s~:@>"
                       (list (type-of c) c fn (append things (list param)))))))
