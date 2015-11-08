@@ -164,9 +164,12 @@ BODY: Query specification of the getter, the most complicated part of the OpenCL
        (with-foreign-object (str '%ocl/g:char count)
          (,fun ,@(butlast args) ,pname count str (cffi:null-pointer))
          ;; for CCL
-         (if (null-pointer-p str)
-             ""
-             (foreign-string-to-lisp str :encoding :ascii))))))
+         (handler-case
+             (foreign-string-to-lisp str :encoding :ascii)
+           (error (c)
+             (warn "~a occured during foreign-string-to-lisp. Returning \"\", so the results is unreliable"
+                   (type-of c))
+             ""))))))
 
 (defun %simple-case (args fun form)
   (ematch form
