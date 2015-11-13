@@ -210,6 +210,27 @@ __kernel void hello(__global char * out) {
     (is (atom ctx))
     (is (atom queue))))
 
+
+(test helloworld-with-easy-opencl-setup
+  (with-easy-opencl-setup (platform
+                           (device (lambda (device)
+                                     (eq (get-device-info device :device-type)
+                                         :device-type-gpu)))
+                           ctx
+                           queue)
+    (is (string=
+         "Hello, World"
+         (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
+           (let* ((out-device (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
+                  (program    (create-program-with-source ctx (asdf:system-relative-pathname :eazy-opencl "t/helloworld.cl"))))
+             (build-program program :devices (list device))
+             (let ((kernel (create-kernel program "hello")))
+               (set-kernel-arg kernel 0 out-device '%ocl:mem)
+               (%ocl/h::with-foreign-array (global-work-size '%ocl:size-t (list size))
+                 (%ocl:enqueue-nd-range-kernel queue kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer)))
+               (%ocl:enqueue-read-buffer queue out-device %ocl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer)))))))))
+
+
 #+nil
 (test fancy-memory-interface
   (with-easy-opencl-setup (platform
