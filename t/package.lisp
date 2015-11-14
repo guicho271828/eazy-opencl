@@ -214,8 +214,8 @@ __kernel void hello(__global char * out) {
 (test helloworld-with-easy-opencl-setup
   (with-easy-opencl-setup (platform
                            (device (lambda (device)
-                                     (eq (get-device-info device :device-type)
-                                         :device-type-gpu)))
+                                     (member :device-type-gpu
+                                             (get-device-info device :device-type))))
                            ctx
                            queue)
     (is (string=
