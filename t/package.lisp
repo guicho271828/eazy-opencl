@@ -66,7 +66,6 @@
               (fail "~<Unexpected error during GC:~@;~a -- after calling ~a with ~s~:@>"
                     (list c fn (append things (list param)))))))))
 
-
 (test setup
   (is-true (get-platform-ids))
   (iter (for pid in (get-platform-ids))
@@ -199,16 +198,53 @@ __kernel void hello(__global char * out) {
               (is (string= "Hello, World" (print result))))))
 
 (test with-easy-opencl-setup
+  (finishes
+    (with-easy-opencl-setup (platform
+                             (device (lambda (device)
+                                       (member :device-type-cpu
+                                               (get-device-info device :device-type))))
+                             ctx
+                             queue)
+      (is (atom platform))
+      (is (atom device))
+      (is (atom ctx))
+      (is (atom queue))))
+  (finishes
+    (with-easy-opencl-setup (_
+                             (_ (lambda (device)
+                                  (member :device-type-cpu
+                                          (get-device-info device :device-type))))
+                             _ queue)
+      (is (atom queue))))
+  (signals simple-error
+    (with-easy-opencl-setup ((_ (constantly nil)) _ _ _)))
+  (signals simple-error
+    (with-easy-opencl-setup (_ (_ (constantly nil)) _ _)))
+  (signals simple-error
+    (with-easy-opencl-setup (_ _ (_ (constantly nil)) _)))
+  (signals simple-error
+    (with-easy-opencl-setup (_ _ _ (_ (constantly nil))))))
+
+
+(test helloworld-with-easy-opencl-setup
   (with-easy-opencl-setup (platform
                            (device (lambda (device)
-                                     (eq (get-device-info device :device-type)
-                                         :device-type-gpu)))
+                                     (member :device-type-cpu
+                                             (get-device-info device :device-type))))
                            ctx
                            queue)
-    (is (atom device))
-    (is (atom device))
-    (is (atom ctx))
-    (is (atom queue))))
+    (is (string=
+         "Hello, World"
+         (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
+           (let* ((out-device (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
+                  (program    (create-program-with-source ctx (asdf:system-relative-pathname :eazy-opencl "t/helloworld.cl"))))
+             (build-program program :devices (list device))
+             (let ((kernel (create-kernel program "hello")))
+               (set-kernel-arg kernel 0 out-device '%ocl:mem)
+               (%ocl/h::with-foreign-array (global-work-size '%ocl:size-t (list size))
+                 (%ocl:enqueue-nd-range-kernel queue kernel 1 (cffi:null-pointer) global-work-size (cffi:null-pointer) 0 (cffi:null-pointer) (cffi:null-pointer)))
+               (%ocl:enqueue-read-buffer queue out-device %ocl:true 0 size out-host 0 (cffi:null-pointer) (cffi:null-pointer)))))))))
+
 
 #+nil
 (test fancy-memory-interface

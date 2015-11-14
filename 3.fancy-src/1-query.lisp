@@ -85,7 +85,9 @@ BODY : a form to be executed under the binding.
             (next-iteration))
           (when flag (error "multiple instances found!"))
           (setf %pid pid %device (first devices) %ctx ctx %queue queue flag t))
-    (funcall callback %pid %device %ctx %queue)))
+    (if (and %pid %device %ctx %queue)
+        (funcall callback %pid %device %ctx %queue)
+        (error "no instances found!"))))
 
 
 
