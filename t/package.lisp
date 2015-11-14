@@ -201,7 +201,7 @@ __kernel void hello(__global char * out) {
   (finishes
     (with-easy-opencl-setup (platform
                              (device (lambda (device)
-                                       (member :device-type-gpu
+                                       (member :device-type-cpu
                                                (get-device-info device :device-type))))
                              ctx
                              queue)
@@ -212,7 +212,7 @@ __kernel void hello(__global char * out) {
   (finishes
     (with-easy-opencl-setup (_
                              (_ (lambda (device)
-                                  (member :device-type-gpu
+                                  (member :device-type-cpu
                                           (get-device-info device :device-type))))
                              _ queue)
       (is (atom queue))))
@@ -229,7 +229,7 @@ __kernel void hello(__global char * out) {
 (test helloworld-with-easy-opencl-setup
   (with-easy-opencl-setup (platform
                            (device (lambda (device)
-                                     (member :device-type-gpu
+                                     (member :device-type-cpu
                                              (get-device-info device :device-type))))
                            ctx
                            queue)
