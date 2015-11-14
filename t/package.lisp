@@ -205,10 +205,25 @@ __kernel void hello(__global char * out) {
                                                (get-device-info device :device-type))))
                              ctx
                              queue)
-      (is (atom device))
+      (is (atom platform))
       (is (atom device))
       (is (atom ctx))
-      (is (atom queue)))))
+      (is (atom queue))))
+  (finishes
+    (with-easy-opencl-setup (_
+                             (_ (lambda (device)
+                                  (member :device-type-gpu
+                                          (get-device-info device :device-type))))
+                             _ queue)
+      (is (atom queue))))
+  (signals simple-error
+    (with-easy-opencl-setup ((_ (constantly nil)) _ _ _)))
+  (signals simple-error
+    (with-easy-opencl-setup (_ (_ (constantly nil)) _ _)))
+  (signals simple-error
+    (with-easy-opencl-setup (_ _ (_ (constantly nil)) _)))
+  (signals simple-error
+    (with-easy-opencl-setup (_ _ _ (_ (constantly nil))))))
 
 
 (test helloworld-with-easy-opencl-setup
