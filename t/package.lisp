@@ -66,7 +66,6 @@
               (fail "~<Unexpected error during GC:~@;~a -- after calling ~a with ~s~:@>"
                     (list c fn (append things (list param)))))))))
 
-
 (test setup
   (is-true (get-platform-ids))
   (iter (for pid in (get-platform-ids))
@@ -199,16 +198,17 @@ __kernel void hello(__global char * out) {
               (is (string= "Hello, World" (print result))))))
 
 (test with-easy-opencl-setup
-  (with-easy-opencl-setup (platform
-                           (device (lambda (device)
-                                     (eq (get-device-info device :device-type)
-                                         :device-type-gpu)))
-                           ctx
-                           queue)
-    (is (atom device))
-    (is (atom device))
-    (is (atom ctx))
-    (is (atom queue))))
+  (finishes
+    (with-easy-opencl-setup (platform
+                             (device (lambda (device)
+                                       (member :device-type-gpu
+                                               (get-device-info device :device-type))))
+                             ctx
+                             queue)
+      (is (atom device))
+      (is (atom device))
+      (is (atom ctx))
+      (is (atom queue)))))
 
 
 (test helloworld-with-easy-opencl-setup
