@@ -1,7 +1,10 @@
 ;; groveller file
 
 (in-package #:eazy-opencl.grovel)
+#+darwin
+(include "OpenCL/cl_platform.h")
 
+#-darwin
 (include "CL/cl_platform.h")
 
 ;;; C.1 Shared Application Scalar Data Types

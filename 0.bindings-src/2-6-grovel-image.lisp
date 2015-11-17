@@ -3,6 +3,9 @@
 ;; 5.3 Image objects
 (in-package #:eazy-opencl.grovel)
 
+#+darwin
+(include "OpenCL/cl.h")
+#-darwin
 (include "CL/cl.h")
 
 (cstruct image-format "cl_image_format"

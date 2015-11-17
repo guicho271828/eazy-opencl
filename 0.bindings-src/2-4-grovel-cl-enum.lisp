@@ -1,8 +1,14 @@
 ;;; groveller file
 
 (in-package #:eazy-opencl.grovel)
-
+#+darwin
+(include "OpenCL/cl.h")
+#-darwin
 (include "CL/cl.h")
+
+#+darwin
+(include "OpenCL/cl_ext.h")
+#-darwin
 (include "CL/cl_ext.h")
 
 (constant (#.(lispify "FALSE") "CL_FALSE"))
