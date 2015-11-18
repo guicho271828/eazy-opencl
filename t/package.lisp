@@ -129,7 +129,7 @@ __kernel void hello(__global char * out) {
                          (skip "Command queue for ctx ~s and device ~s (~s) was not created" ctx did type)
                          (next-iteration))))
               (for result =
-                   (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
+                   (with-foreign-pointer-as-string ((out-host size) 32) ;; Hello, World<null> : char[13]
                      (let* ((out-device
                              (or (pie (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
                                  (next-iteration)))
@@ -140,8 +140,11 @@ __kernel void hello(__global char * out) {
                            (next-iteration))
                        (let ((kernel (or (pie (create-kernel program "hello"))
                                          (next-iteration))))
-                         (test-all-infos out-device (all-enums '%ocl:mem-info) :buffer #'get-mem-object-info)
-                         (test-all-infos program    (all-enums '%ocl:program-info) :program #'get-program-info)
+                         (test-all-infos out-device '(:MEM-CONTEXT :MEM-FLAGS :MEM-HOST-PTR :MEM-MAP-COUNT
+                                                                   :MEM-REFERENCE-COUNT :MEM-SIZE :MEM-TYPE) :buffer #'get-mem-object-info)
+                         (test-all-infos program    '(:PROGRAM-CONTEXT :PROGRAM-DEVICES
+                                                                       :PROGRAM-KERNEL-NAMES :PROGRAM-NUM-DEVICES :PROGRAM-NUM-KERNELS
+                                                                       :PROGRAM-REFERENCE-COUNT :PROGRAM-SOURCE) :program #'get-program-info)
                          (test-all-infos (list program did) (all-enums '%ocl:program-build-info) :build #'get-program-build-info)
                          (test-all-infos kernel     (all-enums '%ocl:kernel-info) :kernel #'get-kernel-info)
                          (finishes
@@ -177,7 +180,7 @@ __kernel void hello(__global char * out) {
                          (skip "Command queue for ctx ~s and device ~s (~s) was not created" ctx did type)
                          (next-iteration))))
               (for result =
-                   (with-foreign-pointer-as-string ((out-host size) 13) ;; Hello, World<null> : char[13]
+                   (with-foreign-pointer-as-string ((out-host size) 32) ;; Hello, World<null> : char[13]
                      (let* ((out-device
                              (or (pie (create-buffer ctx '(:mem-write-only :mem-use-host-ptr) size out-host))
                                  (next-iteration)))
