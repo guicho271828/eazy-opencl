@@ -1,6 +1,10 @@
 ;; groveller file
 (in-package :eazy-opencl.grovel-utils)
 
+#+darwin
+(include "OpenCL/cl.h")
+
+#-darwin
 (include "CL/cl.h")
 
 (constant (opencl-1.0 "CL_VERSION_1_0") :optional t)

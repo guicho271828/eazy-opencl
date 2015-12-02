@@ -66,6 +66,20 @@
               (fail "~<Unexpected error during GC:~@;~a -- after calling ~a with ~s~:@>"
                     (list c fn (append things (list param)))))))))
 
+;; :MEM-OFFSET and :MEM-ASSOCIATED-MEMOBJECT cause crash on OSX
+(defparameter *mem-info* 
+  #+darwin
+  (set-difference (all-enums '%ocl:mem-info) '(:MEM-OFFSET :MEM-ASSOCIATED-MEMOBJECT))
+  #-darwin
+  (all-enums '%ocl:mem-info))
+
+;; :PROGRAM-BINARY-SIZES and :PROGRAM-BINARIES cause crash on OSX
+(defparameter *program-info* 
+  #+darwin
+  (set-difference (all-enums '%ocl:program-info) '(:PROGRAM-BINARY-SIZES :PROGRAM-BINARIES))
+  #-darwin
+  (all-enums '%ocl:program-info))
+
 (test setup
   (is-true (get-platform-ids))
   (iter (for pid in (get-platform-ids))
@@ -140,8 +154,8 @@ __kernel void hello(__global char * out) {
                            (next-iteration))
                        (let ((kernel (or (pie (create-kernel program "hello"))
                                          (next-iteration))))
-                         (test-all-infos out-device (all-enums '%ocl:mem-info) :buffer #'get-mem-object-info)
-                         (test-all-infos program    (all-enums '%ocl:program-info) :program #'get-program-info)
+                         (test-all-infos out-device *mem-info* :buffer #'get-mem-object-info)
+                         (test-all-infos program *program-info* :program #'get-program-info)
                          (test-all-infos (list program did) (all-enums '%ocl:program-build-info) :build #'get-program-build-info)
                          (test-all-infos kernel     (all-enums '%ocl:kernel-info) :kernel #'get-kernel-info)
                          (finishes
