@@ -9,7 +9,7 @@ Development status:
 + extensive testing ([[https://travis-ci.org/guicho271828/eazy-opencl][https://travis-ci.org/guicho271828/eazy-opencl.svg]], [[https://circleci.com/gh/guicho271828/eazy-opencl][https://circleci.com/gh/guicho271828/eazy-opencl.svg]])
 
 TODOs:
-+ lisp-to-C preprocessor -> work in progress at https://github.com/gos-k/oclcl
++ lisp-to-C preprocessor -> *work in progress* at https://github.com/gos-k/oclcl
 + Loading external OpenCL library easily (like in quicklisp)
 + Really good way to handle complicated memory operation
   (e.g., generating operations automatically)
