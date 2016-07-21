@@ -1,6 +1,8 @@
 
 (in-package :eazy-opencl.grovel-utils)
 
+(push "/opt/AMDAPPSDK-3.0/lib/x86_64" cffi:*foreign-library-directories*)
+
 (define-foreign-library :opencl
   (:darwin (:framework "OpenCL")) ;; ?
   (:windows "OpenCL.dll" :convention :stdcall)

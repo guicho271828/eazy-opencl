@@ -28,3 +28,5 @@
                :eazy-opencl.fancy)
   :description "Opencl Binding for Common Lisp"
   :in-order-to ((test-op (test-op :eazy-opencl.test))))
+
+
